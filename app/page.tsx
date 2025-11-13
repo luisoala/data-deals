@@ -19,6 +19,7 @@ export interface Deal {
   value_max: number | null
   value_unit: string | null
   codes: string[]
+  source_url: string | null
 }
 
 export default function Home() {
@@ -38,6 +39,27 @@ export default function Home() {
   const [suggestionModalOpen, setSuggestionModalOpen] = useState(false)
   const [editingDeal, setEditingDeal] = useState<Deal | null>(null)
 
+  // Snap value to nearest step for value slider
+  const snapToValueStep = (value: number): number => {
+    if (value < 0) return -1
+    const steps = [75, 150, 225, 300]
+    // Find closest step
+    let closest = steps[0]
+    let minDist = Math.abs(value - closest)
+    for (const step of steps) {
+      const dist = Math.abs(value - step)
+      if (dist < minDist) {
+        minDist = dist
+        closest = step
+      }
+    }
+    // If value is between Undisclosed and first step, snap to first step
+    if (value >= 0 && value < steps[0] / 2) {
+      return steps[0]
+    }
+    return closest
+  }
+
   useEffect(() => {
     fetch('/api/deals')
       .then(res => res.json())
@@ -50,11 +72,13 @@ export default function Home() {
       .then(res => res.json())
       .then(data => {
         setStats(data)
-        // Set initial value max from stats
+        // Set initial value max from stats, clamped to stepped slider max (300) and snapped to nearest step
+        const rawValueMax = Math.min(300, data.valueRange.max)
+        const snappedValueMax = snapToValueStep(rawValueMax)
         setFilters(prev => ({
           ...prev,
           valueMin: -1, // Include Undisclosed by default
-          valueMax: data.valueRange.max,
+          valueMax: snappedValueMax,
         }))
       })
   }, [])
@@ -88,9 +112,9 @@ export default function Home() {
       if (deal.value_min === null && deal.value_max === null) {
         return filters.valueMin < 0 // Include if Undisclosed is in range
       }
-      // For disclosed deals, check if they overlap with the filter range
-      const dealMin = deal.value_min || 0
-      const dealMax = deal.value_max || dealMin
+      // For disclosed deals, convert from dollars to millions and check if they overlap with the filter range
+      const dealMin = (deal.value_min || 0) / 1000000 // Convert to millions
+      const dealMax = (deal.value_max || dealMin) / 1000000 // Convert to millions
       const filterMin = filters.valueMin < 0 ? 0 : filters.valueMin
       return (
         (dealMin >= filterMin && dealMin <= filters.valueMax) ||
@@ -129,11 +153,14 @@ export default function Home() {
   const resetAllFilters = () => {
     setSelectedNodes(new Set())
     setSearchQuery('')
+    // Snap valueMax to nearest step
+    const rawValueMax = stats ? Math.min(300, stats.valueRange.max) : 300
+    const snappedValueMax = snapToValueStep(rawValueMax)
     setFilters({
       yearMin: 2016,
       yearMax: 2025,
       valueMin: -1, // Include Undisclosed
-      valueMax: stats?.valueRange.max || 0,
+      valueMax: snappedValueMax, // Snapped to nearest step
       types: [],
       codes: [],
     })

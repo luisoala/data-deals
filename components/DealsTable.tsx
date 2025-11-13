@@ -17,21 +17,6 @@ type SortDirection = 'asc' | 'desc'
 export default function DealsTable({ deals, searchQuery, onSearchChange, onEdit, onAddNew }: DealsTableProps) {
   const [sortField, setSortField] = useState<SortField>('date')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
-  const [refUrls, setRefUrls] = useState<Record<string, string>>({})
-
-  useEffect(() => {
-    // Load reference URLs
-    fetch('/data/ref-urls.json')
-      .then(res => res.json())
-      .then(data => setRefUrls(data))
-      .catch(() => {
-        // Try alternative path
-        fetch('/ref-urls.json')
-          .then(res => res.json())
-          .then(data => setRefUrls(data))
-          .catch(() => {})
-      })
-  }, [])
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -61,19 +46,19 @@ export default function DealsTable({ deals, searchQuery, onSearchChange, onEdit,
     return sortDirection === 'asc' ? '↑' : '↓'
   }
 
-  // Get source URL and name
-  const getSourceInfo = (ref: string) => {
-    const url = refUrls[ref]
+  // Get source URL and name from deal's source_url field
+  const getSourceInfo = (deal: Deal) => {
+    const url = deal.source_url
     if (url) {
       // Extract domain name for display
       try {
         const domain = new URL(url).hostname.replace('www.', '')
         return { url, name: domain }
       } catch {
-        return { url, name: ref }
+        return { url, name: deal.ref }
       }
     }
-    return { url: null, name: ref }
+    return { url: null, name: deal.ref }
   }
 
   return (
@@ -167,10 +152,10 @@ export default function DealsTable({ deals, searchQuery, onSearchChange, onEdit,
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {sortedDeals.map(deal => {
-              const sourceInfo = getSourceInfo(deal.ref)
-              return (
+              <tbody className="bg-white divide-y divide-gray-200">
+                {sortedDeals.map(deal => {
+                  const sourceInfo = getSourceInfo(deal)
+                  return (
                 <tr key={deal.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4 text-xs text-gray-900 font-medium truncate" title={deal.data_receiver}>
                     {deal.data_receiver}
@@ -214,7 +199,7 @@ export default function DealsTable({ deals, searchQuery, onSearchChange, onEdit,
                       <span className="text-gray-400" title={sourceInfo.name}>{sourceInfo.name}</span>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-xs">
+                  <td className="px-6 py-4 whitespace-nowrap text-xs text-right">
                     <button
                       onClick={() => onEdit(deal)}
                       className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-200 transition-colors"

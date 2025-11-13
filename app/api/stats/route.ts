@@ -27,9 +27,11 @@ export async function GET() {
     })
 
     // Value range - include disclosed values, but account for "Undisclosed"
+    // Convert from dollars to millions for UI consistency
     const values = deals
       .map(d => d.value_min || d.value_max)
-      .filter(v => v !== null) as number[]
+      .filter(v => v !== null)
+      .map(v => (v as number) / 1000000) as number[] // Convert to millions
     const valueMin = 0
     const valueMax = values.length > 0 ? Math.max(...values) : 0
     // Add a buffer for "Undisclosed" - set max to be slightly above the highest disclosed value
