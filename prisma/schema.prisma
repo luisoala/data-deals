@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Deal {
+  id              Int      @id @default(autoincrement())
+  data_receiver   String
+  data_aggregator String
+  ref             String
+  date            Int
+  type            String
+  value_raw       String
+  value_min       Float?
+  value_max       Float?
+  value_unit      String?
+  codes           String   // JSON array stored as string
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  suggestions Suggestion[]
+
+  @@index([data_receiver])
+  @@index([data_aggregator])
+  @@index([date])
+  @@index([type])
+}
+
+model Suggestion {
+  id          Int      @id @default(autoincrement())
+  deal_id     Int?
+  type        String   // "edit" or "new"
+  fields      String   // JSON object stored as string
+  status      String   @default("pending") // "pending", "approved", "rejected"
+  submitted_at DateTime @default(now())
+  reviewed_at  DateTime?
+  reviewed_by  String?  // GitHub username
+
+  deal Deal? @relation(fields: [deal_id], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([deal_id])
+}
+

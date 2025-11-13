@@ -1,0 +1,1107 @@
+[
+  {
+    "id": 1,
+    "data_receiver": "DeepMind",
+    "data_aggregator": "Moorfields Hospital",
+    "ref": "moorfieldsdeepmind2016",
+    "date": 2016,
+    "type": "Academic",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 2,
+    "data_receiver": "DeepMind",
+    "data_aggregator": "NHS",
+    "ref": "deepmindnhs2017t",
+    "date": 2017,
+    "type": "Academic",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 3,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "GitHub (Microsoft)",
+    "ref": "githubcopilotlawsuit2022t",
+    "date": 2018,
+    "type": "UGC",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "L"
+    ]
+  },
+  {
+    "id": 4,
+    "data_receiver": "Adobe",
+    "data_aggregator": "Stock Contributors",
+    "ref": "adobefirefly2023",
+    "date": 2022,
+    "type": "Images",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C",
+      "S"
+    ]
+  },
+  {
+    "id": 5,
+    "data_receiver": "Various Licensees",
+    "data_aggregator": "X (formerly Twitter)",
+    "ref": "variouslicenseesbloombergibmetcxtwitter2023",
+    "date": 2023,
+    "type": "UGC",
+    "value_raw": "2.5m/yr",
+    "value_min": 2500000,
+    "value_max": 2500000,
+    "value_unit": "millions",
+    "codes": [
+      "C",
+      "R"
+    ]
+  },
+  {
+    "id": 6,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "Axel Springer",
+    "ref": "openaias2023",
+    "date": 2023,
+    "type": "News",
+    "value_raw": "20m+",
+    "value_min": 20000000,
+    "value_max": null,
+    "value_unit": "millions",
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 7,
+    "data_receiver": "Apple",
+    "data_aggregator": "Publishers",
+    "ref": "applepublishers2023",
+    "date": 2023,
+    "type": "News",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "U"
+    ]
+  },
+  {
+    "id": 8,
+    "data_receiver": "ElevenLabs",
+    "data_aggregator": "Voice Actors",
+    "ref": "elevenlabsvoice2023",
+    "date": 2023,
+    "type": "UGC",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C",
+      "S"
+    ]
+  },
+  {
+    "id": 9,
+    "data_receiver": "IBM",
+    "data_aggregator": "NASA",
+    "ref": "nasaibm2023",
+    "date": 2023,
+    "type": "Images",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 10,
+    "data_receiver": "LG",
+    "data_aggregator": "Shutterstock",
+    "ref": "lgshutterstock2023",
+    "date": 2023,
+    "type": "Images",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 11,
+    "data_receiver": "Meta",
+    "data_aggregator": "Shutterstock",
+    "ref": "metashutterstock2023",
+    "date": 2023,
+    "type": "Images",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 12,
+    "data_receiver": "Mubert",
+    "data_aggregator": "Musicians",
+    "ref": "mubertmusicians2023",
+    "date": 2023,
+    "type": "UGC",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C",
+      "S"
+    ]
+  },
+  {
+    "id": 13,
+    "data_receiver": "NVIDIA",
+    "data_aggregator": "Getty Images",
+    "ref": "nvidiagettyimages2023",
+    "date": 2023,
+    "type": "Images",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 14,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "Associated Press",
+    "ref": "openaiap2023t",
+    "date": 2023,
+    "type": "News",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 15,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "Shutterstock",
+    "ref": "openaishutterstock2023",
+    "date": 2023,
+    "type": "Images",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 16,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "StackOverflow",
+    "ref": "openaistackoverflow2024",
+    "date": 2023,
+    "type": "UGC",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 17,
+    "data_receiver": "Perplexity",
+    "data_aggregator": "Multiple News Publishers",
+    "ref": "perplexitymultiplenewspublishers2023",
+    "date": 2023,
+    "type": "News",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C",
+      "S",
+      "R"
+    ]
+  },
+  {
+    "id": 18,
+    "data_receiver": "Runway",
+    "data_aggregator": "Getty Images",
+    "ref": "runwaygetty2023",
+    "date": 2023,
+    "type": "Images",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 19,
+    "data_receiver": "Stability AI",
+    "data_aggregator": "AudioSparx",
+    "ref": "audiosparx2023",
+    "date": 2023,
+    "type": "UGC",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 20,
+    "data_receiver": "Stability AI",
+    "data_aggregator": "Getty Images",
+    "ref": "gettystabilityai2025",
+    "date": 2023,
+    "type": "Images",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "L"
+    ]
+  },
+  {
+    "id": 21,
+    "data_receiver": "Microsoft",
+    "data_aggregator": "Taylor & Francis / Informa",
+    "ref": "microsofttf2024",
+    "date": 2024,
+    "type": "Academic",
+    "value_raw": "10m",
+    "value_min": 10000000,
+    "value_max": 10000000,
+    "value_unit": "millions",
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 22,
+    "data_receiver": "Undisclosed",
+    "data_aggregator": "HarperCollins",
+    "ref": "undisclosedlargetechcompanyharpercollins2024",
+    "date": 2024,
+    "type": "Academic",
+    "value_raw": "2.5k/book",
+    "value_min": 2500,
+    "value_max": 2500,
+    "value_unit": "thousands",
+    "codes": [
+      "C",
+      "S"
+    ]
+  },
+  {
+    "id": 23,
+    "data_receiver": "Undisclosed",
+    "data_aggregator": "Reuters",
+    "ref": "reuters2024",
+    "date": 2024,
+    "type": "News",
+    "value_raw": "22m",
+    "value_min": 22000000,
+    "value_max": 22000000,
+    "value_unit": "millions",
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 24,
+    "data_receiver": "Amazon",
+    "data_aggregator": "Shutterstock",
+    "ref": "amazonshutterstock2024",
+    "date": 2024,
+    "type": "Images",
+    "value_raw": "25-50m",
+    "value_min": 25000000,
+    "value_max": 50000000,
+    "value_unit": "millions",
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 25,
+    "data_receiver": "Apple",
+    "data_aggregator": "Shutterstock",
+    "ref": "appleshutterstock2024",
+    "date": 2024,
+    "type": "Images",
+    "value_raw": "25-50m",
+    "value_min": 25000000,
+    "value_max": 50000000,
+    "value_unit": "millions",
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 26,
+    "data_receiver": "Google",
+    "data_aggregator": "Shutterstock",
+    "ref": "googleshutterstock2024",
+    "date": 2024,
+    "type": "Images",
+    "value_raw": "25-50m",
+    "value_min": 25000000,
+    "value_max": 50000000,
+    "value_unit": "millions",
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 27,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "Shutterstock",
+    "ref": "openaishutterstock2024",
+    "date": 2024,
+    "type": "Images",
+    "value_raw": "25-50m",
+    "value_min": 25000000,
+    "value_max": 50000000,
+    "value_unit": "millions",
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 28,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "News Corp",
+    "ref": "openainewscorp2024t",
+    "date": 2024,
+    "type": "News",
+    "value_raw": "250m/5yr",
+    "value_min": 250000000,
+    "value_max": 250000000,
+    "value_unit": "millions",
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 29,
+    "data_receiver": "Perplexity",
+    "data_aggregator": "Yelp",
+    "ref": "perplexityyelp2024",
+    "date": 2024,
+    "type": "UGC",
+    "value_raw": "25m",
+    "value_min": 25000000,
+    "value_max": 25000000,
+    "value_unit": "millions",
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 30,
+    "data_receiver": "Large Tech Company",
+    "data_aggregator": "Wiley",
+    "ref": "wiley2024",
+    "date": 2024,
+    "type": "Academic",
+    "value_raw": "44m",
+    "value_min": 44000000,
+    "value_max": 44000000,
+    "value_unit": "millions",
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 31,
+    "data_receiver": "Google",
+    "data_aggregator": "Reddit",
+    "ref": "googlereddit2024t",
+    "date": 2024,
+    "type": "UGC",
+    "value_raw": "60m/yr",
+    "value_min": 60000000,
+    "value_max": 60000000,
+    "value_unit": "millions",
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 32,
+    "data_receiver": "Undisclosed",
+    "data_aggregator": "Taylor & Francis / Informa",
+    "ref": "undisclosedtf2024",
+    "date": 2024,
+    "type": "Academic",
+    "value_raw": "65m",
+    "value_min": 65000000,
+    "value_max": 65000000,
+    "value_unit": "millions",
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 33,
+    "data_receiver": "Undisclosed",
+    "data_aggregator": "Freepik",
+    "ref": "freepik2024",
+    "date": 2024,
+    "type": "Images",
+    "value_raw": "6m",
+    "value_min": 6000000,
+    "value_max": 6000000,
+    "value_unit": "millions",
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 34,
+    "data_receiver": "Undisclosed",
+    "data_aggregator": "Tempus",
+    "ref": "multipleclientsundisclosedtempus2024",
+    "date": 2024,
+    "type": "Health",
+    "value_raw": "72.8m",
+    "value_min": 72800000,
+    "value_max": 72800000,
+    "value_unit": "millions",
+    "codes": [
+      "C",
+      "R"
+    ]
+  },
+  {
+    "id": 35,
+    "data_receiver": "Google",
+    "data_aggregator": "StackOverflow",
+    "ref": "googlestackoverflow2024t",
+    "date": 2024,
+    "type": "UGC",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 36,
+    "data_receiver": "Meta",
+    "data_aggregator": "Reuters",
+    "ref": "metareuters2024",
+    "date": 2024,
+    "type": "News",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C",
+      "U"
+    ]
+  },
+  {
+    "id": 37,
+    "data_receiver": "Midjourney",
+    "data_aggregator": "Tumblr (Automattic)",
+    "ref": "midjourneytumblr2024",
+    "date": 2024,
+    "type": "UGC",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 38,
+    "data_receiver": "Midjourney",
+    "data_aggregator": "Wordpress",
+    "ref": "midjourneywordpress2024",
+    "date": 2024,
+    "type": "UGC",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 39,
+    "data_receiver": "Musical AI",
+    "data_aggregator": "Symphonic Distribution",
+    "ref": "musicalaisymphonicdistribution2024",
+    "date": 2024,
+    "type": "Audio",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 40,
+    "data_receiver": "NVIDIA",
+    "data_aggregator": "Shutterstock",
+    "ref": "nvidiashutterstock2024",
+    "date": 2024,
+    "type": "Images",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 41,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "Dotdash Meredith",
+    "ref": "dotdashmeredith2024",
+    "date": 2024,
+    "type": "News",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 42,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "TIME",
+    "ref": "timedeal2024",
+    "date": 2024,
+    "type": "News",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 43,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "NYT",
+    "ref": "nytopenai2024",
+    "date": 2024,
+    "type": "News",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "L"
+    ]
+  },
+  {
+    "id": 44,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "Reddit",
+    "ref": "openaireddit2024",
+    "date": 2024,
+    "type": "UGC",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 45,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "Tumblr (Automattic)",
+    "ref": "openaitumblr2024",
+    "date": 2024,
+    "type": "UGC",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 46,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "Vox Media",
+    "ref": "voxmedia2024",
+    "date": 2024,
+    "type": "News",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 47,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "Wordpress",
+    "ref": "openaiwordpress2024",
+    "date": 2024,
+    "type": "UGC",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 48,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "Le Monde",
+    "ref": "openailemonde2024",
+    "date": 2024,
+    "type": "News",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 49,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "Prisa Media",
+    "ref": "openaiprisamedia2024",
+    "date": 2024,
+    "type": "News",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 50,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "Financial Times",
+    "ref": "openaifinancialtimes2024",
+    "date": 2024,
+    "type": "News",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 51,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "The Atlantic",
+    "ref": "openaitheatlantic2024",
+    "date": 2024,
+    "type": "News",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 52,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "Condé Nast",
+    "ref": "openaicondenast2024",
+    "date": 2024,
+    "type": "News",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 53,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "Axios",
+    "ref": "openaiaxios2024",
+    "date": 2024,
+    "type": "News",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 54,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "The Guardian",
+    "ref": "openaiguardian2024",
+    "date": 2024,
+    "type": "News",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 55,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "Schibsted",
+    "ref": "openaischibsted2024",
+    "date": 2024,
+    "type": "News",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 56,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "Future plc",
+    "ref": "openaifutureplc2024",
+    "date": 2024,
+    "type": "News",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 57,
+    "data_receiver": "OpenAI",
+    "data_aggregator": "Hearst Magazines",
+    "ref": "openaihearstmagazines2024",
+    "date": 2024,
+    "type": "News",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 58,
+    "data_receiver": "Potato",
+    "data_aggregator": "Wiley",
+    "ref": "potatowiley2024",
+    "date": 2024,
+    "type": "Academic",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 59,
+    "data_receiver": "ProRata AI",
+    "data_aggregator": "Multiple (500+) News Publishers",
+    "ref": "prorataaimultiple500newspublishers2024",
+    "date": 2024,
+    "type": "News",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C",
+      "S"
+    ]
+  },
+  {
+    "id": 60,
+    "data_receiver": "Undisclosed",
+    "data_aggregator": "Oxford University Press",
+    "ref": "llmoxford2024",
+    "date": 2024,
+    "type": "Academic",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "U"
+    ]
+  },
+  {
+    "id": 61,
+    "data_receiver": "Undisclosed",
+    "data_aggregator": "Cambridge University Press",
+    "ref": "cambridge2024",
+    "date": 2024,
+    "type": "Academic",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "U"
+    ]
+  },
+  {
+    "id": 62,
+    "data_receiver": "Undisclosed",
+    "data_aggregator": "Sage",
+    "ref": "llmsage2024",
+    "date": 2024,
+    "type": "Academic",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "U"
+    ]
+  },
+  {
+    "id": 63,
+    "data_receiver": "Amazon",
+    "data_aggregator": "New York Times",
+    "ref": "amazonnewyorktimes2025",
+    "date": 2025,
+    "type": "News",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 64,
+    "data_receiver": "AWS",
+    "data_aggregator": "Wiley",
+    "ref": "awswiley2025",
+    "date": 2025,
+    "type": "Academic",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 65,
+    "data_receiver": "Cohere",
+    "data_aggregator": "News/Media Alliance",
+    "ref": "newsalliancec2025",
+    "date": 2025,
+    "type": "News",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "L"
+    ]
+  },
+  {
+    "id": 66,
+    "data_receiver": "Google",
+    "data_aggregator": "Associated Press",
+    "ref": "googleassociatedpress2025",
+    "date": 2025,
+    "type": "News",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 67,
+    "data_receiver": "Mistral AI",
+    "data_aggregator": "Agence France-Presse",
+    "ref": "mistralaiagencefrancepresse2025",
+    "date": 2025,
+    "type": "News",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 68,
+    "data_receiver": "OpenEvidence",
+    "data_aggregator": "NEJM Group",
+    "ref": "openevidence2025",
+    "date": 2025,
+    "type": "Academic",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 69,
+    "data_receiver": "Perplexity",
+    "data_aggregator": "Wiley",
+    "ref": "perplexitywiley2025",
+    "date": 2025,
+    "type": "Academic",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 70,
+    "data_receiver": "Pinterest",
+    "data_aggregator": "Pinterest Users",
+    "ref": "pinterest2025t",
+    "date": 2025,
+    "type": "Images",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 71,
+    "data_receiver": "ProRata",
+    "data_aggregator": "AAAS",
+    "ref": "prorata2025",
+    "date": 2025,
+    "type": "Academic",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  },
+  {
+    "id": 72,
+    "data_receiver": "Undisclosed",
+    "data_aggregator": "De Gruyter Brill",
+    "ref": "degruyter2025",
+    "date": 2025,
+    "type": "Academic",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "U"
+    ]
+  },
+  {
+    "id": 73,
+    "data_receiver": "Undisclosed",
+    "data_aggregator": "DataSeeds AI (Zedge)",
+    "ref": "undiscloseddataseedsaizedge2025",
+    "date": 2025,
+    "type": "Images",
+    "value_raw": "Undisclosed",
+    "value_min": null,
+    "value_max": null,
+    "value_unit": null,
+    "codes": [
+      "C"
+    ]
+  }
+]
