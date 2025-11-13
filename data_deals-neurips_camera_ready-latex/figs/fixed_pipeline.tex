@@ -1,0 +1,350 @@
+\begin{tikzpicture}
+  \def\L{13.0}
+  \def\xA{0}
+  \def\xB{\L/4}
+  \def\xC{\L/2}
+  \def\xD{3*\L/4}
+  \def\xE{\L}
+  \def\rA{0.8}
+  \def\rB{0.8}
+  \def\rC{0.8}
+  \def\rD{0.8}
+  \def\ellipseR{0.18}
+
+  \pgfmathsetmacro{\centerA}{0.5*(\xA+\xB)}
+  \pgfmathsetmacro{\centerB}{0.5*(\xB+\xC)}
+  \pgfmathsetmacro{\centerC}{0.5*(\xC+\xD)}
+  \pgfmathsetmacro{\centerD}{0.5*(\xD+\xE)}
+
+  \draw[horizontal water,thick]
+    (\xA,\rA)
+    to[out=0,in=180] (\xB,\rB)
+    to[out=0,in=180] (\xC,\rC)
+    to[out=0,in=180] (\xD,\rD) -- (\xE,\rD)
+    -- (\xE,-\rD)
+    -- (\xD,-\rD)
+    to[out=180,in=0] (\xC,-\rC)
+    to[out=180,in=0] (\xB,-\rB)
+    to[out=180,in=0] (\xA,-\rA);
+
+  \fill[horizontal water]
+  plot[domain=0:2*pi,samples=100]
+    ({\xA + (\ellipseR + 0.05*sin(8*\x r)) * cos(\x r)},
+     {\rA * sin(\x r)})
+  -- cycle;
+  \draw[mydarkblue,thick] plot[domain=0:2*pi,samples=100] 
+  ({\xA + (\ellipseR + 0.05*sin(8*\x r)) * cos(\x r)},
+   {\rA * sin(\x r)});
+  
+  
+
+
+
+
+
+  \def\clogX{\xB-0.18}
+  \foreach \i/\dx/\dy in {1/0.00/0.00, 2/0.429/0.375, 3/-0.429/0.375, 4/0.429/-0.375, 5/-0.429/-0.375, 6/0.6825/0.15, 7/-0.6825/-0.15} {
+    \pgfmathsetmacro{\clogCloudX}{\clogX+\dx}
+    \pgfmathsetmacro{\clogCloudY}{0+\dy}
+    \glowpath{darkgreen}{4mm}{0.25}{(\clogCloudX,\clogCloudY) ellipse [x radius=0.16, y radius=0.11]}
+    \fill[bottom color=white!20!black, top color=black!10!white, opacity=1, shading angle=90]
+      (\clogCloudX,\clogCloudY) ellipse [x radius=0.16, y radius=0.11];
+    \draw[black,thick,opacity=0.95] (\clogCloudX,\clogCloudY) ellipse [x radius=0.16, y radius=0.11];
+  }
+
+  \def\clogTwoX{\xC+3.25}
+  \foreach \i/\dx/\dy in {1/0.00/0.00, 2/0.429/0.375, 3/-0.429/0.375, 4/0.429/-0.375, 5/-0.429/-0.375, 6/0.6825/0.15, 7/-0.6825/-0.15} {
+    \pgfmathsetmacro{\clogCloudX}{\clogTwoX+\dx}
+    \pgfmathsetmacro{\clogCloudY}{0+\dy}
+    \glowpath{darkgreen}{4mm}{0.25}{(\clogCloudX,\clogCloudY) ellipse [x radius=0.16, y radius=0.11]}
+    \fill[bottom color=white!20!black, top color=black!10!white, opacity=1, shading angle=90]
+      (\clogCloudX,\clogCloudY) ellipse [x radius=0.16, y radius=0.11];
+    \draw[black,thick,opacity=0.95] (\clogCloudX,\clogCloudY) ellipse [x radius=0.16, y radius=0.11];
+  }
+
+
+  \foreach \j in {0,...,58} {
+    \pgfmathsetmacro{\coinx}{\xA+0.5+\j*(\xE-\xA-1)/58}
+    \pgfmathsetmacro{\coiny}{(rnd-0.5)*1.4*(\rA-0.08)} %
+    \pgfmathsetmacro{\angle}{(rnd-0.5)*40} %
+    \begin{scope}[shift={(\coinx,\coiny)}, rotate=\angle]
+      \fill[coinyellow] (-0.3,-0.03) arc[start angle=180, end angle=360, x radius=0.3, y radius=0.06] -- (0.3,0.03) arc[start angle=0, end angle=180, x radius=0.3, y radius=0.06] -- cycle;
+      \fill[coinyellow] (0,0.03) ellipse [x radius=0.3, y radius=0.06];
+      \draw[black,thick] (0,0.03) ellipse [x radius=0.3, y radius=0.06];
+      \draw[black,thick] plot[domain=pi:2*pi,samples=30] ({0.3*cos(\x r)}, {-0.03+0.06*sin(\x r)});
+      \draw[black,thick] (-0.3,-0.03) -- (-0.3,0.03);
+      \draw[black,thick] (0.3,-0.03) -- (0.3,0.03);
+    \end{scope}
+  }
+ 
+
+  \draw[horizontal water,thick,opacity=0.5]
+    (\xA,\rA)
+    to[out=0,in=180] (\xB,\rB)
+    to[out=0,in=180] (\xC,\rC)
+    to[out=0,in=180] (\xD,\rD) -- (\xE,\rD)
+    -- (\xE,-\rD)
+    -- (\xD,-\rD)
+    to[out=180,in=0] (\xC,-\rC)
+    to[out=180,in=0] (\xB,-\rB)
+    to[out=180,in=0] (\xA,-\rA);
+
+  \fill[horizontal water]
+    plot[domain=0:2*pi,samples=100]
+      ({\xE + (\ellipseR + 0.05*sin(8*\x r)) * cos(\x r)},
+       {\rD * sin(\x r)})
+    -- cycle;
+  \draw[mydarkblue,thick] plot[domain=0:2*pi,samples=100]
+    ({\xE + (\ellipseR + 0.05*sin(8*\x r)) * cos(\x r)},
+     {\rD * sin(\x r)});
+
+  \foreach \j in {1,...,7} {
+    \pgfmathsetmacro{\coinx}{\xE + 0.18*\j}
+    \pgfmathsetmacro{\coiny}{(rnd-0.5)*1.4*(\rA-0.08)}
+    \pgfmathsetmacro{\angle}{(rnd-0.5)*40}
+    \begin{scope}[shift={(\coinx,\coiny)}, rotate=\angle]
+      \fill[coinyellow] (-0.3,-0.03) arc[start angle=180, end angle=360, x radius=0.3, y radius=0.06] -- (0.3,0.03) arc[start angle=0, end angle=180, x radius=0.3, y radius=0.06] -- cycle;
+      \fill[coinyellow] (0,0.03) ellipse [x radius=0.3, y radius=0.06];
+      \draw[black,thick] (0,0.03) ellipse [x radius=0.3, y radius=0.06];
+      \draw[black,thick] plot[domain=pi:2*pi,samples=30] ({0.3*cos(\x r)}, {-0.03+0.06*sin(\x r)});
+      \draw[black,thick] (-0.3,-0.03) -- (-0.3,0.03);
+      \draw[black,thick] (0.3,-0.03) -- (0.3,0.03);
+    \end{scope}
+  }
+
+  \foreach \i/\centerX in {1/\centerA, 2/\centerB, 3/\centerC, 4/\centerD} {
+    \begin{scope}[shift={(\centerX+.5,-.6*1.3)}, xscale=-1, rotate=180]
+      \def\Rx{0.6}
+      \def\Ry{0.2*\Rx}
+      \def\rx{0.5*\Rx} %
+      \def\ry{0.36*\Ry}
+      \def\HL{0.4}
+      \def\HR{1.05}
+      \def\hL{\HL}
+      \def\hR{0.95*\HR}
+      \clip (-2*\Rx-2*\rx,-\HR) rectangle (0,\HR);
+      \ifnum\i=1
+        \drawCoinStreamVertical{-0.9}{-0.2}{0}{0.28}{110}{130}{1}
+      \fi
+      \ifnum\i=2
+        \drawCoinStreamVertical{-0.9}{.6}{1}{0.7}{110}{130}{2}
+      \fi
+      \ifnum\i=3
+        \drawCoinStreamVertical{-0.9}{.8}{1}{0.5}{110}{130}{3}
+      \fi
+      \ifnum\i=4
+        \drawCoinStreamVertical{-0.9}{1}{4}{0.36}{110}{130}{4}
+      \fi
+      \draw[mydarkblue,opacity=0.25,line width=0.7pt] (\Rx,\hL) ellipse ({1.12*\rx} and {1.12*\ry});
+      \draw[water,opacity=0.5]
+        (-\Rx,\hL) --++ (0,-\hL) arc(180:360:\Rx) --++ (0,\hR) --++ (2*\rx,0) --++
+        (0,-\hR) arc(360:180:\Rx+2*\rx) --++ (0,\hL);
+      \draw[water,opacity=0.5]
+        (-\Rx-\rx,\hL) ellipse({\rx} and {\ry})
+        (\Rx+\rx,\hR) ellipse({\rx} and {\ry});
+      \draw[thick]
+        (-\Rx,\HL) --++ (0,-\HL) arc(180:360:\Rx) --++ (0,\HR) arc(180:0:\rx)
+        --++ (0,-\HR) arc(360:180:\Rx+2*\rx) --++ (0,\HL);
+      \draw[thick]
+        (-\Rx-\rx,\HL) ellipse({\rx} and {\ry});
+      \draw[mydarkblue,opacity=0.5,line width=1pt]
+        plot[domain=200:340,samples=40,variable=\t]
+          ({\Rx + 1.12*\rx*cos(\t)}, {\hL + 1.12*\ry*sin(\t)});
+    \end{scope}
+    \def\bowlY{-1.1*1.32-0.35}
+    \def\bowlH{0.42}
+    \def\bowlR{0.9}
+    \pgfmathsetmacro{\bowlXcenter}{\centerX-0.35}
+    \pgfmathsetmacro{\bowlXleft}{\bowlXcenter-\bowlR}
+    \pgfmathsetmacro{\bowlXright}{\bowlXcenter+\bowlR}
+    \pgfmathsetmacro{\bowlBaseY}{\bowlY-\bowlH}
+    \ifnum\i=1
+      \draw[mydarkblue,thick] (\bowlXcenter,\bowlBaseY) ellipse (0.24 and 0.06);
+      \draw[horizontal water,thick,opacity=0.5]
+        (\bowlXleft,\bowlY)
+        to[out=-70,in=180] (\bowlXcenter,\bowlBaseY)
+        to[out=0,in=-110] (\bowlXright,\bowlY)
+        arc(0:180:{\bowlR} and 0.07);
+      \draw[mydarkblue,thick] (\bowlXcenter,\bowlY) ellipse [x radius=\bowlR, y radius=0.07];
+      \drawCoinPile{\bowlXcenter}{\bowlBaseY+0.15}{2}
+      \draw[horizontal water,thick,opacity=0.5]
+  (\bowlXleft,\bowlY)
+  to[out=-70,in=180] (\bowlXcenter,\bowlBaseY)
+  to[out=0,in=-100] (\bowlXright,\bowlY)
+  arc(0:180:{\bowlR} and -0.07);
+      \glowpath{darkgreen}{2mm}{0.25}{(\bowlXcenter,\bowlY) ellipse [x radius=\bowlR, y radius=0.07]}
+    \else
+      \draw[mydarkblue,thick] (\bowlXcenter,\bowlBaseY) ellipse (0.24 and 0.06);
+      \draw[horizontal water,thick,opacity=0.5]
+        (\bowlXleft,\bowlY)
+        to[out=-70,in=180] (\bowlXcenter,\bowlBaseY)
+        to[out=0,in=-110] (\bowlXright,\bowlY)
+        arc(0:180:{\bowlR} and 0.07);
+      \draw[mydarkblue,thick] (\bowlXcenter,\bowlY) ellipse [x radius=\bowlR, y radius=0.07];
+      
+    \fi
+    \ifnum\i=2
+      \drawCoinPile{\bowlXcenter}{\bowlBaseY+0.15}{2} %
+      \draw[horizontal water,thick,opacity=0.5]
+  (\bowlXleft,\bowlY)
+  to[out=-70,in=180] (\bowlXcenter,\bowlBaseY)
+  to[out=0,in=-100] (\bowlXright,\bowlY)
+  arc(0:180:{\bowlR} and -0.07);
+    \fi
+    \ifnum\i=3
+      \drawCoinPile{\bowlXcenter}{\bowlBaseY+0.15}{1} %
+      \draw[horizontal water,thick,opacity=0.5]
+  (\bowlXleft,\bowlY)
+  to[out=-70,in=180] (\bowlXcenter,\bowlBaseY)
+  to[out=0,in=-100] (\bowlXright,\bowlY)
+  arc(0:180:{\bowlR} and -0.07);
+    \fi
+    \ifnum\i=4
+      \drawCoinPile{\bowlXcenter}{\bowlBaseY+0.15}{8} %
+      \draw[horizontal water,thick,opacity=0.5]
+  (\bowlXleft,\bowlY)
+  to[out=-70,in=180] (\bowlXcenter,\bowlBaseY)
+  to[out=0,in=-100] (\bowlXright,\bowlY)
+  arc(0:180:{\bowlR} and -0.07);
+    \fi
+  }
+
+  \foreach \i/\centerX/\bowlY in {1/\centerA/-1.1*1.32-0.35, 2/\centerB/-1.1*1.32-0.35, 3/\centerC/-1.1*1.32-0.35, 4/\centerD/-1.1*1.32-0.35} {
+    \ifnum\i=1
+      \node[align=center] at (\centerX-.35, \bowlY-1) {Data \\ Generator};
+    \fi
+    \ifnum\i=2
+      \node[align=center] at (\centerX-.35, \bowlY-1) {Data \\ Aggregator};
+    \fi
+    \ifnum\i=3
+      \node[align=center] at (\centerX-.35, \bowlY-1) {Data \\ Transformer};
+    \fi
+    \ifnum\i=4
+      \node[align=center] at (\centerX-.35, \bowlY-1) {Model \\ Monetizer};
+    \fi
+  }
+
+
+
+  \def\shardX{\centerC-1.5} %
+  \def\shardW{1.5}
+  \def\shardY{-0.8}
+  \begin{scope}
+    \clip (\shardX-0.5*\shardW,\shardY-0.5) rectangle (\shardX+0.5*\shardW,0.8); %
+    \fill[white]
+      (\shardX-0.48*\shardW,\shardY-0.15)
+      -- (\shardX-0.36*\shardW,\shardY+0.33)
+      -- (\shardX-0.22*\shardW,\shardY+0.18)
+      -- (\shardX-0.08*\shardW,\shardY+0.38)
+      -- (\shardX+0.12*\shardW,\shardY+0.22)
+      -- (\shardX+0.32*\shardW,\shardY+0.32)
+      -- (\shardX+0.50*\shardW,\shardY-0.15)
+      -- cycle;
+    \draw[mydarkblue,thick]
+      (\shardX-0.45*\shardW,\shardY)
+      -- (\shardX-0.36*\shardW,\shardY+0.33)
+      -- (\shardX-0.22*\shardW,\shardY+0.18)
+      -- (\shardX-0.08*\shardW,\shardY+0.38)
+      -- (\shardX+0.12*\shardW,\shardY+0.22)
+      -- (\shardX+0.32*\shardW,\shardY+0.32)
+      -- (\shardX+0.45*\shardW,\shardY);
+  \end{scope}
+  \glowpath{darkgreen}{2mm}{0.25}{
+    (\shardX-0.45*\shardW,\shardY)
+    -- (\shardX-0.36*\shardW,\shardY+0.33)
+    -- (\shardX-0.22*\shardW,\shardY+0.18)
+    -- (\shardX-0.08*\shardW,\shardY+0.38)
+    -- (\shardX+0.12*\shardW,\shardY+0.22)
+    -- (\shardX+0.32*\shardW,\shardY+0.32)
+    -- (\shardX+0.45*\shardW,\shardY)
+  }
+  \def\shardFloorY{-.81}
+  \begin{scope}
+    \path[clip]
+      (\shardX-0.45*\shardW,\shardFloorY)
+      -- (\shardX-0.36*\shardW,\shardFloorY+0.33)
+      -- (\shardX-0.22*\shardW,\shardFloorY+0.18)
+      -- (\shardX-0.08*\shardW,\shardFloorY+0.38)
+      -- (\shardX+0.12*\shardW,\shardFloorY+0.22)
+      -- (\shardX+0.32*\shardW,\shardFloorY+0.32)
+      -- (\shardX+0.45*\shardW,\shardFloorY)
+      -- cycle;
+    \fill[horizontal water,opacity=1,shading angle=0]
+      (\shardX-0.5*\shardW,\shardFloorY-0.5)
+      rectangle (\shardX+0.5*\shardW,\shardFloorY+0.5);
+  \end{scope}
+  \draw[mydarkblue,thick]
+    (\shardX-0.45*\shardW,\shardFloorY)
+    -- (\shardX-0.36*\shardW,\shardFloorY+0.33)
+    -- (\shardX-0.22*\shardW,\shardFloorY+0.18)
+    -- (\shardX-0.08*\shardW,\shardFloorY+0.38)
+    -- (\shardX+0.12*\shardW,\shardFloorY+0.22)
+    -- (\shardX+0.32*\shardW,\shardFloorY+0.32)
+    -- (\shardX+0.45*\shardW,\shardFloorY)
+    -- cycle;
+  \glowpath{darkgreen}{2mm}{0.25}{
+    (\shardX-0.45*\shardW,\shardFloorY)
+    -- (\shardX-0.36*\shardW,\shardFloorY+0.33)
+    -- (\shardX-0.22*\shardW,\shardFloorY+0.18)
+    -- (\shardX-0.08*\shardW,\shardFloorY+0.38)
+    -- (\shardX+0.12*\shardW,\shardFloorY+0.22)
+    -- (\shardX+0.32*\shardW,\shardFloorY+0.32)
+    -- (\shardX+0.45*\shardW,\shardFloorY)
+    -- cycle
+  }
+
+  \def\boxYTop{2.8}
+  \def\boxYBot{-3.5}
+  \def\boxH{1.5}
+  \def\boxR{0.18} %
+  \def\boxXLeft{\xA}
+  \def\boxXRight{\xE+1.2}
+  \def\boxGap{0.5}
+  \pgfmathsetmacro{\boxW}{0.5*(\boxXRight-\boxXLeft)-0.5*\boxGap}
+  \pgfmathsetmacro{\topLeftY}{\boxYTop-0.5*\boxH}
+  \pgfmathsetmacro{\topLeftCircleX}{\boxXLeft}
+  \pgfmathsetmacro{\topLeftTextX}{\topLeftCircleX+3}
+  \glowpath{darkgreen}{4mm}{0.25}{(\topLeftCircleX,\topLeftY) circle [radius=0.45]}
+  \fill[black] (\topLeftCircleX,\topLeftY) circle [radius=0.45];
+  \node[font=\LARGE\bfseries\sffamily, text=white] at (\topLeftCircleX,\topLeftY) {1};
+  \node[font=\LARGE\bfseries,align=left] at (\topLeftTextX+.5, \topLeftY) {Task-Data Matching};
+  \pgfmathsetmacro{\topRightY}{\boxYTop-0.5*\boxH}
+  \pgfmathsetmacro{\topRightCircleX}{\boxXLeft+\boxW+\boxGap}
+  \pgfmathsetmacro{\topRightTextX}{\topRightCircleX+4}
+  \glowpath{darkgreen}{4mm}{0.25}{(\topRightCircleX,\topRightY) circle [radius=0.45]}
+  \fill[black] (\topRightCircleX,\topRightY) circle [radius=0.45];
+  \node[font=\LARGE\bfseries\sffamily, text=white] at (\topRightCircleX,\topRightY) {2};
+  \node[font=\LARGE\bfseries,align=left] at (\topRightTextX-.4, \topRightY) {Lineage Tracking};
+  \pgfmathsetmacro{\botLeftY}{\boxYBot-0.5*\boxH}
+  \pgfmathsetmacro{\botLeftCircleX}{\boxXLeft+4.5}
+  \pgfmathsetmacro{\botLeftTextX}{\botLeftCircleX+3.5}
+  \glowpath{darkgreen}{4mm}{0.25}{(\botLeftCircleX,\botLeftY) circle [radius=0.45]}
+  \fill[black] (\botLeftCircleX,\botLeftY) circle [radius=0.45];
+  \node[font=\LARGE\bfseries\sffamily, text=white] at (\botLeftCircleX,\botLeftY) {3};
+  \node[font=\LARGE\bfseries,align=left] at (\botLeftTextX-1, \botLeftY) {Valuation};
+
+  \def\smallCircleR{0.225}
+  \def\smallCircleOneX{2.6}
+  \def\smallCircleOneY{-1.7}
+  \def\smallCircleTwoX{9.2}
+  \def\smallCircleTwoY{0.7}
+  \def\smallCircleThreeX{5.8}
+  \def\smallCircleThreeY{-.9}
+  \def\smallCircleFourX{2.6}
+  \def\smallCircleFourY{0.7}
+  \glowpath{darkgreen}{3mm}{0.25}{(\smallCircleOneX, \smallCircleOneY) circle [radius=\smallCircleR]}
+  \fill[black] (\smallCircleOneX, \smallCircleOneY) circle [radius=\smallCircleR];
+  \node[font=\normalsize\bfseries\sffamily, text=white] at (\smallCircleOneX, \smallCircleOneY) {3};
+  \glowpath{darkgreen}{3mm}{0.25}{(\smallCircleThreeX, \smallCircleThreeY) circle [radius=\smallCircleR]}
+  \fill[black] (\smallCircleThreeX, \smallCircleThreeY) circle [radius=\smallCircleR];
+  \node[font=\normalsize\bfseries\sffamily, text=white] at (\smallCircleThreeX, \smallCircleThreeY) {2};
+  \glowpath{darkgreen}{3mm}{0.25}{(\smallCircleFourX, \smallCircleFourY) circle [radius=\smallCircleR]}
+  \fill[black] (\smallCircleFourX, \smallCircleFourY) circle [radius=\smallCircleR];
+  \node[font=\normalsize\bfseries\sffamily, text=white] at (\smallCircleFourX, \smallCircleFourY) {1};
+
+
+
+
+ 
+
+\end{tikzpicture}

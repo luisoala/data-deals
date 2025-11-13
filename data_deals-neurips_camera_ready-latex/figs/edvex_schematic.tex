@@ -1,0 +1,200 @@
+\usetikzlibrary{backgrounds,positioning,arrows.meta}
+\newcommand{\datasym}{\tikz[baseline=-2pt,scale=0.25]{\foreach \y in {0,0.09,0.18}{\fill[white] (0,\y) rectangle (0.45,\y+0.06); \draw[gray,thick] (0,\y) rectangle (0.45,\y+0.06);}}}
+
+\begin{tikzpicture}[font=\scriptsize\sffamily, line cap=round]
+  \begin{scope}[xshift=-4.2cm]
+  \definecolor{cRed}{HTML}{D62728}
+  \definecolor{cBlue}{HTML}{1F77B4}
+  \definecolor{cOrange}{HTML}{E88E5A}
+  \definecolor{cYellow}{HTML}{FFBC05}
+  \definecolor{cGreen}{HTML}{34A853}
+  \definecolor{cCyan}{HTML}{00BCD4}
+  \definecolor{cPurple}{HTML}{9C27B0}
+  \definecolor{bTask}{HTML}{DCEAFB}
+  \definecolor{bPrice}{HTML}{DFF7DE}
+  \definecolor{bProv}{HTML}{FEF5D6}
+
+  \def\contribblockx{1}
+  \def\contribblocky{0}
+  \def\consumerblockx{-.7}
+  \def\consumerblocky{0}
+  \def\contribblockybottom{-.25}
+  \def\consumerblockybottom{-.4}
+  \node[font=\bfseries] (title1) at (1.8,0) {Current data deals for AI};
+  \def\boxw{1.48cm}
+  \node[fill=cRed,draw,minimum width=\boxw,minimum height=0.57cm,rounded corners=2pt,shift={(\contribblockx,\contribblocky)}] (src1) at (-4.2,-0.7) {};
+  \foreach [count=\i from 2] \col in {cYellow,cBlue,cCyan,cGreen,cPurple} {
+    \pgfmathsetmacro{\ypos}{-1.25-0.28*(\i-2)}
+    \begingroup
+      \node[fill=\col,draw,minimum width=\boxw,inner sep=2pt,text height=0.04cm,rounded corners=2pt,shift={(\contribblockx,\contribblocky)}] (src\i) at (-4.2,\ypos) {};
+    \endgroup
+  }
+  \node[fill=cBlue,draw,minimum width=\boxw,minimum height=0.45cm,rounded corners=3pt,shift={(\consumerblockx,\consumerblocky)}] (bigC) at (8, -1) {};
+  \node[fill=cOrange,draw,minimum width=\boxw,minimum height=0.45cm,rounded corners=3pt,shift={(\consumerblockx,\consumerblocky)}] (smallC) at (8,-1.7) {};
+  \node[font=\scriptsize\bfseries,anchor=south,shift={(\contribblockx,\consumerblocky)}] at (-4.15,-.3) {Data contributors};
+  \node[font=\scriptsize\bfseries,anchor=south,shift={(\consumerblockx,\consumerblocky)}] at (7.95,-.3) {Data consumers};
+
+  \tikzset{>={Latex[length=6pt, width=6pt]}}
+  \draw[ultra thick,black,<->] (src1.east) -- ++(0.5,0) coordinate (arrowleftend) to[out=0,in=180] coordinate (arrowrightend) (bigC.west);
+  \node[fill=black,draw=black,circle,minimum size=0.38cm,inner sep=0pt, xshift=.6cm, yshift=.3cm] at (src1.east) {\textcolor{white}{\sffamily\bfseries\textdollar}};
+  \node[fill=black,draw=black,circle,minimum size=0.38cm,inner sep=0pt,xshift=-.6cm,yshift=.3cm] at (bigC.west) {
+    \begin{tikzpicture}[scale=0.13]
+      \fill[white] (0,0) ellipse (1 and 0.45);
+      \draw[white,line width=0.5pt] (0,0) ellipse (1 and 0.45);
+      \draw[white,line width=0.5pt] (-1,0) -- (-1,-1.1) arc (180:360:1 and 0.45) -- (1,0);
+      \draw[white,line width=0.5pt] (0,-0.37) ellipse (1 and 0.45);
+      \draw[white,line width=0.5pt] (0,-0.74) ellipse (1 and 0.45);
+    \end{tikzpicture}
+  };
+  \draw[thick,black,dotted,-{Latex[length=6pt, width=6pt]}] (src2.east) -- ++(0.5,0) to[out=0,in=180] (bigC.west);
+  \foreach \i in {4,5} {
+    \draw[thick,black,dotted,-{Latex[length=6pt, width=6pt]}] (src\i.east) -- ++(0.5,0) to[out=0,in=180] (smallC.west);
+  }
+
+  \node[fill=black,draw=black,circle,minimum size=0.38cm,inner sep=0pt,xshift=-.6cm,yshift=.3cm] at (smallC.west) {
+    \begin{tikzpicture}[scale=0.13]
+      \fill[white] (0,0) ellipse (1 and 0.45);
+      \draw[white,line width=0.5pt] (0,0) ellipse (1 and 0.45);
+      \draw[white,line width=0.5pt] (-1,0) -- (-1,-1.1) arc (180:360:1 and 0.45) -- (1,0);
+      \draw[white,line width=0.5pt] (0,-0.37) ellipse (1 and 0.45);
+      \draw[white,line width=0.5pt] (0,-0.74) ellipse (1 and 0.45);
+    \end{tikzpicture}
+  };
+
+  \node[font=\scriptsize\itshape,align=center] at (1.9,-1.45) {Deals skew towards large contributors};
+
+  \draw[dashed,gray] (-4,-2.8) -- (8,-2.8);
+
+  \node[font=\bfseries] (title2) at (1.9,-3.2) {Equitable Data-Value Exchange (EDVEX) Framework};
+
+  \node[fill=cRed,draw,minimum width=\boxw,minimum height=0.57cm,rounded corners=2pt,shift={(\contribblockx,\contribblocky+\contribblockybottom)}] (bsrc1) at (-4.2,-4.1) {};
+  \foreach [count=\i from 2] \col in {cYellow,cBlue,cCyan,cGreen,cPurple} {
+    \pgfmathsetmacro{\ypos}{-4.65-0.28*(\i-2)}
+    \begingroup
+      \node[fill=\col,draw,minimum width=\boxw,inner sep=2pt,text height=0.04cm,rounded corners=2pt,shift={(\contribblockx,\contribblocky+\contribblockybottom)}] (bsrc\i) at (-4.2,\ypos) {};
+    \endgroup
+  }
+
+  \node[fill=bTask,rounded corners,minimum width=2.1cm,minimum height=3.3cm] (taskbg) at (-.5,-5.45) {};
+  \node[font=\scriptsize\bfseries,align=center, anchor=north, yshift=-.8cm] at (taskbg) {Task-data\\matching};
+
+  \node[fill=bPrice,rounded corners,minimum width=2.1cm,minimum height=3.3cm] (pricebg) at (2,-5.45) {};
+  \node[font=\scriptsize\bfseries,align=center, anchor=north, yshift=-.8cm] at (pricebg) {Utility-driven\\data pricing};
+
+  \node[fill=bProv,rounded corners,minimum width=2.1cm,minimum height=3.3cm] (provbg) at (4.5,-5.45) {};
+  \node[font=\scriptsize\bfseries,align=center, anchor=north, yshift=-.8cm] at (provbg) {Auditable\\provenance};
+
+  \node[fill=cBlue,draw,minimum width=\boxw,minimum height=0.45cm,rounded corners=3pt,shift={(\consumerblockx,\consumerblocky+\consumerblockybottom)}] (bbigC) at (8,-4.3) {};
+  \node[fill=cOrange,draw,minimum width=\boxw,minimum height=0.45cm,rounded corners=3pt,shift={(\consumerblockx,\consumerblocky+\consumerblockybottom)}] (bsmallC) at (8,-5.0) {};
+
+
+  \node[font=\scriptsize\bfseries] at (1.9,-3.6) {Dynamic task-optimized data bargaining};
+
+  \glowpath{darkgreen}{1.5mm}{0.15}{[rounded corners=2pt] (taskbg.north west) rectangle (taskbg.south east)}
+  \glowpath{darkgreen}{1.5mm}{0.15}{[rounded corners=2pt] (pricebg.north west) rectangle (pricebg.south east)}
+  \glowpath{darkgreen}{1.5mm}{0.15}{[rounded corners=2pt] (provbg.north west) rectangle (provbg.south east)}
+
+  \node[draw=black,fill=none,rounded corners=6pt,minimum width=4.4cm,minimum height=1.1cm,thick] (dealbox1) at (2,-4.5) {};
+  \node[draw=black,fill=none,rounded corners=6pt,minimum width=4.4cm,minimum height=1.1cm,thick] (dealbox2) at (2,-5.7) {};
+
+  \node[fill=cRed,draw=black,minimum width=\boxw,inner sep=2pt,text height=0.04cm,rounded corners=2pt] (dealbox1red) at (1,-4.2) {};
+  \node[fill=cYellow,draw=black,minimum width=\boxw,inner sep=2pt,text height=0.04cm,rounded corners=2pt] (dealbox1yellow) at (1,-4.48) {};
+  \node[fill=cBlue,draw=black,minimum width=\boxw,inner sep=2pt,text height=0.04cm,rounded corners=2pt] (dealbox1blue) at (1,-4.76) {};
+
+  \draw[thick,black,-{Latex[length=6pt, width=6pt]}] (bsrc1.east) to[out=0,in=180] (dealbox1.west);
+  \draw[thick,black,-{Latex[length=6pt, width=6pt]}] (bsrc2.east) to[out=0,in=180] (dealbox1.west);
+  \draw[thick,black,-{Latex[length=6pt, width=6pt]}] (bsrc3.east) to[out=0,in=180] (dealbox1.west);
+
+   \draw[thick,black,-{Latex[length=6pt, width=6pt]}] (bsrc2.east) to[out=0,
+   in=180] (dealbox2.west);
+   \draw[thick,black,-{Latex[length=6pt, width=6pt]}] (bsrc4.east) to[out=0,
+   in=180] (dealbox2.west);
+   \draw[thick,black,-{Latex[length=6pt, width=6pt]}] (bsrc5.east) to[out=0,
+   in=180] (dealbox2.west);
+
+  \node[fill=cYellow,draw=black,minimum width=\boxw,inner sep=2pt,text height=0.04cm,rounded corners=2pt] (dealbox2yellow) at (1,-5.4) {};
+  \node[fill=cCyan,draw=black,minimum width=\boxw,inner sep=2pt,text height=0.04cm,rounded corners=2pt] (dealbox2cyan) at (1,-5.68) {};
+  \node[fill=cGreen,draw=black,minimum width=\boxw,inner sep=2pt,text height=0.04cm,rounded corners=2pt] (dealbox2green) at (1,-5.96) {};
+
+  \draw[thick,black,{Latex[length=6pt, width=6pt]}-] (dealbox2yellow.east) to[out=0,in=180](dealbox2.east);
+  \draw[thick,black,{Latex[length=6pt, width=6pt]}-] (dealbox2cyan.east) to[out=0,in=180](dealbox2.east);
+  \draw[thick,black,{Latex[length=6pt, width=6pt]}-] (dealbox2green.east) to[out=0,in=180](dealbox2.east);
+
+  \def\dollarcirclescale{0.21}
+  \def\dollarcircleradius{0.36}
+  \def\dollarcirclexshift{0.4cm}
+  \def\dollarcircleyshift{0.12cm}
+  \node at ([xshift=\dollarcirclexshift,yshift=\dollarcircleyshift]dealbox2yellow.east) {\begin{tikzpicture}[scale=\dollarcirclescale]
+    \draw[fill=black,draw=black] (0,0) circle (\dollarcircleradius);
+    \node at (0,0) {\scalebox{0.7}{\textcolor{white}{\sffamily\bfseries\textdollar}}};
+  \end{tikzpicture}};
+  \node at ([xshift=\dollarcirclexshift,yshift=\dollarcircleyshift]dealbox2cyan.east) {\begin{tikzpicture}[scale=\dollarcirclescale]
+    \draw[fill=black,draw=black] (0,0) circle (\dollarcircleradius);
+    \node at (0,0) {\scalebox{0.7}{\textcolor{white}{\sffamily\bfseries\textdollar}}};
+  \end{tikzpicture}};
+  \node at ([xshift=\dollarcirclexshift,yshift=\dollarcircleyshift]dealbox2green.east) {\begin{tikzpicture}[scale=\dollarcirclescale]
+    \draw[fill=black,draw=black] (0,0) circle (\dollarcircleradius);
+    \node at (0,0) {\scalebox{0.7}{\textcolor{white}{\sffamily\bfseries\textdollar}}};
+  \end{tikzpicture}};
+
+  \node at ([xshift=\dollarcirclexshift,yshift=\dollarcircleyshift]dealbox1red.east) {\begin{tikzpicture}[scale=\dollarcirclescale]
+    \draw[fill=black,draw=black] (0,0) circle (\dollarcircleradius);
+    \node at (0,0) {\scalebox{0.7}{\textcolor{white}{\sffamily\bfseries\textdollar}}};
+  \end{tikzpicture}};
+  \node at ([xshift=\dollarcirclexshift,yshift=\dollarcircleyshift]dealbox1yellow.east) {\begin{tikzpicture}[scale=\dollarcirclescale]
+    \draw[fill=black,draw=black] (0,0) circle (\dollarcircleradius);
+    \node at (0,0) {\scalebox{0.7}{\textcolor{white}{\sffamily\bfseries\textdollar}}};
+  \end{tikzpicture}};
+  \node at ([xshift=\dollarcirclexshift,yshift=\dollarcircleyshift]dealbox1blue.east) {\begin{tikzpicture}[scale=\dollarcirclescale]
+    \draw[fill=black,draw=black] (0,0) circle (\dollarcircleradius);
+    \node at (0,0) {\scalebox{0.7}{\textcolor{white}{\sffamily\bfseries\textdollar}}};
+  \end{tikzpicture}};
+
+  \draw[ultra thick,black,<->] (dealbox1.east) to[out=0,in=180] (bbigC.west);
+  \draw[ultra thick,black,<->] (dealbox2.east) to[out=0,in=180] (bsmallC.west);
+
+  \node[fill=black,draw=black,circle,minimum size=0.38cm,inner sep=0pt, xshift=.6cm, yshift=.3cm] at (dealbox1.east) {\textcolor{white}{\sffamily\bfseries\textdollar}};
+  \node[fill=black,draw=black,circle,minimum size=0.38cm,inner sep=0pt,xshift=-.6cm,yshift=.3cm] at (bbigC.west) {
+    \begin{tikzpicture}[scale=0.13]
+      \fill[white] (0,0) ellipse (1 and 0.45);
+      \draw[white,line width=0.5pt] (0,0) ellipse (1 and 0.45);
+      \draw[white,line width=0.5pt] (-1,0) -- (-1,-1.1) arc (180:360:1 and 0.45) -- (1,0);
+      \draw[white,line width=0.5pt] (0,-0.37) ellipse (1 and 0.45);
+      \draw[white,line width=0.5pt] (0,-0.74) ellipse (1 and 0.45);
+    \end{tikzpicture}
+  };
+  \node[fill=black,draw=black,circle,minimum size=0.38cm,inner sep=0pt, xshift=.6cm, yshift=.3cm] at (dealbox2.east) {\textcolor{white}{\sffamily\bfseries\textdollar}};
+  \node[fill=black,draw=black,circle,minimum size=0.38cm,inner sep=0pt,xshift=-.6cm,yshift=.3cm] at (bsmallC.west) {
+    \begin{tikzpicture}[scale=0.13]
+      \fill[white] (0,0) ellipse (1 and 0.45);
+      \draw[white,line width=0.5pt] (0,0) ellipse (1 and 0.45);
+      \draw[white,line width=0.5pt] (-1,0) -- (-1,-1.1) arc (180:360:1 and 0.45) -- (1,0);
+      \draw[white,line width=0.5pt] (0,-0.37) ellipse (1 and 0.45);
+      \draw[white,line width=0.5pt] (0,-0.74) ellipse (1 and 0.45);
+    \end{tikzpicture}
+  };
+
+  \draw[thick,black,{Latex[length=6pt, width=6pt]}-] (dealbox1red.east) to[out=0,in=180](dealbox1.east);
+  \draw[thick,black,{Latex[length=6pt, width=6pt]}-] (dealbox1yellow.east)to[out=0,in=180](dealbox1.east);
+  \draw[thick,black,{Latex[length=6pt, width=6pt]}-] (dealbox1blue.east)to[out=0,in=180](dealbox1.east);
+
+  \node[fill=black,draw=black,circle,minimum size=0.38cm,inner sep=0pt,xshift=-.4cm,yshift=.3cm] at (dealbox1.west) {
+    \begin{tikzpicture}[scale=0.13]
+      \fill[white] (0,0) ellipse (1 and 0.45);
+      \draw[white,line width=0.5pt] (0,0) ellipse (1 and 0.45);
+      \draw[white,line width=0.5pt] (-1,0) -- (-1,-1.1) arc (180:360:1 and 0.45) -- (1,0);
+      \draw[white,line width=0.5pt] (0,-0.37) ellipse (1 and 0.45);
+      \draw[white,line width=0.5pt] (0,-0.74) ellipse (1 and 0.45);
+    \end{tikzpicture}
+  };
+  \node[fill=black,draw=black,circle,minimum size=0.38cm,inner sep=0pt,xshift=-.4cm,yshift=.3cm] at (dealbox2.west) {
+    \begin{tikzpicture}[scale=0.13]
+      \fill[white] (0,0) ellipse (1 and 0.45);
+      \draw[white,line width=0.5pt] (0,0) ellipse (1 and 0.45);
+      \draw[white,line width=0.5pt] (-1,0) -- (-1,-1.1) arc (180:360:1 and 0.45) -- (1,0);
+      \draw[white,line width=0.5pt] (0,-0.37) ellipse (1 and 0.45);
+      \draw[white,line width=0.5pt] (0,-0.74) ellipse (1 and 0.45);
+    \end{tikzpicture}
+  };
+  \end{scope}
+\end{tikzpicture} 

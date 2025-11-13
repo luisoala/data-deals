@@ -1,0 +1,86 @@
+\usepackage{physics}
+\usepackage{tikz}
+\usepackage[outline]{contour} %
+\usetikzlibrary{patterns,decorations.pathmorphing}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{calc}
+\tikzset{>=latex}
+\contourlength{1.1pt}
+
+\colorlet{mydarkblue}{blue!40!black}
+\colorlet{myblue}{blue!30}
+\colorlet{myred}{red!65!black}
+\colorlet{vcol}{green!45!black}
+\colorlet{watercol}{blue!80!cyan!7!white}
+\colorlet{darkwatercol}{blue!80!cyan!80!black!30!white}
+\definecolor{coinyellow}{RGB}{255,215,0}
+\definecolor{coindark}{RGB}{204,168,0}
+\definecolor{darkgreen}{RGB}{0,120,0}
+
+\tikzstyle{water}=[draw=mydarkblue,top color=watercol!95,bottom color=watercol!90!black,middle color=watercol!60,shading angle=0]
+\tikzstyle{horizontal water}=[water,
+  top color=watercol!95!black!90,bottom color=watercol!90!black!90,middle color=watercol!80,shading angle=0]
+\tikzstyle{dark water}=[draw=blue!20!black,top color=darkwatercol,bottom color=darkwatercol!80!black,middle color=darkwatercol!40,shading angle=0]
+\tikzstyle{vvec}=[->,very thick,vcol,line cap=round]
+\tikzstyle{force}=[->,myred,very thick,line cap=round]
+\tikzstyle{width}=[{Latex[length=3,width=3]}-{Latex[length=3,width=3]}]
+
+\pgfdeclarelayer{back}
+\pgfsetlayers{back,main}
+\makeatletter
+\pgfkeys{%
+  /tikz/on layer/.code={
+    \pgfonlayer{#1}\begingroup
+    \aftergroup\endpgfonlayer
+    \aftergroup\endgroup
+  },
+  /tikz/node on layer/.code={
+    \pgfonlayer{#1}\begingroup
+    \expandafter\def\expandafter\tikz@node@finish\expandafter{\expandafter\endgroup\expandafter\endpgfonlayer\tikz@node@finish}%
+  },
+}
+\tikzset{glow/.style 2 args={preaction={draw, #1, line cap=round, line join=round, line width=#2, opacity=0.5, on layer=back}}}
+
+\newcommand{\drawCoinPile}[3]{%
+  \pgfmathsetseed{42}
+  \foreach \k in {0,...,#3} {
+    \pgfmathsetmacro{\spread}{.7*exp(-1.1*\k/(#3+1)) + 0.18} %
+    \pgfmathsetmacro{\dx}{(rnd-0.5)*\spread}
+    \pgfmathsetmacro{\dy}{0.06*\k + (rnd-0.5)*0.02} %
+    \pgfmathsetmacro{\angle}{(rnd-0.5)*20}
+    \begin{scope}[shift={({#1+\dx},{#2+\dy})}, rotate=\angle]
+      \fill[coinyellow] (-0.3,-0.03) arc[start angle=180, end angle=360, x radius=0.3, y radius=0.06] -- (0.3,0.03) arc[start angle=0, end angle=180, x radius=0.3, y radius=0.06] -- cycle;
+      \fill[coinyellow] (0,0.03) ellipse [x radius=0.3, y radius=0.06];
+      \draw[black,thick] (0,0.03) ellipse [x radius=0.3, y radius=0.06];
+      \draw[black,thick] plot[domain=pi:2*pi,samples=30] ({0.3*cos(\x r)}, {-0.03+0.06*sin(\x r)});
+      \draw[black,thick] (-0.3,-0.03) -- (-0.3,0.03);
+      \draw[black,thick] (0.3,-0.03) -- (0.3,0.03);
+    \end{scope}
+  }
+}
+
+\newcommand{\drawCoinStreamVertical}[7]{%
+  \pgfmathsetseed{#7}
+  \foreach \j in {0,...,#3} {
+    \pgfmathsetmacro{\y}{#2-#4*\j}
+    \pgfmathsetmacro{\dx}{(rnd-0.5)*0.08}
+    \pgfmathsetmacro{\angle}{#5 + rnd*(#6-#5)}
+    \begin{scope}[shift={({#1+\dx},\y)}, rotate=\angle]
+      \fill[coinyellow] (-0.3,-0.03) arc[start angle=180, end angle=360, x radius=0.3, y radius=0.06] -- (0.3,0.03) arc[start angle=0, end angle=180, x radius=0.3, y radius=0.06] -- cycle;
+      \fill[coinyellow] (0,0.03) ellipse [x radius=0.3, y radius=0.06];
+      \draw[black,thick] (0,0.03) ellipse [x radius=0.3, y radius=0.06];
+      \draw[black,thick] plot[domain=pi:2*pi,samples=30] ({0.3*cos(\x r)}, {-0.03+0.06*sin(\x r)});
+      \draw[black,thick] (-0.3,-0.03) -- (-0.3,0.03);
+      \draw[black,thick] (0.3,-0.03) -- (0.3,0.03);
+    \end{scope}
+  }
+}
+
+\newcommand{\glowpath}[4]{%
+  \foreach \i in {1,...,8} {
+    \pgfmathsetmacro{\w}{#2*\i/8}
+    \pgfmathsetmacro{\op}{#3*(1-0.8*\i/8)}
+    \draw[draw=#1, line width=\w, opacity=\op, line cap=round, line join=round] #4;
+  }
+}

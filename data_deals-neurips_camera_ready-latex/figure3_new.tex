@@ -1,0 +1,52 @@
+\begin{wrapfigure}{l}{0.40\textwidth}
+    \vspace{-0.6em}
+    \centering
+    \begin{tikzpicture}
+     \begin{axis}[
+        axis lines*=left,
+        ybar stacked,
+        bar width=32pt,
+        width=0.40\textwidth,
+        height=4cm,
+        ymin=0,
+        ymax=80,
+        ylabel={\# of deals},
+        xtick=data,
+        xtick style={draw=none},
+        xticklabel style={font=\scriptsize},
+        symbolic x coords={No revenue share,Revenue share},
+        enlarge x limits=0.40,
+        y tick label style={font=\scriptsize},
+        ytick distance=20,
+        clip=false,
+        axis on top=true,
+        z buffer=sort,
+        after end axis/.code={%
+          \node[font=\scriptsize, text=black, inner sep=1pt] at (axis cs:{No revenue share},7) {$\$677.3\mathrm{m}$};
+          \node[font=\normalsize, text=black, inner sep=1pt] at (axis cs:{No revenue share},40.5) {?};
+          \node[font=\normalsize, text=black, inner sep=1pt] at (axis cs:{Revenue share},15.5) {?};
+        }
+     ]
+       \addplot+[draw=black, line width=1pt, fill=red!70]
+         coordinates {
+           (No revenue share,15)
+           (Revenue share,0)
+         };
+       \addplot+[draw=black, dashed, dash pattern=on 3pt off 1.5pt, line width=1pt, fill=red!20]
+         coordinates {
+           (No revenue share,52)
+           (Revenue share,0)
+         };
+        \addplot+[draw=black, line width=1pt, fill=red!20]
+         coordinates {
+           (No revenue share,0)
+           (Revenue share,6)
+         };
+
+     \end{axis}
+    \end{tikzpicture}
+    \vspace{-0.6em}
+    \caption{Counts of data deals with and without revenue share information. Left bar (No revenue share): solid segment (15 deals) corresponds to deals where public sources quoted a revenue volume. If ranges are given we conservatively take the floor of that range. Total sum of disclosed revenue volume is \$677.3m. The dashed segment (52 deals) indicates additional deals without revenue share and shows the problem of dark figures in this space. Right bar (Revenue share): 6 deals feature some revenue sharing information to generators, only one has public information on revenue (\$2.5k).}
+    \vspace{-0.5em}
+    \label{fig:deal-volume-figure}
+  \end{wrapfigure}

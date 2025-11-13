@@ -1,0 +1,245 @@
+\documentclass{article}
+
+
+
+
+
+
+    \usepackage[final,position,nonatbib]{neurips_2025}
+
+\usepackage[utf8]{inputenc} %
+\usepackage[T1]{fontenc}    %
+\usepackage{hyperref}       %
+\usepackage{xurl}
+\usepackage{hyperref}         %
+\usepackage{booktabs}       %
+\usepackage{amsfonts}       %
+\usepackage{nicefrac}       %
+\usepackage{microtype}      %
+\usepackage{xcolor}         %
+\usepackage{tcolorbox}
+\tcbuselibrary{breakable}
+
+\usepackage{wrapfig}
+\usepackage{amssymb}
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{colortbl} %
+\usepackage{graphicx}
+\usepackage{rotating}
+\usepackage{nicematrix}
+\usepackage{enumitem}
+\usepackage{minitoc}
+\usepackage{tocloft}
+\usepackage{sidecap} %
+\usepackage{fontawesome}
+\usepackage{pifont}
+\usepackage{tikz}
+\usepackage{rotating}
+
+\usepackage{tabularx} %
+\usepackage{geometry} %
+\usepackage{pgf-pie}
+\usepackage{cleveref}
+\usepackage{multibib}
+   \newcites{deal}{Data Deal References}
+
+\usepackage{todonotes}
+
+\usepackage{physics}
+\usepackage{tikz}
+\usepackage[outline]{contour} %
+\usetikzlibrary{patterns,decorations.pathmorphing}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{calc}
+\tikzset{>=latex}
+\contourlength{1.1pt}
+
+\colorlet{mydarkblue}{blue!40!black}
+\colorlet{myblue}{blue!30}
+\colorlet{myred}{red!65!black}
+\colorlet{vcol}{green!45!black}
+\colorlet{watercol}{blue!80!cyan!7!white}
+\colorlet{darkwatercol}{blue!80!cyan!80!black!30!white}
+
+\tikzstyle{water}=[draw=mydarkblue,top color=watercol!95,bottom color=watercol!90!black,middle color=watercol!60,shading angle=0]
+\tikzstyle{horizontal water}=[water,
+  top color=watercol!95!black!90,bottom color=watercol!90!black!90,middle color=watercol!80,shading angle=0]
+\tikzstyle{dark water}=[draw=blue!20!black,top color=darkwatercol,bottom color=darkwatercol!80!black,middle color=darkwatercol!40,shading angle=0]
+\tikzstyle{vvec}=[->,very thick,vcol,line cap=round]
+\tikzstyle{force}=[->,myred,very thick,line cap=round]
+\tikzstyle{width}=[{Latex[length=3,width=3]}-{Latex[length=3,width=3]}]
+
+\geometry{left=2cm, right=2cm, top=2cm, bottom=2cm} %
+\usepackage{xspace}
+
+\newcommand{\sysname}{EDVEX\xspace}
+\definecolor{myblue}{HTML}{abc6ff}
+\definecolor{myyellow}{HTML}{fbbc05}
+\definecolor{myred}{HTML}{ea4335}
+
+\newcommand{\dawn}[1]{\textbf{\textcolor{red}{[Dawn: #1]}}}
+\newcommand{\luis}[1]{\textbf{\textcolor{blue}{[Luis: #1]}}}
+\newcommand{\wj}[1]{\textbf{\textcolor{purple}{[Wenjie: #1]}}}
+
+\input{macro}
+\input{tikz_imports}
+
+
+\title{A Sustainable AI Economy Needs Data Deals That Work for Generators}
+
+
+\author{%
+  Ruoxi Jia\thanks{Equal contribution.} \\
+  Virginia Tech \\
+  \And
+  Luis Oala$^*$ \\
+  Brickroad \\
+  \AND 
+  Wenjie Xiong \\
+  Virginia Tech \\
+  \And 
+  Suqin Ge \\
+  Virginia Tech \\
+  \And 
+  Jiachen T. Wang \\
+  Princeton University \\
+  \And 
+  Feiyang Kang \\
+  Virginia Tech \\
+  \And 
+  Dawn Song \\
+  UC Berkeley\\
+}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We argue that the machine learning value chain is structurally unsustainable due to an economic data processing inequality: each state in the data cycle from inputs to model weights to synthetic outputs refines technical signal but strips economic equity from data generators.  We show, by analyzing seventy-three public data deals, that the majority of value accrues to aggregators, with documented creator royalties rounding to zero and widespread opacity of deal terms.  This is not just an economic welfare concern: as data and its derivatives become economic assets, the feedback loop that sustains current learning algorithms is at risk.  We identify three structural faults---missing provenance, asymmetric bargaining power, and non-dynamic pricing---as the operational machinery of this inequality.  In our analysis, we trace these problems along the machine learning value chain and propose an Equitable Data-Value Exchange (EDVEX) Framework to enable a minimal market that benefits all participants. Finally, we outline research directions where our community can make concrete contributions to data deals and contextualize our position with related and orthogonal viewpoints.
+\end{abstract}
+
+\section{Introduction}
+
+\begin{wrapfigure}{r}{0.35\textwidth}
+    \vspace{-1em}
+    \centering
+    \begin{tikzpicture}
+      \begin{axis}[
+        axis lines*=left,
+        ybar,
+        bar width=4pt,
+        width=0.35\textwidth,
+        height=4cm,
+        ymin=0,
+        xlabel={Year},
+        ylabel={Deals},
+        xtick=data,
+        xtick style={draw=none},
+        symbolic x coords={'16,'17,'18,'22,'23,'24},
+        enlarge x limits=0.09,
+        ymajorgrids=false,
+        x tick label style={font=\scriptsize},
+        y tick label style={font=\scriptsize}
+      ]
+        \addplot[fill=red!70] coordinates {('16,1) ('17,1) ('18,1) ('22,1) ('23,16) ('24,42)};
+      \end{axis}
+    \end{tikzpicture}
+    \vspace{-0.6em}
+    \caption{Recent data deals across past calendar years. See \Cref{app:data-deals-full-table} for full list.}
+    \vspace{-1em}
+    \label{fig:deal-num}
+  \end{wrapfigure}
+
+Machine-learning at its core is a data processing chain: data shifts states from inputs to pre-train weights to synthetic outputs.  The ascending adoption of AI products has commodified this value chain to a new level and triggered a land-rush for data (\Cref{fig:deal-num}). The market around this value chain is exploding. Model monetizers that have managed to transform data into a mercantile product see increasing sales. OpenAI alone reported $>$\$3.5~bn revenue in 2024 \cite{economist2025openai}. However, the distribution of that value is often lopsided. Papers, songs, or lines of code can be scraped, even pushing the envelope of legality \cite{scihub2025}, and distilled into revenue while data generators
+often receive little attribution.
+Data aggregators on the other hand, entities that amass large collections of data from generators, often benefit from the generous terms of service from pre-GPT times. Reddit, for example, banked \$203~million in data licenses until early 2024, yet channeled \$0 to the volunteers who wrote the content~\cite{reddit}.  Data and its derivatives have become valuable commodities traded among a small cadre of firms, but the 
+pipeline that transports value from data generators to model monetizers so far appears to be an extraction engine (\Cref{fig:viz-abstract}).  In our view, the extraction is driven by three mutually reinforcing faults: \textbf{invisible provenance}, whereby pieces of data lose lineage and downstream users cannot audit or route royalties; \textbf{asymmetric bargaining power}, in which blanket licences and unilateral API terms let aggregators dictate prices to fragmented contributors; and \textbf{inefficient price discovery}, ignoring the dynamic, combinatorial value data accrues in different task contexts.
+
+\textbf{\emph{Taken together, our position is that the current ML value chain is unsustainable because of an economic data processing inequality that systematically transfers value away from data generators. A sustainable, efficient AI economy needs data deals that work for all market participants including generators.}} 
+
+If data generators are excluded from the value chain, the supply of high‑quality, diverse data will shrink and prices will be set in opaque, concentrated markets. That dynamic stands to harm our own community: researchers, startups, and large labs alike risk facing fewer, less representative datasets---the very fuel current learning algorithms require. Conversely, we hypothesize that open, shared infrastructure facilitating data exchange between all market participants can help to stimluate data flow in an AI economy.
+
+
+\textbf{Contributions.} \textbf{(1)} We compile and analyze a collection of 73 publicly disclosed data deals (\Cref{sec:cracks}). We trace how missing lineage, weak bargaining, and one-shot pricing form a feedback cycle that concentrates capital and cuts out data generators from the value chain. \textbf{(2)} In \Cref{sec:edvex}, we sketch an Equitable Data-Value Exchange Framework that wires task-data matching, dynamic data pricing, and auditable provenance into an efficient marketplace that benefits all participants. \textbf{(3)} We surface open problems—from scalable provenance tooling to incentive-compatible marketplaces—that our community can contribute to. \textbf{(4)} We weigh our observations and proposal against related (\Cref{sec:related_work}) and opposing view points (\Cref{sec:counter}).
+
+
+
+
+
+\begin{figure}[t]
+    \centering
+    \scalebox{0.8}{\input{figs/broken_pipeline}}
+    \vspace{-0.5em}
+    \caption{A pipeline symbolizing a piece of the data value chain in machine learning and the structural defects underlying the economic data processing inequality. 1) Data aggregators often strip provenance information of data generators when selling data to companies that transform data into model weights and monetizable products. 2) Model monetizers, which often also transform the data to model weights, enjoy a bargaining advantage as they control much of the current revenue generation. 3) Due to their heterogeneity, data generators in particular are not well equipped to participate in the price discovery of their own data.}
+    \vspace{-1em}
+    \label{fig:viz-abstract}
+\end{figure}
+\input{cracks}
+\input{technical_design}
+\section{Related Work}
+\label{sec:related_work}
+\input{related_proposals}
+ 
+\section{Counter Positions}
+\label{sec:counter}
+\textbf{Considering alternatives and the cost of inaction.} 
+The proposal for \sysname stems from the need to address fundamental inefficiencies and inequities in the current data economy. However, it is crucial to consider alternative pathways to these goals and to understand the potential ramifications if these overarching issues remain unaddressed. Several strategies exist to improve the data value chain (see Section~\ref{sec:related_work}). However, they often present partial solutions or face limitations when aiming for systemic change. As noted in our discussion of regulatory frameworks (e.g., GDPR, EU Data Act), legal protections are advancing. However, such evolution, alongside current market practices of online data marketplaces (which, as discussed, struggle with robust valuation and discovery), may not sufficiently alter fundamental power imbalances or provide the utility-driven mechanisms \sysname envisions for fair compensation and optimal data matching. Beyond current regulations, more direct governmental control over data access or value allocation could be pursued. However, this approach risks stifling innovation and may lack the agility to manage dynamic data markets effectively. Web3 initiatives and models like data cooperatives, trusts, and unions (detailed in Section \ref{sec:related_work}) significantly advance transparency, collective bargaining, and contributor empowerment. \sysname argues for more dynamic, task-optimized collaborations beyond static memberships, recognizing the task-dependent nature of data value. While collaborative ethical pledges by industry can be beneficial, they often lack robust enforcement and may not fully address the systemic representation and compensation issues for smaller data contributors.
+
+Without addressing these fundamental challenges—opaque data valuation, limited access for smaller players, and inadequate compensation—the data economy will become increasingly concentrated, disadvantaging smaller innovators and stifling diverse AI development. These market inefficiencies will perpetuate the systematic undervaluation of data, while unfair practices diminish public trust and risk triggering restrictive regulatory responses~\cite{longpre2024consent}. This makes proactive, systemic solutions not just beneficial, but necessary.
+
+\textbf{Racing to the bottom.} A significant consideration in designing equitable data deals is the potential for a ``race to the bottom'' in pricing, particularly for data that may appear abundant or easily substitutable. If many users can provide data suitable for a task, and only a subset is needed, market dynamics might indeed incentivize developers to select the lowest bidders, potentially devaluing the contributions of many. \sysname's task-data matching layer aims to move beyond simple availability. By focusing on the marginal utility of data for specific tasks, and potentially identifying optimal combinations of diverse sources (as per~\cite{kang2023performance,kang2024autoscale}), the system may value datasets not just on individual merit but on their synergistic contribution. A data set that seems redundant in isolation might offer significant value (e.g., enhancing the representativeness of minority classes) when combined with others, thus resisting pure price-based selection. The concept of ``dynamic, task-optimized data unions'' is central here. While individual contributors of highly substitutable data might face downward price pressure, unions can provide collective bargaining power. These unions could establish minimum quality thresholds or value propositions for their pooled data, preventing a race to the bottom among their constituents for a given task requiring their specific collective offering. However, for data that is genuinely highly commoditized and where individual contributions offer little unique marginal utility even within optimal bundles, the risk of price depression remains a critical area for future research within the \sysname framework (see Open Problems for Valuation).
+
+\textbf{Data for service.} A pertinent consideration is the prevalent ``data-for-service'' model~\cite{anderson2009free}, where users receive non-monetary value through free access to services. This position paper does not inherently negate this exchange but seeks to bring transparency and fairness, particularly when data's utility extends beyond the immediate service provision. By making data's potential market value explicit through its valuation mechanisms, \sysname could enable a clearer understanding of the ``data'' side of the bargain. This could facilitate scenarios where the value of a service is more consciously weighed against the value of data licensed for broader applications, potentially leading to new hybrid models where users are compensated for data uses that transcend their direct service experience.
+
+\textbf{Synthetic data.} The increasing use of synthetic data in training AI models, and the emergence of iterative training loops where models generate data for further training (\cite{li2023textbooks,maini2024rephrasing,eldan2023tinystories,chen2024diversity,liu2024best}), requires new considerations for a framework like \sysname. It raises questions about the necessity for valuating human-generated data and the feasibility of tracing real data's value in these complex, recursive pipelines \cite{feng2024beyond}. While synthetic data offers scalability and controllability (\cite{abdin2024phi,liu2024best}), human-generated data will likely remain crucial for grounding models in real-world distributions, nuances, and edge cases \cite{askari2025improving}. Synthetic data, especially if generated by models initially trained on other synthetic data, can suffer from a ``model collapse''~\cite{shumailov2024ai,dohmatob2024strong}. In domains requiring direct interaction with the physical world---such as robotics (\cite{singh2024synthetica,de2022next}), autonomous driving (\cite{song2023synthetic,nvidia2025omniverse}), and healthcare (\cite{van2024synthetic, ghosheh2024survey}), the need for authentic, real-world data for training, testing, and validation will persist and likely intensify \cite{liu2024best}. Synthetic data can augment, but rarely fully replace, data from real-world sensors and interactions in these critical applications \cite{abdin2024phi,chen2024diversity}. Many valuable datasets are highly specialized, represent niche domains, or fall into the ``long-tail'' \cite{makansi2021exposing,ferguson2014big}. Synthesizing high-quality, diverse data for these areas without sufficient initial real-world exemplars is extremely challenging \cite{fu2024drive,heidorn2008shedding}. Overall, \sysname's mechanisms for incentivizing the contribution of real-world datasets remain highly relevant.
+
+It is crucial to also recognize that generating high-quality, diverse, and useful synthetic data is not a trivial or cost-free endeavor \cite{maini2024rephrasing,liu2024best}. Significant expertise, computational resources, and often sophisticated curation and filtering of initial seed data which may itself be real data are required \cite{chen2024diversity,feng2024beyond,oala2024dmlr}. \sysname is agnostic to the origin of the data (real or synthetic) in principle; what matters is its utility, provenance, and the effort involved in its creation and curation. Thus, ``data contributors'' could indeed be entities (or individuals) who specialize in generating high-value synthetic datasets. We could assess the value of these synthetic contributions just as they would for real data. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Conclusion}
+
+The rapid advancement of artificial intelligence is inextricably linked to the availability and utilization of vast, diverse datasets. Yet, the current paradigms for data exchange are frequently marked by opacity, inefficiency, and an inequitable distribution of value that often disadvantages smaller contributors and hinders optimal data discovery. This position paper has explored \sysname, a conceptual framework designed to address these foundational challenges. By considering integrated layers for task-data matching and discovery, auditable lineage tracking, and transparent, utility-driven valuation, this paper argues for a community effort to cultivate a data ecosystem that ensures bargaining symmetry, clear provenance, and efficient pricing for all participants.
+
+
+\textbf{Limitations.} Our evidence base relies on publicly disclosed deals and public filings. However, many transactions are private or under NDA, so our dataset likely undercounts and is skewed toward larger, English-language, and U.S.-centric agreements. We therefore report patterns rather than exhaustive statistics. Confidentiality constraints preclude disclosure of non-public deal terms even when known, and we avoid speculation that could compromise sources. Market conditions have been evolving rapidly in the last three years, limiting temporal generalization and our classification necessarily simplifies heterogeneous contracts. While we provide a transparent table, completeness cannot be assumed. As a position paper, we do not present an implementation or pilot. The feasibility and performance of key components remain open research problems.
+
+\section*{Acknolwedgement}
+Ruoxi Jia and Feiyang Kang acknowledge support from the National Science Foundation through grants IIS-2312794, IIS-2313130, and OAC-2239622. Suqin Ge acknowledges support from the College of Science Dean’s Discovery Fund at Virginia Tech. Jiachen T. Wang is supported by Apple's AI/ML PhD Fellowship, Princeton’s Yan Huo *94 Graduate Fellowship and Princeton’s Gordon Y.S. Wu Fellowship. Luis Oala thanks Bruno Sanguinetti and Freeman Lewin for engaging discussions during the review of the manuscript. The authors thank Alex Izydorczyk, Ithaka S+R and Freeman Lewin for providing resources to cross-reference public deal listings.
+
+\bibliographystyle{unsrt}
+\bibliography{ref,ref_cracks}
+
+\newpage
+\appendix
+\section{Data Deals - Full Table}
+\label{app:data-deals-full-table}
+\input{deals_table_joined}
+
+\newpage
+{\scriptsize
+\bibliographystyledeal{abbrv}
+\bibliographydeal{ref2,ref3}
+}
+
+
+\end{document}

@@ -1,0 +1,153 @@
+\vspace{-0.5em}
+\section{Towards an Equitable Data-Value Exchange Framework}
+\vspace{-0.5em}
+\label{sec:edvex}
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+    \vspace{-1.2em}
+     \centering
+     \scalebox{0.45}{\input{figs/fixed_pipeline}}
+     \vspace{-1em}
+     \caption{EDVEX patches for a sustainable and efficient machine learning economy.}
+     \label{fig:enter-label}
+     \vspace{-1.2em}
+\end{wrapfigure}
+
+The empirical cracks identified in Section 2 prompt the design of a data pipeline ensuring bargaining symmetry, provenance, and efficient pricing. This section outlines the \underline{E}quitable \underline{D}ata-\underline{V}alue \underline{Ex}change Framework (\sysname), a minimal blueprint designed to empower diverse data contributors—especially smaller ones—and align market interests (Figure~\ref{fig:overview}). We detail its potential layers and highlight key open problems, inviting discussion and future research.
+
+
+\subsection{Technical Primitives}
+
+\textbf{Task-Data Matching.} A foundational layer in an \sysname would aim to optimally match \textit{data sources} to specific machine learning tasks so as to maximize defined objectives for the model's effective task fulfillment~\cite{chen2023data}. In a vast and growing data landscape, especially one encouraging diverse contributors, automated discovery tooling becomes increasingly helpful.
+Simultaneously, data sellers---particularly smaller ones---often lack the resources or foresight to identify every context where their datasets might be valuable. This layer is foundational because it tackles the inefficiencies and information asymmetries that currently hinder effective data utilization. It ensures that data can be surfaced based on its utility for a task, rather than solely on the marketing capabilities or existing relationships of the data provider, thereby fostering a more level playing field and broader participation.
+
+One might envision this as a sophisticated recommendation system for datasets, navigating the vast universe of potential sources to identify \emph{combinations of sources} predicted to yield the highest improvement for a given target task~\cite{kang2023performance,just2023asr}. Traditional dataset discovery, often reliant on keyword searches, struggles to predict a dataset's true utility for downstream ML tasks \cite{akhtar2024croissant}.
+Extensive results on empirical scaling laws~\cite{hestness2017deeplearningscalingpredictable,kaplan2020scaling,hoffmann2022training} demonstrate that performance gains on representative data subsamples and small model sizes can help predict gains from the full corpus and larger model size, enabling us to leverage a \emph{sandbox-first evaluation protocol}. 
+Within this sandbox, candidate datasets (or their representative subsamples) are subjected to small-scale experiments (e.g., using small-scale proxy models), 
+and the resulting performance changes are extrapolated to estimate their marginal utility for the target model at the desired data scale
+~\cite{coleman2019selection,kang2023performance,ye2024data,pais2025autoguidedonlinedatacuration,bischl2025openml}. 
+Datasets are then ranked by this task-specific utility estimate, with the highest-scoring individual sources or bundles recommended to the developer. The sandbox can be designed to include additional features such as optimizing the mixture of high-ranked datasets, the implementation of which could build upon a wealth of existing and ongoing research employing small-scale experiments to inform training data selection~\cite{liu2024regmix,kang2024autoscale,abdin2024phi,magnusson2025datadecide}.
+The layer could also include data wrangling operations \cite{kandel2011wrangler} (e.g., cleaning, transformation, and format standardization) or data pruning/datapoint selection \cite{borsos2020coresets,sorscher2022beyond, abbas2023semdedup,wang2024data} before performing utility estimation.
+
+
+
+
+
+
+
+
+
+
+Overall, by evaluating and potentially combining disparate data sources based on their collective utility for a task, this layer could facilitate the organic formation of \emph{dynamic, task-optimized data unions}.
+These adaptive groupings, formed based on specific task requirements rather than pre-defined domains as seen in traditional data collectives~\cite{MidataCoopHome}, could empower contributors by creating value more efficiently, which in turn increases their bargaining power against large aggregators.
+
+
+
+\begin{tcolorbox}[breakable, colback=darkgreen!5,colframe=darkgreen!60,
+                  title=Open Problems for Task–Data Matching,
+                  fonttitle=\bfseries, coltitle=black,
+                  left=1mm,right=1mm,top=1mm,bottom=1mm]
+\textbf{Data profiling under constraints.} How can we design a profile a data source in ways that capture its potential utility for specific AI tasks---facilitating better data discovery and matching---while preserving data contributor privacy and ensuring that the profile itself does not diminish the incentive for data acquisition by prematurely disclosing excessive value \cite{gisselbrecht2016dynamic,chen2023data}?
+
+\textbf{Task profiling for effective matching.} How can AI task descriptions effectively articulate model-specific requirements---such as existing data summary, intended model architecture, whether training is from scratch or based on a pre-trained model---to guide the contribution of high-value, relevant data that demonstrably improves downstream model performance \cite{hernandez2021scaling}? 
+
+\textbf{Scalability of the sandbox protocol.} How can the sandbox evaluation protocol (subsampling, lightweight model runs, utility extrapolation) be implemented to scale efficiently to potentially millions of datasets and thousands of tasks without incurring prohibitive compute costs or latency?
+
+\textbf{Generalization of utility estimation.} Current scaling laws have mainly focused on certain data modalities, model architectures, and AI tasks. How well do utility estimates derived from sandbox evaluations generalize across different data modalities (tabular, time-series, graph), model architectures, and complex AI tasks (e.g., reinforcement learning)?
+
+\textbf{Feedback loops and adaptive data discovery.} How can the discovery system incorporate feedback from actual downstream model performance (after full data acquisition and use) to continuously refine its utility estimation techniques for new tasks \cite{oala2022data,fakoor2022time,zamzmi2024out}? 
+
+\end{tcolorbox}
+
+\textbf{Lineage Tracking and Auditable Provenance.}
+\begin{figure}[t] %
+    \centering %
+    \input{figs/edvex_schematic}
+    \caption{(\textbf{Top}): The current landscape of AI data deals is largely dominated by transactions with large-scale content holders (such as major publishers), lacking efficient price discovery mechanisms. Data from smaller players is often scraped \emph{en masse} without compensation or simply overlooked. (\textbf{Bottom}): Our envisioned EDVEX Framework features efficient task-data matching, utility-driven data pricing, and auditable provenance to create a more efficient, equitable and transparent ecosystem.}
+    \label{fig:overview} %
+\end{figure}
+To pay data generators according to their contributions, we must identify who provided data and how data is used.
+Currently, for AI training, such a lineage tracking or provenance mechanism is not widely adopted. Typically, a dataset comes with a license stating the restriction of using the data; however, the license does not help with tracking how the data is actually used. 
+Existing lineage tracking \cite{sagemaker,chen2020developments} requires manual effort to add the lineage metadata.
+
+We need a framework to properly log the data source and the usage of data, so that the information can later be used for data valuation. 
+Each asset (including dataset, trained models, and intermediate values) should have lineage metadata indicating what and how the source data impacts the asset. 
+In the case where the dataset comprises data from different data creators, the metadata should faithfully record all the data sources~\cite{longpre2023data}, including small contributions. One challenge here is to have an encoding scheme that efficiently represents combinations of data sources from potentially millions of data creators. 
+The second challenge is that in the AI pipeline the resulting model is influenced by how data is used in the workflow, e.g., data filtering decisions, feature engineering choices, training configurations (e.g., hyperparameters), architectural selections, and training randomness, making lineage tracking far more complex than traditional data processing pipelines.
+For example, different filters (or data curation mechanisms in general) lead to different data selection choices. 
+Meanwhile, data practitioners might not want to reveal all the details of the workflow.
+Hence, the framework should consider what information to include in the metadata to make lineage tracking accurate enough without significant memory and execution time overhead. 
+
+Such a lineage tracking framework should also be designed to be easily deployed by practitioners. Practitioners typically use existing frameworks or APIs, such as PyTorch, for data processing and AI training. To reduce the additional manual efforts for lineage tracking, the lineage tracking framework may be integrated with existing frameworks and logging metadata automatically. Interesting templates for such an architecture include cataloging projects such as Unity \cite{unity} and provenance-by-design protocol experiments such as Bittensor \cite{bittensor}.
+
+
+
+
+\begin{tcolorbox}[breakable,colback=darkgreen!5,colframe=darkgreen!60,
+                  title=Open Problems for Tracking Lineage,
+                  fonttitle=\bfseries, coltitle=black,
+                  left=1mm,right=1mm,top=1mm,bottom=1mm]
+
+
+\textbf{Information requirements for lineage tracking.} 
+What specific information should be logged to enable effective lineage tracking? How granular should the metadata be regarding individual data creators, transformation processes, and intermediate outputs? 
+
+\textbf{Balancing the metadata size and tracking accuracy.} Given the potentially large amount of information needed for accurate lineage tracking, how can we design an efficient encoding mechanism? How should we navigate a trade-off between the metadata size and tracking accuracy?
+
+\textbf{Lower the barrier for tracking lineage.} How can we design the software stack to minimize the manual effort? How can we efficiently ensure complete tracking with robust integrity protection?
+
+
+\end{tcolorbox}
+
+\textbf{Valuation.} The current paradigm for data acquisition is often characterized by opaque, bilateral negotiations, frequently between large AI developers and data aggregators. This can systematically disadvantage not only smaller contributors but data buyers and may fail to reflect a dataset's true, context-dependent value \cite{ghorbani2019data}. This situation can lead to inefficient price discovery and potentially inequitable compensation \cite{raskar2019data}, where significant data sources might be used without recompense or remain unutilized. The "Task-Data Matching" layer, by exploring the formation of dynamic, task-optimized data unions based on preliminary utility estimates, could lay some groundwork for more transparent and equitable valuation approaches. This layer would need to explore mechanisms for two core challenges: establishing a fair market price for an assembled data bundle and ensuring equitable revenue distribution among contributors within that union.
+
+One avenue to explore is leveraging the task-specific utility estimates generated during the discovery phase as a foundation for more transparent price discovery. Instead of relying on bargaining power, the predicted performance uplift (e.g., loss reduction, accuracy gain) offered by a dynamically assembled data bundle could inform its market value. Several approaches could facilitate this. For instance, AI developers might bid for access to these task-optimized data bundles \cite{gao2025learn}. The utility estimates from the sandbox evaluation could serve as standard information for bidders, potentially fostering more competitive and fair outcomes. As another example, the price of the bundle could be directly correlated with its estimated contribution to model performance~\cite{chen2019towards}. 
+Besides a one-time upfront payment, AI developers could also offer the union a share of the subsequent value generated by the model developed using their data (e.g., a percentage of revenue). This could align long-term incentives between AI developers and the data contributors. These mechanisms aim to create a more liquid and rational market for data, where price is more closely tied to demonstrable utility.
+
+Once a price for the entire bundle is established, the proceeds can be shared among the contributing data sources. Crucially, for such dynamic data unions to be viable and encourage broad participation, equitable revenue sharing among contributors within the bundle is paramount \cite{prorata2025}. If contributors do not perceive the allocation as fair, they may be reluctant to participate \cite{brynjolfsson2025generative}. The implementation of equitable revenue sharing can draw inspiration from cooperative game theory concepts like the Shapley values \cite{shapley1953value}, which determine the shares based on a participant's marginal contribution to the overall task-specific utility of the union.
+The sandbox mentioned above could be designed to provide useful signals to estimate the contribution of individual participants~\cite{wang2024data,jia2019towards}. 
+
+
+
+
+
+\begin{tcolorbox}[breakable,colback=darkgreen!5,colframe=darkgreen!60,
+                  title=Open Problems for Valuation,
+                  fonttitle=\bfseries, coltitle=black,
+                  left=1mm,right=1mm,top=1mm,bottom=1mm]
+
+\textbf{Efficient and reliable pre-acquisition estimation of data contribution.} What evaluation processes should be conducted within the sandbox, and what specific information about candidate data sources must be made accessible for these evaluations, to enable the reliable and efficient estimation of their individual contributions \emph{before} acquisition?
+
+\textbf{Understanding data's influence in complex and iterative AI development workflows.} Modern AI development often involves intricate pipelines with multiple stages, diverse data types, varied training algorithms, and even iterative loops where models are trained on synthetic data generated by earlier model versions. 
+How can we quantify the value contribution of an initial or intermediary dataset as it propagates and transforms through these sophisticated, multi-step processes? 
+
+
+\textbf{Contribution to multi-faceted AI evaluation.} 
+How do we design data valuation mechanisms that reward contributions across multi-faceted performance metrics such as fairness and robustness? 
+
+
+
+
+\textbf{Mitigating ``gaming.''} Any data valuation system predicated on defined metrics is susceptible to ``gaming,'' where contributors optimize for these metrics, potentially sacrificing genuine data quality~\cite{Strathern1997}. How do we design valuation and market mechanisms that inherently reward genuinely useful data, while actively disincentivizing manipulative behaviors?
+
+\textbf{Addressing price erosion for highly substitutable data.} How can valuation and market mechanisms be designed to prevent a ``race to the bottom'' for data contributions that are abundant and readily substitutable from numerous sources?
+
+\end{tcolorbox}
+
+
+\subsection{Incentives for Implementing \sysname %
+
+The successful realization of an \sysname hinges on its technical feasibility and, critically, on its ability to create compelling incentives for a diverse range of actors to develop, deploy, and participate in such an ecosystem. 
+This section outlines the primary incentives for key stakeholders.
+
+
+For \textbf{data contributors}, especially smaller players and those with niche datasets often overlooked, \sysname signals a shift towards equitable participation. The framework's design also promises fair economic returns, determined by the demonstrable utility of their data and transparent revenue-sharing within dynamic data unions. The emergence of a diverse array of data cooperatives and unions demonstrates the growing interest in monetization of their data~\cite{Orchi2023DriversSeat,MidataCoopHome,ResonateCoop,StreamrDataUnions}. Coupled with enhanced discoverability through intelligent matching and auditable lineage, contributors are incentivized by market access and the assurance that their data's value are acknowledged.
+
+
+This enriched and more accessible data landscape directly benefits \textbf{AI developers}. They are incentivized by the prospect of discovering relevant data that can significantly improve model performance, as exemplified by a recent surge of data deals~\cite{Singh2024OpenAI}. The task-data matching layer offers a pathway to facilitate and de-risk data acquisitions. The utility-based valuation also offers greater predictability in data expenditure. Moreover, substantial legal and financial risks associated with data misuse provide compelling reasons for framework adoption. 
+For instance, Meta's recent settlements for data privacy issues—\$1.4 billion in Texas for biometric data misuse~\cite{meta2024lawsuit14} and \$725 million for the Cambridge Analytica case~\cite{meta2025lawsuit725}—dwarf the estimated \$1.6 billion value of data deals in~\Cref{fig:deal-volume}. 
+
+\sysname creates new market opportunities for \textbf{platform developers and infrastructure providers} to create and operate the novel services that will define this new data ecosystem---from sophisticated discovery engines and secure sandboxes to reliable lineage trackers and automated valuation tools. Also, by building around \sysname, these platforms could enhance data exchange efficiency and cultivate trust among data providers, which in turn directly benefits platform adoption.
+
+Ultimately, \sysname fosters a virtuous cycle: fair compensation and transparency encourage broader data contribution; accessible, high-quality data accelerates AI development; and new infrastructure supports a thriving market. 
+
