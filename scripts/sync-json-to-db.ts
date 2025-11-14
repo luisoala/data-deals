@@ -110,10 +110,21 @@ async function main() {
 
   console.log(`Syncing ${dealsData.length} deals to database...`)
 
+  let updatedCount = 0
+  let missingCount = 0
+  
   for (const deal of dealsData) {
     // Get source URL from ref-urls.json mapping
     const sourceUrl = refUrls[deal.ref] || null
+    
+    if (!sourceUrl) {
+      missingCount++
+      if (missingCount <= 5) {
+        console.log(`Missing URL for ref: ${deal.ref}`)
+      }
+    }
 
+    // Upsert deal data
     await prisma.deal.upsert({
       where: { id: deal.id },
       update: {
@@ -127,7 +138,6 @@ async function main() {
         value_max: deal.value_max,
         value_unit: deal.value_unit,
         codes: JSON.stringify(deal.codes),
-        source_url: sourceUrl,
       },
       create: {
         id: deal.id,
@@ -144,9 +154,24 @@ async function main() {
         source_url: sourceUrl,
       },
     })
+    
+    // Update source_url separately using updateMany (more reliable)
+    if (sourceUrl) {
+      await prisma.deal.updateMany({
+        where: { ref: deal.ref },
+        data: { source_url: sourceUrl },
+      })
+      updatedCount++
+    } else {
+      // Clear source_url if it should be null
+      await prisma.deal.updateMany({
+        where: { ref: deal.ref },
+        data: { source_url: null },
+      })
+    }
   }
 
-  console.log('Sync complete!')
+  console.log(`Sync complete! Updated ${updatedCount} deals with URLs, ${missingCount} deals missing URLs`)
 }
 
 main()
