@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:  # Allow manual triggering
 
 jobs:
   deploy:
@@ -11,31 +12,178 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Run linting
-        run: |
-          npm install
-          npm run lint || true
+        run: npm run lint || true
+        continue-on-error: true
 
-      - name: Deploy to EC2
-        uses: appleboy/ssh-action@v1.0.0
+      - name: Upload files to EC2
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          port: ${{ secrets.EC2_SSH_PORT || 22 }}
+          source: "."
+          target: "/tmp/data-deals-deploy"
+          strip_components: 0
+          exclude: |
+            node_modules
+            .git
+            .next
+            prisma/dev.db
+            dev.db
+            venv
+            __pycache__
+            *.log
+
+      - name: Bootstrap and Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
+          OAUTH_CLIENT_SECRET: ${{ secrets.OAUTH_CLIENT_SECRET }}
+          ADMIN_GITHUB_USERNAMES: ${{ secrets.ADMIN_GITHUB_USERNAMES }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: ${{ secrets.EC2_SSH_PORT || 22 }}
           script: |
-            cd /home/ubuntu/data-deals
-            git pull origin main
-            npm install
-            npx prisma generate
-            npx prisma db push
-            npm run sync
-            npm run build
-            pm2 restart data-deals || pm2 start npm --name "data-deals" -- start
+            set -e
+            echo "Starting deployment..."
+            
+            APP_DIR="/home/ubuntu/data-deals"
+            DEPLOY_DIR="/tmp/data-deals-deploy"
+            
+            # Check if this is first-time setup
+            if [ ! -d "$APP_DIR" ] || [ ! -f "$APP_DIR/package.json" ]; then
+              echo "First-time setup detected. Running bootstrap..."
+              
+              # Install basic dependencies if needed
+              if ! command -v node &> /dev/null; then
+                echo "Installing Node.js 20..."
+                curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+                sudo apt-get install -y nodejs
+              fi
+              
+              if ! command -v pm2 &> /dev/null; then
+                echo "Installing PM2..."
+                sudo npm install -g pm2
+              fi
+              
+              if ! command -v nginx &> /dev/null; then
+                echo "Installing Nginx..."
+                sudo apt-get update -qq
+                sudo apt-get install -y nginx
+              fi
+              
+              # Create application directory
+              echo "Creating application directory..."
+              mkdir -p "$APP_DIR"
+              
+              # Set up Nginx
+              echo "Configuring Nginx..."
+              sudo tee /etc/nginx/sites-available/data-deals > /dev/null <<EOF
+            server {
+                listen 80;
+                server_name _;
+            
+                location / {
+                    proxy_pass http://localhost:3000;
+                    proxy_http_version 1.1;
+                    proxy_set_header Upgrade \$http_upgrade;
+                    proxy_set_header Connection 'upgrade';
+                    proxy_set_header Host \$host;
+                    proxy_cache_bypass \$http_upgrade;
+                }
+            }
+            EOF
+              sudo ln -sf /etc/nginx/sites-available/data-deals /etc/nginx/sites-enabled/
+              sudo rm -f /etc/nginx/sites-enabled/default
+              sudo nginx -t
+              sudo systemctl restart nginx
+              sudo systemctl enable nginx
+              
+              # Set up PM2
+              pm2 startup systemd -u ubuntu --hp /home/ubuntu | grep -v "PM2" | sudo bash || true
+              
+              # Create .env file if it doesn't exist
+              if [ ! -f "$APP_DIR/.env" ]; then
+                echo "Creating .env file..."
+                EC2_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo "localhost:3000")
+                
+                # Use GitHub secrets if available, otherwise use template
+                OAUTH_CLIENT_ID="${OAUTH_CLIENT_ID:-}"
+                OAUTH_CLIENT_SECRET="${OAUTH_CLIENT_SECRET:-}"
+                ADMIN_USERNAMES="${ADMIN_GITHUB_USERNAMES:-}"
+                NEXTAUTH_SECRET="${NEXTAUTH_SECRET:-$(openssl rand -base64 32)}"
+                
+                cat > "$APP_DIR/.env" <<ENVEOF
+            # Database
+            DATABASE_URL="file:./prisma/prod.db"
+            
+            # NextAuth
+            NEXTAUTH_URL="http://$EC2_IP"
+            NEXTAUTH_SECRET="$NEXTAUTH_SECRET"
+            
+            # GitHub OAuth
+            GITHUB_CLIENT_ID="$OAUTH_CLIENT_ID"
+            GITHUB_CLIENT_SECRET="$OAUTH_CLIENT_SECRET"
+            
+            # Admin Access
+            ADMIN_GITHUB_USERNAMES="$ADMIN_USERNAMES"
+            ENVEOF
+                
+                if [ -z "$OAUTH_CLIENT_ID" ] || [ -z "$OAUTH_CLIENT_SECRET" ]; then
+                  echo "WARNING: .env file created with template. Please update GitHub OAuth values!"
+                  echo "Option 1: SSH in and edit: nano $APP_DIR/.env"
+                  echo "Option 2: Add as GitHub Secrets and redeploy"
+                else
+                  echo ".env file created with values from GitHub Secrets"
+                fi
+              fi
+              
+              echo "Bootstrap complete!"
+            fi
+            
+            # Copy uploaded files to app directory (preserving .env if it exists)
+            echo "Copying files to application directory..."
+            if [ -f "$APP_DIR/.env" ]; then
+              cp "$APP_DIR/.env" "$DEPLOY_DIR/.env"
+            fi
+            rsync -av --delete --exclude='node_modules' --exclude='.next' --exclude='.env' "$DEPLOY_DIR/" "$APP_DIR/"
+            if [ -f "$DEPLOY_DIR/.env" ]; then
+              mv "$DEPLOY_DIR/.env" "$APP_DIR/.env"
+            fi
+            
+            cd "$APP_DIR" || exit 1
+            
+            # Run deployment script
+            echo "Running deployment script..."
+            bash scripts/deploy.sh || exit 1
+            
+            # Verify deployment
+            echo "Verifying deployment..."
+            sleep 5
+            if pm2 list | grep -q "data-deals.*online"; then
+              echo "Deployment successful!"
+            else
+              echo "ERROR: Deployment failed - PM2 process not running"
+              pm2 logs data-deals --lines 50
+              exit 1
+            fi
+            
+            # Clean up deploy directory
+            rm -rf "$DEPLOY_DIR"
 

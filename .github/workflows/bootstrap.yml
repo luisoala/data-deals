@@ -1,0 +1,137 @@
+name: Bootstrap EC2 Instance
+
+on:
+  workflow_dispatch:  # Manual trigger only for initial setup
+    inputs:
+      skip_repo_clone:
+        description: 'Skip repository clone (if already cloned)'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Bootstrap EC2 Instance
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: ${{ secrets.EC2_SSH_PORT || 22 }}
+          script: |
+            set -e
+            echo "🚀 Starting bootstrap process..."
+            
+            # Upload bootstrap script
+            cat > /tmp/bootstrap.sh << 'BOOTSTRAP_EOF'
+            #!/bin/bash
+            set -e
+            
+            echo "📦 Updating system packages..."
+            sudo apt-get update -qq
+            sudo apt-get upgrade -y -qq
+            
+            # Install Node.js 20 if not installed
+            if ! command -v node &> /dev/null || [ "$(node --version | cut -d'v' -f2 | cut -d'.' -f1)" -lt "20" ]; then
+              echo "📦 Installing Node.js 20..."
+              curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+              sudo apt-get install -y nodejs
+            else
+              echo "✅ Node.js already installed: $(node --version)"
+            fi
+            
+            # Install PM2 if not installed
+            if ! command -v pm2 &> /dev/null; then
+              echo "📦 Installing PM2..."
+              sudo npm install -g pm2
+            else
+              echo "✅ PM2 already installed"
+            fi
+            
+            # Install Nginx if not installed
+            if ! command -v nginx &> /dev/null; then
+              echo "📦 Installing Nginx..."
+              sudo apt-get install -y nginx
+            else
+              echo "✅ Nginx already installed"
+            fi
+            
+            # Install Git if not installed
+            if ! command -v git &> /dev/null; then
+              echo "📦 Installing Git..."
+              sudo apt-get install -y git
+            else
+              echo "✅ Git already installed"
+            fi
+            
+            # Create application directory
+            APP_DIR="/home/ubuntu/data-deals"
+            echo "📁 Setting up application directory: $APP_DIR"
+            mkdir -p "$APP_DIR"
+            
+            # Clone repository if it doesn't exist
+            if [ ! -d "$APP_DIR/.git" ]; then
+              echo "📥 Cloning repository..."
+              cd /home/ubuntu
+              REPO_URL="${{ github.server_url }}/${{ github.repository }}.git"
+              git clone "$REPO_URL" data-deals || {
+                echo "⚠️  Repository clone failed. You may need to set up deploy key."
+                echo "   Creating directory structure..."
+                mkdir -p "$APP_DIR"
+              }
+            else
+              echo "✅ Repository already cloned"
+            fi
+            
+            cd "$APP_DIR"
+            
+            # Set up Nginx configuration
+            echo "⚙️  Configuring Nginx..."
+            sudo tee /etc/nginx/sites-available/data-deals > /dev/null <<EOF
+            server {
+                listen 80;
+                server_name _;
+            
+                location / {
+                    proxy_pass http://localhost:3000;
+                    proxy_http_version 1.1;
+                    proxy_set_header Upgrade \$http_upgrade;
+                    proxy_set_header Connection 'upgrade';
+                    proxy_set_header Host \$host;
+                    proxy_cache_bypass \$http_upgrade;
+                }
+            }
+            EOF
+            
+            # Enable site
+            sudo ln -sf /etc/nginx/sites-available/data-deals /etc/nginx/sites-enabled/
+            sudo rm -f /etc/nginx/sites-enabled/default
+            
+            # Test Nginx configuration
+            sudo nginx -t
+            
+            # Restart Nginx
+            sudo systemctl restart nginx
+            sudo systemctl enable nginx
+            
+            # Set up PM2 to start on boot
+            echo "⚙️  Configuring PM2..."
+            pm2 startup systemd -u ubuntu --hp /home/ubuntu | grep -v "PM2" | sudo bash || true
+            
+            echo ""
+            echo "✅ Bootstrap complete!"
+            echo ""
+            echo "Next steps:"
+            echo "1. Set up .env file with your configuration"
+            echo "2. Run the deploy workflow to complete setup"
+            BOOTSTRAP_EOF
+            
+            chmod +x /tmp/bootstrap.sh
+            bash /tmp/bootstrap.sh
+

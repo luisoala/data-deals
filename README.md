@@ -19,13 +19,12 @@ Interactive web application showcasing AI data deals from the NeurIPS 2025 paper
 - **ORM**: Prisma
 - **Authentication**: NextAuth.js with GitHub OAuth
 
-## Setup
+## Quick Start
 
 ### Prerequisites
 
 - Node.js 20+
 - npm or yarn
-- Git
 
 ### Installation
 
@@ -45,82 +44,18 @@ npm install
 cp .env.example .env
 ```
 
-Edit `.env` and fill in:
-- `DATABASE_URL`: Database connection string
-- `NEXTAUTH_URL`: Your app URL (e.g., `http://localhost:3000`)
-- `NEXTAUTH_SECRET`: Generate with `openssl rand -base64 32`
-- `GITHUB_CLIENT_ID`: GitHub OAuth app client ID
-- `GITHUB_CLIENT_SECRET`: GitHub OAuth app client secret
-- `ADMIN_GITHUB_USERNAMES`: Comma-separated list of admin GitHub usernames
+Edit `.env` with your configuration (see [docs/setup.md](docs/SETUP_CHECKLIST.md) for details).
 
-4. Set up the database and start development:
+4. Set up database and start development:
 ```bash
-# Full setup (installs packages, sets up DB, syncs data, starts server)
 npm run dev:setup
-
-# OR manually:
-npm run setup  # Install packages, generate Prisma, push DB, sync data
-npm run dev    # Start dev server
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### Quick Restart
-
-For quick restarts during development (after initial setup):
-```bash
-# Restart dev server with data sync
-bash scripts/dev-restart.sh
-
-# OR just restart without sync
-npm run dev
-```
-
-## Data Structure
-
-The source of truth for deals data is `data/deals.json`. This file is synced to the database on deployment.
-
-### Deal Schema
-
-```typescript
-{
-  id: number
-  data_receiver: string
-  data_aggregator: string
-  ref: string
-  date: number
-  type: string
-  value_raw: string
-  value_min: number | null
-  value_max: number | null
-  value_unit: string | null
-  codes: string[]
-}
-```
-
-## Deployment
-
-### EC2 Setup
-
-1. Launch an EC2 instance (Ubuntu)
-2. Install Node.js, npm, PM2, and Nginx
-3. Clone the repository
-4. Set up environment variables
-5. Configure Nginx as reverse proxy
-6. Set up PM2 to run the Next.js app
-
-### GitHub Actions
-
-The repository includes a GitHub Actions workflow that automatically deploys to EC2 on push to main branch.
-
-Required secrets:
-- `EC2_HOST`: EC2 instance IP or domain
-- `EC2_USER`: SSH username (usually `ubuntu`)
-- `EC2_SSH_KEY`: Private SSH key for EC2 access
-
 ## Development
 
-### Scripts
+### Available Scripts
 
 - `npm run dev`: Start development server
 - `npm run build`: Build for production
@@ -135,7 +70,33 @@ Required secrets:
 2. Use the "Suggest New Entry" button on the website
 3. Admin can approve suggestions via the admin dashboard
 
+## Deployment
+
+The repository includes automated deployment via GitHub Actions to EC2.
+
+See [docs/deployment.md](docs/DEPLOYMENT.md) for detailed deployment instructions.
+
+## Documentation
+
+Detailed documentation is available in the `docs/` directory:
+
+- [Setup Guide](docs/SETUP_CHECKLIST.md) - Step-by-step setup instructions
+- [Deployment Guide](docs/DEPLOYMENT.md) - Deployment and admin access details
+- [GitHub OAuth Setup](docs/GITHUB_OAUTH_SETUP.md) - Authentication configuration
+- [Automated Deployment Plan](docs/AUTOMATED_DEPLOYMENT_PLAN.md) - CI/CD setup details
+
+## Security
+
+**Important**: This is a public repository. Never commit:
+
+- API keys or secrets
+- Environment variables (`.env` files)
+- Private SSH keys
+- Database credentials
+- OAuth client secrets
+
+All sensitive configuration should be stored in GitHub Secrets (for CI/CD) or environment variables (for local development).
+
 ## License
 
 Apache License 2.0
-
