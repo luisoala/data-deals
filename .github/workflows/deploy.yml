@@ -70,16 +70,17 @@ jobs:
             set -e
             echo "Starting deployment..."
             
-            # Export environment variables so they're available to child scripts
-            export DOMAIN_NAME="${DOMAIN_NAME:-}"
-            export EC2_HOST="${EC2_HOST:-}"
-            export OAUTH_CLIENT_ID="${OAUTH_CLIENT_ID:-}"
-            export OAUTH_CLIENT_SECRET="${OAUTH_CLIENT_SECRET:-}"
-            export ADMIN_GITHUB_USERNAMES="${ADMIN_GITHUB_USERNAMES:-}"
-            export NEXTAUTH_SECRET="${NEXTAUTH_SECRET:-}"
-            export CERTBOT_EMAIL="${CERTBOT_EMAIL:-}"
-            export GITHUB_TOKEN="${GITHUB_TOKEN:-}"
-            export GITHUB_REPOSITORY="${GITHUB_REPOSITORY:-}"
+            # Export environment variables directly from GitHub Actions secrets
+            # These are passed via the env section and should be available
+            export DOMAIN_NAME="${{ secrets.DOMAIN_NAME }}"
+            export EC2_HOST="${{ secrets.EC2_HOST }}"
+            export OAUTH_CLIENT_ID="${{ secrets.OAUTH_CLIENT_ID }}"
+            export OAUTH_CLIENT_SECRET="${{ secrets.OAUTH_CLIENT_SECRET }}"
+            export ADMIN_GITHUB_USERNAMES="${{ secrets.ADMIN_GITHUB_USERNAMES }}"
+            export NEXTAUTH_SECRET="${{ secrets.NEXTAUTH_SECRET }}"
+            export CERTBOT_EMAIL="${{ secrets.CERTBOT_EMAIL }}"
+            export GITHUB_TOKEN="${{ github.token }}"
+            export GITHUB_REPOSITORY="${{ github.repository }}"
             
             echo "Environment variables exported:"
             echo "  EC2_HOST=${EC2_HOST:-<not set>}"
