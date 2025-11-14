@@ -12,62 +12,90 @@ This document explains how CI/CD, admin access, and entry updates work in the Da
 - **ORM**: Prisma
 - **Authentication**: NextAuth.js with GitHub OAuth
 - **Deployment**: EC2 instance with PM2 + Nginx
-- **CI/CD**: Manual deployment via `deploy.sh` script (no GitHub Actions currently configured)
+- **CI/CD**: Automated deployment via GitHub Actions on push to `main`
 
 ## CI/CD on EC2
 
-### Current Setup
+### Automated Deployment via GitHub Actions
 
-**No automated CI/CD pipeline exists yet.** Deployment is currently manual via SSH.
+Deployment is fully automated via GitHub Actions. Every push to the `main` branch triggers an automatic deployment to EC2.
 
-### Manual Deployment Process
+**Workflow File**: `.github/workflows/deploy.yml`
 
-1. **Deploy Script**: `scripts/deploy.sh`
-   - Pulls latest changes from `main` branch
-   - Installs dependencies (`npm install`)
-   - Generates Prisma client (`npx prisma generate`)
-   - Runs database migrations (`npx prisma db push`)
-   - Syncs JSON data to database (`npm run sync`)
-   - Builds Next.js app (`npm run build`)
+**Deployment Process**:
+1. Checks out code
+2. Installs dependencies and runs linting
+3. Uploads files to EC2 via SCP
+4. Runs bootstrap script (first-time setup only):
+   - Installs Node.js 20, PM2, Nginx
+   - Sets up SSL certificate with Let's Encrypt (if domain provided)
+   - Configures Nginx for HTTPS (if domain) or HTTP (if IP only)
+   - Creates `.env` file with environment variables
+5. Runs deployment script (`scripts/deploy.sh`):
+   - Pulls latest changes
+   - Installs dependencies
+   - Generates Prisma client
+   - Runs database migrations
+   - Syncs JSON data to database
+   - Builds Next.js app
    - Restarts PM2 process
 
-2. **To Deploy**:
-   ```bash
-   # SSH into EC2 instance
-   ssh ubuntu@<ec2-ip>
-   
-   # Run deployment script
-   cd /home/ubuntu/data-deals
-   bash scripts/deploy.sh
-   ```
+### Required GitHub Secrets
+
+Configure these secrets in your GitHub repository settings:
+
+**Required**:
+- `EC2_HOST`: EC2 instance IP address or hostname (e.g., `54.123.45.67`)
+- `EC2_USER`: SSH username (usually `ubuntu`)
+- `EC2_SSH_KEY`: Private SSH key for EC2 access (full key including headers)
+- `OAUTH_CLIENT_ID`: GitHub OAuth app client ID
+- `OAUTH_CLIENT_SECRET`: GitHub OAuth app client secret
+- `ADMIN_GITHUB_USERNAMES`: Comma-separated GitHub usernames (e.g., `user1,user2`)
+- `NEXTAUTH_SECRET`: Secret for NextAuth.js (generate with `openssl rand -base64 32`)
+
+**Optional**:
+- `DOMAIN_NAME`: Domain name for SSL certificate (e.g., `example.com`)
+- `CERTBOT_EMAIL`: Email for Let's Encrypt certificate (defaults to `admin@DOMAIN_NAME`)
+- `EC2_SSH_PORT`: SSH port (defaults to 22)
+
+### SSL/HTTPS Setup
+
+If `DOMAIN_NAME` secret is provided:
+- Automatically installs certbot
+- Obtains SSL certificate from Let's Encrypt
+- Configures Nginx for HTTPS with HTTP→HTTPS redirect
+- Sets up automatic certificate renewal
+- `NEXTAUTH_URL` is set to `https://DOMAIN_NAME`
+
+If `DOMAIN_NAME` is not provided:
+- Uses HTTP only
+- `NEXTAUTH_URL` is set to `http://EC2_HOST`
+
+**Important**: For SSL to work:
+1. DNS must point `DOMAIN_NAME` to your EC2 instance IP
+2. EC2 security group must allow inbound traffic on ports 80 and 443
+3. Wait a few minutes after DNS changes before first deployment
 
 ### EC2 Infrastructure
 
-**Setup Script**: `scripts/setup-ec2.sh`
-- Installs Node.js 20
-- Installs PM2 (process manager)
-- Installs Nginx (reverse proxy)
-- Configures Nginx to proxy requests to Next.js on port 3000
-- Sets up PM2 to auto-start on boot
-
 **Current Stack**:
-- **Nginx**: Listens on port 80, proxies to `localhost:3000`
-- **PM2**: Manages Next.js process (`pm2 start npm --name "data-deals" -- start`)
+- **Nginx**: Reverse proxy (HTTP on port 80, HTTPS on port 443 if domain provided)
+- **PM2**: Process manager for Next.js (`pm2 start npm --name "data-deals" -- start`)
 - **App Directory**: `/home/ubuntu/data-deals`
+- **SSL**: Let's Encrypt certificates (if domain provided)
 
-### Missing: GitHub Actions CI/CD
+### Manual Deployment (Fallback)
 
-The README mentions GitHub Actions, but **no workflow file exists**. To set up automated CI/CD:
+If GitHub Actions fails, you can deploy manually:
 
-1. Create `.github/workflows/deploy.yml`
-2. Configure secrets:
-   - `EC2_HOST`: EC2 instance IP/domain
-   - `EC2_USER`: SSH username (usually `ubuntu`)
-   - `EC2_SSH_KEY`: Private SSH key for EC2 access
-3. Workflow should:
-   - Trigger on push to `main`
-   - SSH into EC2
-   - Run `deploy.sh` script
+```bash
+# SSH into EC2 instance
+ssh ubuntu@<ec2-ip>
+
+# Run deployment script
+cd /home/ubuntu/data-deals
+bash scripts/deploy.sh
+```
 
 ## Admin Access
 
@@ -218,23 +246,27 @@ Deal table updated/created
 
 ## Environment Variables
 
-Required for production:
+The `.env` file is automatically created during deployment. Environment variables are set from GitHub Secrets:
 
 ```bash
 # Database
-DATABASE_URL="file:./dev.db"  # SQLite (dev) or PostgreSQL URL (prod)
+DATABASE_URL="file:./prisma/prod.db"  # SQLite in production
 
 # NextAuth
-NEXTAUTH_URL="https://your-domain.com"
-NEXTAUTH_SECRET="<generate with: openssl rand -base64 32>"
+NEXTAUTH_URL="https://your-domain.com"  # Automatically set from DOMAIN_NAME or EC2_HOST
+NEXTAUTH_SECRET="<from NEXTAUTH_SECRET GitHub secret>"
 
 # GitHub OAuth
-GITHUB_CLIENT_ID="<from GitHub OAuth app>"
-GITHUB_CLIENT_SECRET="<from GitHub OAuth app>"
+GITHUB_CLIENT_ID="<from OAUTH_CLIENT_ID GitHub secret>"
+GITHUB_CLIENT_SECRET="<from OAUTH_CLIENT_SECRET GitHub secret>"
 
 # Admin Access
-ADMIN_GITHUB_USERNAMES="username1,username2"
+ADMIN_GITHUB_USERNAMES="<from ADMIN_GITHUB_USERNAMES GitHub secret>"
 ```
+
+**Note**: `NEXTAUTH_URL` is automatically configured:
+- If `DOMAIN_NAME` secret is set: `https://DOMAIN_NAME`
+- Otherwise: `http://EC2_HOST`
 
 ## Troubleshooting
 
