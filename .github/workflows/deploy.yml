@@ -292,11 +292,14 @@ jobs:
               # Check if NEXTAUTH_URL is invalid or doesn't match expected
               CURRENT_URL=$(grep '^NEXTAUTH_URL=' "$APP_DIR/.env" | cut -d'"' -f2 || echo "")
               
+              # Check for invalid values: empty, localhost, or doesn't match expected
               if grep -q '^NEXTAUTH_URL="http://"$' "$APP_DIR/.env" || \
                  grep -q '^NEXTAUTH_URL="https://"$' "$APP_DIR/.env" || \
                  grep -q '^NEXTAUTH_URL=$' "$APP_DIR/.env" || \
+                 [ "$CURRENT_URL" = "localhost:3000" ] || \
+                 [ "$CURRENT_URL" = "http://localhost:3000" ] || \
                  [ "$CURRENT_URL" != "$EXPECTED_URL" ]; then
-                echo "Updating NEXTAUTH_URL to: $EXPECTED_URL"
+                echo "Updating NEXTAUTH_URL from '$CURRENT_URL' to: $EXPECTED_URL"
                 sed -i "s|^NEXTAUTH_URL=.*|NEXTAUTH_URL=\"$EXPECTED_URL\"|" "$APP_DIR/.env"
               else
                 echo "NEXTAUTH_URL is valid: $CURRENT_URL"

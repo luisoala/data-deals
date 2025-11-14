@@ -71,12 +71,37 @@ fi
 echo "Verifying NEXTAUTH_URL configuration..."
 if [ -f ".env" ]; then
   NEXTAUTH_URL=$(grep '^NEXTAUTH_URL=' .env | cut -d'"' -f2 || echo "")
-  if [ -z "$NEXTAUTH_URL" ] || [ "$NEXTAUTH_URL" = "localhost:3000" ] || [ "$NEXTAUTH_URL" = "http://localhost:3000" ]; then
-    echo "ERROR: NEXTAUTH_URL is not set correctly in .env file!"
-    echo "Current value: $NEXTAUTH_URL"
-    echo "This will cause authentication to fail."
-    echo "Please ensure DOMAIN_NAME or EC2_HOST secret is set in GitHub Actions."
-    exit 1
+  
+  # Determine what it SHOULD be
+  if [ -n "${DOMAIN_NAME:-}" ]; then
+    EXPECTED_URL="https://$DOMAIN_NAME"
+  elif [ -n "${EC2_HOST:-}" ]; then
+    EXPECTED_URL="http://$EC2_HOST"
+  else
+    # Try to get IP from metadata service
+    EC2_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo "")
+    if [ -n "$EC2_IP" ]; then
+      EXPECTED_URL="http://$EC2_IP"
+    else
+      EXPECTED_URL=""
+    fi
+  fi
+  
+  # Check if invalid (empty, localhost, or doesn't match expected)
+  if [ -z "$NEXTAUTH_URL" ] || \
+     [ "$NEXTAUTH_URL" = "localhost:3000" ] || \
+     [ "$NEXTAUTH_URL" = "http://localhost:3000" ] || \
+     ([ -n "$EXPECTED_URL" ] && [ "$NEXTAUTH_URL" != "$EXPECTED_URL" ]); then
+    if [ -n "$EXPECTED_URL" ]; then
+      echo "Fixing NEXTAUTH_URL: $NEXTAUTH_URL -> $EXPECTED_URL"
+      sed -i "s|^NEXTAUTH_URL=.*|NEXTAUTH_URL=\"$EXPECTED_URL\"|" .env
+      echo "✓ Updated NEXTAUTH_URL to: $EXPECTED_URL"
+    else
+      echo "ERROR: NEXTAUTH_URL is not set correctly and cannot be auto-fixed!"
+      echo "Current value: $NEXTAUTH_URL"
+      echo "Please ensure DOMAIN_NAME or EC2_HOST secret is set in GitHub Actions."
+      exit 1
+    fi
   else
     echo "✓ NEXTAUTH_URL is set to: $NEXTAUTH_URL"
   fi
