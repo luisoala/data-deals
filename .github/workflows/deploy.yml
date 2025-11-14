@@ -70,6 +70,21 @@ jobs:
             set -e
             echo "Starting deployment..."
             
+            # Export environment variables so they're available to child scripts
+            export DOMAIN_NAME="${DOMAIN_NAME:-}"
+            export EC2_HOST="${EC2_HOST:-}"
+            export OAUTH_CLIENT_ID="${OAUTH_CLIENT_ID:-}"
+            export OAUTH_CLIENT_SECRET="${OAUTH_CLIENT_SECRET:-}"
+            export ADMIN_GITHUB_USERNAMES="${ADMIN_GITHUB_USERNAMES:-}"
+            export NEXTAUTH_SECRET="${NEXTAUTH_SECRET:-}"
+            export CERTBOT_EMAIL="${CERTBOT_EMAIL:-}"
+            export GITHUB_TOKEN="${GITHUB_TOKEN:-}"
+            export GITHUB_REPOSITORY="${GITHUB_REPOSITORY:-}"
+            
+            echo "Environment variables exported:"
+            echo "  EC2_HOST=${EC2_HOST:-<not set>}"
+            echo "  DOMAIN_NAME=${DOMAIN_NAME:-<not set>}"
+            
             APP_DIR="/home/ubuntu/data-deals"
             DEPLOY_DIR="/tmp/data-deals-deploy"
             
@@ -274,7 +289,7 @@ jobs:
             # Validate and fix NEXTAUTH_URL if invalid
             if [ -f "$APP_DIR/.env" ]; then
               echo "Validating .env file..."
-              echo "Available env vars: DOMAIN_NAME=${DOMAIN_NAME:-<not set>}, EC2_HOST=${EC2_HOST:-<not set>}"
+              echo "Available env vars (after export): DOMAIN_NAME=${DOMAIN_NAME:-<not set>}, EC2_HOST=${EC2_HOST:-<not set>}"
               
               # Determine correct NEXTAUTH_URL
               EXPECTED_URL=""
@@ -322,9 +337,9 @@ jobs:
             
             cd "$APP_DIR" || exit 1
             
-            # Run deployment script (pass env vars explicitly)
+            # Run deployment script (env vars should be exported above)
             echo "Running deployment script..."
-            DOMAIN_NAME="${DOMAIN_NAME:-}" EC2_HOST="${EC2_HOST:-}" bash scripts/deploy.sh || exit 1
+            bash scripts/deploy.sh || exit 1
             
             # Verify deployment
             echo "Verifying deployment..."
