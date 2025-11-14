@@ -35,7 +35,7 @@ function SignInContent() {
               <div>
                 <p className="font-semibold mb-2">GitHub OAuth configuration error</p>
                 <p className="text-sm text-gray-600 mb-4">
-                  The callback URL in your GitHub OAuth app doesn't match the server configuration.
+                  The callback URL in your GitHub OAuth app doesn&apos;t match the server configuration.
                 </p>
                 <div className="bg-gray-100 p-3 rounded text-xs font-mono break-all">
                   <p className="font-semibold mb-1">Required callback URL:</p>
