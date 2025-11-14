@@ -121,7 +121,10 @@ jobs:
               # Create .env file if it doesn't exist
               if [ ! -f "$APP_DIR/.env" ]; then
                 echo "Creating .env file..."
-                EC2_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo "localhost:3000")
+                EC2_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo "")
+                if [ -z "$EC2_IP" ]; then
+                  EC2_IP="localhost:3000"
+                fi
                 
                 # Use GitHub secrets if available, otherwise use template
                 OAUTH_CLIENT_ID="${OAUTH_CLIENT_ID:-}"
@@ -165,6 +168,19 @@ jobs:
             rsync -av --delete --exclude='node_modules' --exclude='.next' --exclude='.env' "$DEPLOY_DIR/" "$APP_DIR/"
             if [ -f "$DEPLOY_DIR/.env" ]; then
               mv "$DEPLOY_DIR/.env" "$APP_DIR/.env"
+            fi
+            
+            # Validate and fix NEXTAUTH_URL if invalid
+            if [ -f "$APP_DIR/.env" ]; then
+              echo "Validating .env file..."
+              if grep -q '^NEXTAUTH_URL="http://"$' "$APP_DIR/.env" || grep -q '^NEXTAUTH_URL=$' "$APP_DIR/.env"; then
+                echo "Fixing invalid NEXTAUTH_URL..."
+                EC2_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo "")
+                if [ -z "$EC2_IP" ]; then
+                  EC2_IP="localhost:3000"
+                fi
+                sed -i "s|^NEXTAUTH_URL=.*|NEXTAUTH_URL=\"http://$EC2_IP\"|" "$APP_DIR/.env"
+              fi
             fi
             
             cd "$APP_DIR" || exit 1
