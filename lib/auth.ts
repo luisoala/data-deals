@@ -17,10 +17,11 @@ export const authOptions: NextAuthOptions = {
       return session
     },
     async jwt({ token, profile }) {
-      if (profile?.login) {
-        token.githubUsername = profile.login
+      if (profile && 'login' in profile) {
+        const githubProfile = profile as { login: string }
+        token.githubUsername = githubProfile.login
         const adminUsernames = (process.env.ADMIN_GITHUB_USERNAMES || '').split(',').map(u => u.trim())
-        token.isAdmin = adminUsernames.includes(profile.login)
+        token.isAdmin = adminUsernames.includes(githubProfile.login)
       }
       return token
     },
