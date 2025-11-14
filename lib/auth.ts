@@ -28,6 +28,16 @@ if (!githubClientId || !githubClientSecret) {
     GITHUB_CLIENT_SECRET: !githubClientSecret,
   })
   console.error('Please set GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET in your .env file')
+  console.error('Current env check:', {
+    hasClientId: !!githubClientId,
+    hasClientSecret: !!githubClientSecret,
+    clientIdLength: githubClientId?.length || 0,
+    clientSecretLength: githubClientSecret?.length || 0,
+  })
+} else {
+  console.log('✓ GitHub OAuth credentials found')
+  console.log('  Client ID:', githubClientId.substring(0, 10) + '...')
+  console.log('  Client Secret:', githubClientSecret.substring(0, 10) + '...')
 }
 
 export const authOptions: NextAuthOptions = {
