@@ -12,7 +12,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.moorfields.nhs.uk/research/google-deepmind"
   },
   {
     "id": 2,
@@ -27,7 +28,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.royalfree.nhs.uk/news/statement-re-deepmind-data-processing-agreement-during-testing-phase-streams-app"
   },
   {
     "id": 3,
@@ -42,7 +44,8 @@
     "value_unit": null,
     "codes": [
       "L"
-    ]
+    ],
+    "source_url": "https://www.datacenterknowledge.com/regulations/microsoft-github-openai-hit-with-code-copyright-lawsuit"
   },
   {
     "id": 4,
@@ -58,7 +61,8 @@
     "codes": [
       "C",
       "S"
-    ]
+    ],
+    "source_url": "https://www.adobe.com/sensei/generative-ai/firefly.html"
   },
   {
     "id": 5,
@@ -74,7 +78,8 @@
     "codes": [
       "C",
       "R"
-    ]
+    ],
+    "source_url": "https://mashable.com/article/twitter-elon-musk-paid-enterprise-api-access-pricing"
   },
   {
     "id": 6,
@@ -89,7 +94,8 @@
     "value_unit": "millions",
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.reuters.com/business/media-telecom/global-news-publisher-axel-springer-partners-with-openai-landmark-deal-2023-12-13/"
   },
   {
     "id": 7,
@@ -104,7 +110,8 @@
     "value_unit": null,
     "codes": [
       "U"
-    ]
+    ],
+    "source_url": "https://www.reuters.com/technology/apple-explores-ai-deals-with-news-publishers-new-york-times-2023-12-22/"
   },
   {
     "id": 8,
@@ -120,7 +127,8 @@
     "codes": [
       "C",
       "S"
-    ]
+    ],
+    "source_url": "https://elevenlabs.io/voice-data-partnerships"
   },
   {
     "id": 9,
@@ -135,7 +143,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.earthdata.nasa.gov/news/nasa-ibm-collaborate-apply-ai-earth-science-data"
   },
   {
     "id": 10,
@@ -150,7 +159,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.shutterstock.com/blog/lg-partners-with-shutterstock-to-advance-ai-for-better-life"
   },
   {
     "id": 11,
@@ -165,7 +175,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.prnewswire.com/news-releases/shutterstock-expands-long-standing-relationship-with-meta-301719769.html"
   },
   {
     "id": 12,
@@ -181,7 +192,8 @@
     "codes": [
       "C",
       "S"
-    ]
+    ],
+    "source_url": "https://musically.com/2023/07/12/ai-music-startup-mubert-reaches-100m-tracks-milestone/"
   },
   {
     "id": 13,
@@ -196,7 +208,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://blogs.nvidia.com/blog/generative-ai-getty-images/"
   },
   {
     "id": 14,
@@ -211,7 +224,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://apnews.com/article/openai-chatgpt-associated-press-ap-f86f84c5bcc2f3b98074b38521f5f75a"
   },
   {
     "id": 15,
@@ -226,7 +240,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.investopedia.com/shutterstock-expands-deal-with-openai-shares-rise-7559349"
   },
   {
     "id": 16,
@@ -241,7 +256,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://techcrunch.com/2024/05/06/stack-overflow-signs-deal-with-openai-to-supply-data-to-its-models/"
   },
   {
     "id": 17,
@@ -258,7 +274,8 @@
       "C",
       "S",
       "R"
-    ]
+    ],
+    "source_url": "https://pressgazette.co.uk/news/perplexity-publishers-revenue-sharing/"
   },
   {
     "id": 18,
@@ -273,7 +290,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://runwayml.com/news/runway-partners-with-getty-images"
   },
   {
     "id": 19,
@@ -288,7 +306,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.musicbusinessworldwide.com/stability-ai-launches-text-to-music-generator-trained-on-licensed-content-via-a-partnership-with-music-library-audiosparx/"
   },
   {
     "id": 20,
@@ -303,7 +322,8 @@
     "value_unit": null,
     "codes": [
       "L"
-    ]
+    ],
+    "source_url": "https://www.dreyfus.fr/en/2025/02/19/getty-images-us-inc-and-others-v-stability-ai-ltd-2025-ewhc-38-ch-an-interesting-case-in-ai-and-intellectual-property-law/"
   },
   {
     "id": 21,
@@ -318,7 +338,8 @@
     "value_unit": "millions",
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://theconversation.com/an-academic-publisher-has-struck-an-ai-data-deal-with-microsoft-without-their-authors-knowledge-235203"
   },
   {
     "id": 22,
@@ -334,7 +355,8 @@
     "codes": [
       "C",
       "S"
-    ]
+    ],
+    "source_url": "https://www.404media.co/harpercollins-ai-deal/"
   },
   {
     "id": 23,
@@ -349,7 +371,8 @@
     "value_unit": "millions",
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://magis.substack.com/p/ai-data-licensing-deals"
   },
   {
     "id": 24,
@@ -364,7 +387,8 @@
     "value_unit": "millions",
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.reuters.com/technology/inside-big-techs-underground-race-buy-ai-training-data-2024-04-05/"
   },
   {
     "id": 25,
@@ -379,7 +403,8 @@
     "value_unit": "millions",
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.reuters.com/technology/inside-big-techs-underground-race-buy-ai-training_data-2024-04-05/"
   },
   {
     "id": 26,
@@ -394,7 +419,8 @@
     "value_unit": "millions",
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.reuters.com/technology/inside-big-techs-underground-race-buy-ai-training-data-2024-04-05/"
   },
   {
     "id": 27,
@@ -409,7 +435,8 @@
     "value_unit": "millions",
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.reuters.com/technology/inside-big-techs-underground-race-buy-ai-training-data-2024-04-05/"
   },
   {
     "id": 28,
@@ -424,7 +451,8 @@
     "value_unit": "millions",
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://apnews.com/article/openai-news-corp-a49144d381796df5729c746f52fbef19"
   },
   {
     "id": 29,
@@ -439,7 +467,8 @@
     "value_unit": "millions",
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.theverge.com/2024/3/12/24098728/perplexity-chatbot-yelp-suggestions-data-ai"
   },
   {
     "id": 30,
@@ -454,7 +483,8 @@
     "value_unit": "millions",
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.booksandpublishing.com.au/articles/2024/09/04/258068/wiley-expects-to-make-us44-million-from-ai-partnership-authors-unable-to-opt-out/"
   },
   {
     "id": 31,
@@ -469,7 +499,8 @@
     "value_unit": "millions",
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.cbsnews.com/news/google-reddit-60-million-deal-ai-training/"
   },
   {
     "id": 32,
@@ -484,7 +515,8 @@
     "value_unit": "millions",
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.insidehighered.com/news/faculty-issues/research/2024/07/29/taylor-francis-ai-deal-sets-worrying-precedent"
   },
   {
     "id": 33,
@@ -499,7 +531,8 @@
     "value_unit": "millions",
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.reuters.com/technology/inside-big-techs-underground-race-buy-ai-training-data-2024-04-05/"
   },
   {
     "id": 34,
@@ -515,7 +548,8 @@
     "codes": [
       "C",
       "R"
-    ]
+    ],
+    "source_url": "https://www.tempus.com/news/tempus-reports-second-quarter-2025-results/?srsltid=AfmBOoqkGt9igPgNkP7xs-nB9mQHrrmXvWg_oQgfFKvzYnaVLSfzeYjK"
   },
   {
     "id": 35,
@@ -530,7 +564,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.wired.com/story/google-deal-stackoverflow-ai-giants-pay-for-data/"
   },
   {
     "id": 36,
@@ -546,7 +581,8 @@
     "codes": [
       "C",
       "U"
-    ]
+    ],
+    "source_url": "https://www.axios.com/2024/10/25/meta-reuters-ai-news-facebook-instagram"
   },
   {
     "id": 37,
@@ -561,7 +597,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.404media.co/tumblr-and-wordpress-to-sell-users-data-to-train-ai-tools/"
   },
   {
     "id": 38,
@@ -576,7 +613,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.404media.co/tumblr-and-wordpress-to-sell-users-data-to-train-ai-tools/"
   },
   {
     "id": 39,
@@ -591,7 +629,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://musically.com/2024/08/21/symphonic-opens-its-catalogue-up-for-licensed-ai-training/"
   },
   {
     "id": 40,
@@ -606,7 +645,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.businessinsider.com/shutterstock-integrated-gen-ai-stock-digital-photo-video-content-service-2024-12"
   },
   {
     "id": 41,
@@ -621,7 +661,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.reuters.com/markets/deals/investopedia-owner-dotdash-meridith-signs-content-license-deal-with-openai-2024-05-07/"
   },
   {
     "id": 42,
@@ -636,7 +677,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.reuters.com/technology/artificial-intelligence/openai-signs-multi-year-content-deal-with-time-magazine-2024-06-27/"
   },
   {
     "id": 43,
@@ -651,7 +693,8 @@
     "value_unit": null,
     "codes": [
       "L"
-    ]
+    ],
+    "source_url": "https://harvardlawreview.org/blog/2024/04/nyt-v-openai-the-timess-about-face/"
   },
   {
     "id": 44,
@@ -666,7 +709,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.theverge.com/2024/5/16/24158529/reddit-openai-chatgpt-api-access-advertising"
   },
   {
     "id": 45,
@@ -681,7 +725,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.404media.co/tumblr-and-wordpress-to-sell-users-data-to-train-ai-tools/"
   },
   {
     "id": 46,
@@ -696,7 +741,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.theverge.com/2024/5/29/24167072/openai-content-copyright-vox-media-the-atlantic"
   },
   {
     "id": 47,
@@ -711,7 +757,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.404media.co/tumblr-and-wordpress-to-sell-users-data-to-train-ai-tools/"
   },
   {
     "id": 48,
@@ -726,7 +773,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.lemonde.fr/en/about-us/article/2024/03/13/le-monde-signs-artificial-intelligence-partnership-agreement-with-open-ai_6615418_115.html"
   },
   {
     "id": 49,
@@ -741,7 +789,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://openai.com/index/global-news-partnerships-le-monde-and-prisa-media/"
   },
   {
     "id": 50,
@@ -756,7 +805,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://aboutus.ft.com/press_release/openai"
   },
   {
     "id": 51,
@@ -771,7 +821,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.theatlantic.com/press-releases/archive/2024/05/atlantic-product-content-partnership-openai/678529/"
   },
   {
     "id": 52,
@@ -786,7 +837,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.condenast.com/news/conde-nast-openai-partnership"
   },
   {
     "id": 53,
@@ -801,7 +853,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.axios.com/2025/01/15/open-ai-axios-local-newsrooms-funding-deal"
   },
   {
     "id": 54,
@@ -816,7 +869,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.theguardian.com/gnm-press-office/2025/feb/14/guardian-media-group-announces-strategic-partnership-with-openai"
   },
   {
     "id": 55,
@@ -831,7 +885,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://openai.com/index/openai-partners-with-schibsted-media-group/"
   },
   {
     "id": 56,
@@ -846,7 +901,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://openai.com/index/openai-and-future-partner-on-specialist-content/"
   },
   {
     "id": 57,
@@ -861,7 +917,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://venturebeat.com/ai/openai-will-bring-cosmopolitan-publisher-hearsts-content-to-chatgpt"
   },
   {
     "id": 58,
@@ -876,7 +933,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.publishersweekly.com/pw/by-topic/industry-news/industry-deals/article/96248-wiley-creates-ai-partnership-program.html"
   },
   {
     "id": 59,
@@ -892,7 +950,8 @@
     "codes": [
       "C",
       "S"
-    ]
+    ],
+    "source_url": "https://pressgazette.co.uk/platforms/prorata-ai-dmg-media-guardian-sky-news/"
   },
   {
     "id": 60,
@@ -907,7 +966,8 @@
     "value_unit": null,
     "codes": [
       "U"
-    ]
+    ],
+    "source_url": "https://www.insidehighered.com/news/quick-takes/2024/08/05/oxford-university-press-actively-working-ai-companies"
   },
   {
     "id": 61,
@@ -922,7 +982,8 @@
     "value_unit": null,
     "codes": [
       "U"
-    ]
+    ],
+    "source_url": "https://www.thebookseller.com/news/cambridge-university-press--assessment-writes-to-20k-authors-for-ai-licensing-opt-in"
   },
   {
     "id": 62,
@@ -937,7 +998,8 @@
     "value_unit": null,
     "codes": [
       "U"
-    ]
+    ],
+    "source_url": "https://www.thebookseller.com/news/sage-confirms-it-is-in-talks-to-license-content-to-ai-firms"
   },
   {
     "id": 63,
@@ -952,7 +1014,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.nytimes.com/2025/05/29/business/media/new-york-times-amazon-ai-licensing.html"
   },
   {
     "id": 64,
@@ -967,7 +1030,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://newsroom.wiley.com/press-releases/press-release-details/2025/Wiley-Announces-Collaboration-With-Amazon-Web-Services-AWS-to-Integrate-Scientific-Content-Into-Life-Sciences-AI-Agents/"
   },
   {
     "id": 65,
@@ -982,7 +1046,8 @@
     "value_unit": null,
     "codes": [
       "L"
-    ]
+    ],
+    "source_url": "https://www.newsmediaalliance.org/news-media-alliance-announces-industry-lawsuit/"
   },
   {
     "id": 66,
@@ -997,7 +1062,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.ap.org/media-center/ap-in-the-news/2025/google-signs-deal-with-ap-to-deliver-up-to-date-news-through-its-gemini-ai-chatbot/"
   },
   {
     "id": 67,
@@ -1012,7 +1078,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://ca.finance.yahoo.com/news/mistral-signs-deal-afp-offer-095158286.html"
   },
   {
     "id": 68,
@@ -1027,7 +1094,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.openevidence.com/announcements/openevidence-and-nejm"
   },
   {
     "id": 69,
@@ -1042,7 +1110,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.booksandpublishing.com.au/articles/2024/09/04/258068/wiley-expects-to-make-us44-million-from-ai-partnership-authors-unable-to-opt-out/"
   },
   {
     "id": 70,
@@ -1057,7 +1126,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://policy.pinterest.com/en/privacy-policy"
   },
   {
     "id": 71,
@@ -1072,7 +1142,8 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.eurekalert.org/news-releases/1071967"
   },
   {
     "id": 72,
@@ -1087,7 +1158,8 @@
     "value_unit": null,
     "codes": [
       "U"
-    ]
+    ],
+    "source_url": "https://degruyterbrill.com/en/ai-for-authors/#:~:text=Why%20does%20De%20Gruyter%20Brill%20want%20to%20enter%20agreements%20with%20generative%20AI%20providers"
   },
   {
     "id": 73,
@@ -1102,6 +1174,7 @@
     "value_unit": null,
     "codes": [
       "C"
-    ]
+    ],
+    "source_url": "https://www.stocktitan.net/news/ZDGE/zedge-launches-data-seeds-ai-a-content-marketplace-for-ai-training-yzg8lvti96ec.html"
   }
 ]

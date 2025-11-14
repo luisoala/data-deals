@@ -9,6 +9,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Required for pushing commits back to repo
     
     steps:
       - name: Checkout code
@@ -57,6 +59,8 @@ jobs:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           DOMAIN_NAME: ${{ secrets.DOMAIN_NAME }}
           CERTBOT_EMAIL: ${{ secrets.CERTBOT_EMAIL }}
+          GITHUB_TOKEN: ${{ github.token }}  # Built-in token with repo write access
+          GITHUB_REPOSITORY: ${{ github.repository }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}

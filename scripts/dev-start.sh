@@ -47,14 +47,6 @@ fi
 echo "Syncing JSON data to database..."
 npm run sync
 
-# Parse bib URLs if needed
-if [ ! -f "public/data/ref-urls.json" ]; then
-    echo "Parsing bibliography URLs..."
-    node scripts/parse-bib-urls.js
-    mkdir -p public/data
-    cp data/ref-urls.json public/data/ref-urls.json 2>/dev/null || true
-fi
-
 echo ""
 echo "Setup complete!"
 echo ""

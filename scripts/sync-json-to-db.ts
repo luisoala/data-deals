@@ -98,24 +98,14 @@ async function main() {
   const jsonPath = path.join(process.cwd(), 'data', 'deals.json')
   const dealsData = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'))
 
-  // Load ref-to-URL mapping
-  const refUrlsPath = path.join(process.cwd(), 'public', 'data', 'ref-urls.json')
-  let refUrls: Record<string, string> = {}
-  try {
-    refUrls = JSON.parse(fs.readFileSync(refUrlsPath, 'utf-8'))
-    console.log(`Loaded ${Object.keys(refUrls).length} URL mappings`)
-  } catch (error) {
-    console.warn('Could not load ref-urls.json, continuing without source URLs')
-  }
-
   console.log(`Syncing ${dealsData.length} deals to database...`)
 
   let updatedCount = 0
   let missingCount = 0
   
   for (const deal of dealsData) {
-    // Get source URL from ref-urls.json mapping
-    const sourceUrl = refUrls[deal.ref] || null
+    // Get source URL directly from deals.json (single source of truth)
+    const sourceUrl = deal.source_url || null
     
     if (!sourceUrl) {
       missingCount++
@@ -124,7 +114,7 @@ async function main() {
       }
     }
 
-    // Upsert deal data
+    // Upsert deal data (including source_url from deals.json)
     await prisma.deal.upsert({
       where: { id: deal.id },
       update: {
@@ -138,6 +128,7 @@ async function main() {
         value_max: deal.value_max,
         value_unit: deal.value_unit,
         codes: JSON.stringify(deal.codes),
+        source_url: sourceUrl,
       },
       create: {
         id: deal.id,
@@ -155,19 +146,8 @@ async function main() {
       },
     })
     
-    // Update source_url separately using updateMany (more reliable)
     if (sourceUrl) {
-      await prisma.deal.updateMany({
-        where: { ref: deal.ref },
-        data: { source_url: sourceUrl },
-      })
       updatedCount++
-    } else {
-      // Clear source_url if it should be null
-      await prisma.deal.updateMany({
-        where: { ref: deal.ref },
-        data: { source_url: null },
-      })
     }
   }
 

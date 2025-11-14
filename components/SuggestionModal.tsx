@@ -13,7 +13,7 @@ export default function SuggestionModal({ deal, onClose }: SuggestionModalProps)
     data_receiver: deal?.data_receiver || '',
     data_aggregator: deal?.data_aggregator || '',
     ref: deal?.ref || '',
-    source_url: '', // URL for new entries
+    source_url: deal?.source_url || '', // Include URL for edits too
     date: deal?.date || new Date().getFullYear(),
     type: deal?.type || '',
     value_raw: deal?.value_raw || '',
@@ -137,21 +137,19 @@ export default function SuggestionModal({ deal, onClose }: SuggestionModalProps)
               </div>
             </div>
 
-            {!deal && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Source URL</label>
-                <input
-                  type="url"
-                  value={formData.source_url}
-                  onChange={(e) =>
-                    setFormData({ ...formData, source_url: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="https://..."
-                  required={!deal}
-                />
-              </div>
-            )}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Source URL</label>
+              <input
+                type="url"
+                value={formData.source_url}
+                onChange={(e) =>
+                  setFormData({ ...formData, source_url: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="https://..."
+                required={!deal}
+              />
+            </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>

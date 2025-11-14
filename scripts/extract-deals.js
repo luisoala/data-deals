@@ -173,6 +173,8 @@ const rawDeals = [
 ];
 
 // Process deals and add parsed values
+// source_url can be included directly in rawDeals array - if not provided, defaults to null
+// Example: { receiver: 'OpenAI', ..., source_url: 'https://example.com' }
 const deals = rawDeals.map((deal, index) => {
   const parsedValue = parseValue(deal.value);
   return {
@@ -183,7 +185,8 @@ const deals = rawDeals.map((deal, index) => {
     date: deal.date,
     type: deal.type,
     ...parsedValue,
-    codes: deal.codes
+    codes: deal.codes,
+    source_url: deal.source_url || null // Include URL in rawDeals array, or add manually in deals.json
   };
 });
 

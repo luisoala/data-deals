@@ -1,6 +1,22 @@
 import { NextAuthOptions } from 'next-auth'
 import GitHubProvider from 'next-auth/providers/github'
 
+// Ensure NEXTAUTH_URL is set correctly
+const nextAuthUrl = process.env.NEXTAUTH_URL
+if (!nextAuthUrl) {
+  console.error('ERROR: NEXTAUTH_URL is not set! Authentication will fail.')
+  console.error('Please set NEXTAUTH_URL in your .env file to your production URL')
+  console.error('Current env vars:', {
+    NODE_ENV: process.env.NODE_ENV,
+    VERCEL_URL: process.env.VERCEL_URL,
+  })
+}
+
+// Log the URL being used (for debugging)
+if (nextAuthUrl) {
+  console.log('NextAuth configured with URL:', nextAuthUrl)
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     GitHubProvider({

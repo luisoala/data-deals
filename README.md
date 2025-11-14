@@ -2,100 +2,100 @@
 
 Interactive web application showcasing AI data deals from the NeurIPS 2025 paper "A Sustainable AI Economy Needs Data Deals That Work for Generators".
 
-## Features
+## What This Is
 
-- **Interactive Network Graph**: Visualize relationships between data receivers and aggregators
-- **Advanced Filtering**: Filter by year, value, content type, and deal codes
-- **Sortable Table**: Explore all 73 data deals with sorting capabilities
-- **Community Contributions**: Users can suggest edits or new entries
-- **Admin Dashboard**: Review and approve suggestions (GitHub OAuth required)
-
-## Tech Stack
-
-- **Frontend**: Next.js 14+ (App Router) with TypeScript
-- **Styling**: Tailwind CSS
-- **Graph Visualization**: D3.js
-- **Database**: SQLite (development) / PostgreSQL (production)
-- **ORM**: Prisma
-- **Authentication**: NextAuth.js with GitHub OAuth
+A Next.js web application that visualizes and manages a dataset of 73 AI data deals, featuring:
+- Interactive network graph visualization
+- Filterable, sortable data table
+- Community-driven suggestions for edits/new entries
+- Admin dashboard for content moderation (GitHub OAuth)
 
 ## Quick Start
 
-### Prerequisites
-
-- Node.js 20+
-- npm or yarn
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd data-deals
-```
-
-2. Install dependencies:
 ```bash
 npm install
-```
-
-3. Set up environment variables:
-```bash
-cp .env.example .env
-```
-
-Edit `.env` with your configuration (see [docs/setup.md](docs/SETUP_CHECKLIST.md) for details).
-
-4. Set up database and start development:
-```bash
 npm run dev:setup
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000)
 
-## Development
+## Project Structure
 
-### Available Scripts
+```
+data-deals/
+├── app/                    # Next.js App Router
+│   ├── admin/              # Admin dashboard page
+│   ├── api/                # API routes (deals, suggestions, auth)
+│   ├── auth/               # Authentication pages
+│   ├── page.tsx            # Main homepage
+│   └── layout.tsx          # Root layout
+├── components/             # React components
+│   ├── AdminDashboard.tsx
+│   ├── DealsTable.tsx
+│   ├── Filters.tsx
+│   ├── NetworkGraph.tsx
+│   └── SuggestionModal.tsx
+├── data/                   # Data files
+│   ├── deals.json          # Single source of truth (73 deals)
+│   ├── README.md           # Data documentation
+│   └── archive/            # Historical paper materials
+├── docs/                   # Documentation
+│   ├── README.md           # Documentation index
+│   ├── DATA_MODEL.md       # Data structure details
+│   ├── DEPLOYMENT.md       # Deployment guide
+│   └── ...
+├── lib/                    # Shared utilities
+│   ├── auth.ts             # NextAuth configuration
+│   └── prisma.ts           # Prisma client
+├── prisma/                 # Database
+│   └── schema.prisma       # Prisma schema
+├── scripts/                # Build & deployment scripts
+│   ├── deploy.sh           # Production deployment
+│   ├── dev-start.sh        # Local development setup
+│   ├── sync-json-to-db.ts  # Sync deals.json → database
+│   ├── export-db-to-json.ts # Export database → deals.json
+│   └── archive/            # Deprecated scripts
+├── public/                 # Static assets
+├── middleware.ts           # Next.js middleware (auth)
+├── package.json            # Dependencies & scripts
+└── tsconfig.json           # TypeScript config
+```
 
-- `npm run dev`: Start development server
-- `npm run build`: Build for production
-- `npm run start`: Start production server
-- `npm run lint`: Run ESLint
-- `npm run sync`: Sync JSON data to database
-- `npm run db:studio`: Open Prisma Studio
+## Key Files
 
-### Adding New Deals
+- **`data/deals.json`** - Single source of truth for all 73 deals
+- **`prisma/schema.prisma`** - Database schema (Deal, Suggestion models)
+- **`scripts/deploy.sh`** - Production deployment script (EC2)
+- **`.github/workflows/deploy.yml`** - CI/CD workflow
 
-1. Edit `data/deals.json` directly, or
-2. Use the "Suggest New Entry" button on the website
-3. Admin can approve suggestions via the admin dashboard
+## Available Scripts
 
-## Deployment
-
-The repository includes automated deployment via GitHub Actions to EC2.
-
-See [docs/deployment.md](docs/DEPLOYMENT.md) for detailed deployment instructions.
+```bash
+npm run dev              # Start development server
+npm run dev:setup        # Full setup (install, db, sync)
+npm run build            # Build for production
+npm run start            # Start production server
+npm run sync             # Sync deals.json → database
+npm run export:db        # Export database → deals.json
+npm run db:studio        # Open Prisma Studio
+npm run db:push          # Push schema changes
+```
 
 ## Documentation
 
-Detailed documentation is available in the `docs/` directory:
+- **Data**: See `data/README.md` for data structure and workflow
+- **All Guides**: See `docs/README.md` for complete documentation index
+- **Deployment**: See `docs/DEPLOYMENT.md` for production setup
 
-- [Setup Guide](docs/SETUP_CHECKLIST.md) - Step-by-step setup instructions
-- [Deployment Guide](docs/DEPLOYMENT.md) - Deployment and admin access details
-- [GitHub OAuth Setup](docs/GITHUB_OAUTH_SETUP.md) - Authentication configuration
-- [Automated Deployment Plan](docs/AUTOMATED_DEPLOYMENT_PLAN.md) - CI/CD setup details
+## Tech Stack
 
-## Security
-
-**Important**: This is a public repository. Never commit:
-
-- API keys or secrets
-- Environment variables (`.env` files)
-- Private SSH keys
-- Database credentials
-- OAuth client secrets
-
-All sensitive configuration should be stored in GitHub Secrets (for CI/CD) or environment variables (for local development).
+- **Framework**: Next.js 14+ (App Router)
+- **Language**: TypeScript
+- **Database**: SQLite (dev) / Prisma ORM
+- **Auth**: NextAuth.js (GitHub OAuth)
+- **Styling**: Tailwind CSS
+- **Visualization**: D3.js
+- **Deployment**: GitHub Actions → EC2 (PM2, Nginx)
 
 ## License
 
