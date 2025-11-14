@@ -17,11 +17,24 @@ if (nextAuthUrl) {
   console.log('NextAuth configured with URL:', nextAuthUrl)
 }
 
+// Validate required environment variables
+const githubClientId = process.env.GITHUB_CLIENT_ID
+const githubClientSecret = process.env.GITHUB_CLIENT_SECRET
+
+if (!githubClientId || !githubClientSecret) {
+  console.error('ERROR: GitHub OAuth credentials not configured!')
+  console.error('Missing:', {
+    GITHUB_CLIENT_ID: !githubClientId,
+    GITHUB_CLIENT_SECRET: !githubClientSecret,
+  })
+  console.error('Please set GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET in your .env file')
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     GitHubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+      clientId: githubClientId || '',
+      clientSecret: githubClientSecret || '',
     }),
   ],
   callbacks: {

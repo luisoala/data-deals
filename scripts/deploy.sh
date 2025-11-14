@@ -192,10 +192,43 @@ npm run build
 echo "Restarting application..."
 # Delete and recreate to ensure fresh environment variables
 pm2 delete data-deals 2>/dev/null || true
-# Start with explicit working directory to ensure .env is loaded
-cd /home/ubuntu/data-deals
-pm2 start npm --name "data-deals" -- start
+
+# Verify .env file exists and has required variables
+if [ -f ".env" ]; then
+  echo "Verifying .env file contents..."
+  if grep -q "NEXTAUTH_URL=" .env && grep -q "GITHUB_CLIENT_ID=" .env; then
+    echo "✓ .env file contains required variables"
+    # Show NEXTAUTH_URL (masked) for debugging
+    NEXTAUTH_URL=$(grep '^NEXTAUTH_URL=' .env | cut -d'"' -f2)
+    echo "  NEXTAUTH_URL is set to: ${NEXTAUTH_URL:0:20}..."
+  else
+    echo "WARNING: .env file missing required variables!"
+  fi
+else
+  echo "ERROR: .env file not found!"
+  exit 1
+fi
+
+# Start PM2 from current directory (where .env file is located)
+# Next.js will automatically load .env from the project root
+# Use ecosystem file to ensure correct working directory
+cat > /tmp/pm2-ecosystem.json <<EOF
+{
+  "apps": [{
+    "name": "data-deals",
+    "script": "npm",
+    "args": "start",
+    "cwd": "$(pwd)",
+    "env": {
+      "NODE_ENV": "production"
+    }
+  }]
+}
+EOF
+
+pm2 start /tmp/pm2-ecosystem.json
 pm2 save
+rm -f /tmp/pm2-ecosystem.json
 
 # Verify NEXTAUTH_URL is accessible to the running process
 echo "Verifying environment variables are loaded..."
