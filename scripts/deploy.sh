@@ -209,9 +209,43 @@ else
   exit 1
 fi
 
-# Start PM2 from current directory (where .env file is located)
-# Next.js will automatically load .env from the project root
-# Use ecosystem file to ensure correct working directory
+# Load environment variables from .env file and pass to PM2
+# Next.js needs these at runtime, so we'll load them explicitly
+echo "Loading environment variables from .env file..."
+
+# Parse .env file and extract values (handles quoted and unquoted values)
+parse_env_value() {
+  local line="$1"
+  # Remove comments and empty lines
+  line=$(echo "$line" | sed 's/#.*$//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+  if [ -z "$line" ] || ! echo "$line" | grep -q '='; then
+    echo ""
+    return
+  fi
+  # Extract value after =, removing quotes if present
+  # First try quoted value, then unquoted
+  if echo "$line" | grep -q '=".*"'; then
+    echo "$line" | sed -n 's/^[^=]*="\(.*\)"$/\1/p'
+  else
+    echo "$line" | sed -n 's/^[^=]*=\(.*\)$/\1/p'
+  fi
+}
+
+# Extract values from .env file
+ENV_DATABASE_URL=$(parse_env_value "$(grep '^DATABASE_URL=' .env | head -1)" || echo "file:./prisma/prod.db")
+ENV_NEXTAUTH_URL=$(parse_env_value "$(grep '^NEXTAUTH_URL=' .env | head -1)" || echo "")
+ENV_NEXTAUTH_SECRET=$(parse_env_value "$(grep '^NEXTAUTH_SECRET=' .env | head -1)" || echo "")
+ENV_GITHUB_CLIENT_ID=$(parse_env_value "$(grep '^GITHUB_CLIENT_ID=' .env | head -1)" || echo "")
+ENV_GITHUB_CLIENT_SECRET=$(parse_env_value "$(grep '^GITHUB_CLIENT_SECRET=' .env | head -1)" || echo "")
+ENV_ADMIN_GITHUB_USERNAMES=$(parse_env_value "$(grep '^ADMIN_GITHUB_USERNAMES=' .env | head -1)" || echo "")
+
+# Escape JSON special characters
+escape_json() {
+  echo "$1" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/\$/\\$/g'
+}
+
+# Create PM2 ecosystem file with explicit environment variables
+# This ensures PM2 passes them to the Node.js process
 cat > /tmp/pm2-ecosystem.json <<EOF
 {
   "apps": [{
@@ -220,15 +254,30 @@ cat > /tmp/pm2-ecosystem.json <<EOF
     "args": "start",
     "cwd": "$(pwd)",
     "env": {
-      "NODE_ENV": "production"
+      "NODE_ENV": "production",
+      "DATABASE_URL": "$(escape_json "$ENV_DATABASE_URL")",
+      "NEXTAUTH_URL": "$(escape_json "$ENV_NEXTAUTH_URL")",
+      "NEXTAUTH_SECRET": "$(escape_json "$ENV_NEXTAUTH_SECRET")",
+      "GITHUB_CLIENT_ID": "$(escape_json "$ENV_GITHUB_CLIENT_ID")",
+      "GITHUB_CLIENT_SECRET": "$(escape_json "$ENV_GITHUB_CLIENT_SECRET")",
+      "ADMIN_GITHUB_USERNAMES": "$(escape_json "$ENV_ADMIN_GITHUB_USERNAMES")"
     }
   }]
 }
 EOF
 
+echo "Environment variables loaded:"
+echo "  NEXTAUTH_URL=${ENV_NEXTAUTH_URL:0:30}..."
+echo "  GITHUB_CLIENT_ID=${ENV_GITHUB_CLIENT_ID:0:10}..."
+
+echo "Starting PM2 with environment variables..."
 pm2 start /tmp/pm2-ecosystem.json
 pm2 save
 rm -f /tmp/pm2-ecosystem.json
+
+# Verify environment variables are set
+echo "Verifying PM2 environment..."
+pm2 env 0 | grep -E "(NEXTAUTH_URL|GITHUB_CLIENT_ID)" || echo "Note: Check PM2 env if variables are missing"
 
 # Verify NEXTAUTH_URL is accessible to the running process
 echo "Verifying environment variables are loaded..."
