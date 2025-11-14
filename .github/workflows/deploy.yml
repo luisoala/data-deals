@@ -274,19 +274,27 @@ jobs:
             # Validate and fix NEXTAUTH_URL if invalid
             if [ -f "$APP_DIR/.env" ]; then
               echo "Validating .env file..."
+              echo "Available env vars: DOMAIN_NAME=${DOMAIN_NAME:-<not set>}, EC2_HOST=${EC2_HOST:-<not set>}"
               
               # Determine correct NEXTAUTH_URL
+              EXPECTED_URL=""
               if [ -n "${DOMAIN_NAME:-}" ]; then
                 EXPECTED_URL="https://$DOMAIN_NAME"
+                echo "Using DOMAIN_NAME: $EXPECTED_URL"
               elif [ -n "${EC2_HOST:-}" ]; then
                 EXPECTED_URL="http://$EC2_HOST"
+                echo "Using EC2_HOST: $EXPECTED_URL"
               else
                 # Fallback to metadata service
-                EC2_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo "")
-                if [ -z "$EC2_IP" ]; then
-                  EC2_IP="localhost:3000"
+                echo "Trying to get EC2 IP from metadata service..."
+                EC2_IP=$(curl -s --max-time 2 http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo "")
+                if [ -n "$EC2_IP" ]; then
+                  EXPECTED_URL="http://$EC2_IP"
+                  echo "Using metadata service IP: $EXPECTED_URL"
+                else
+                  echo "WARNING: Could not determine EC2 IP. EC2_HOST secret may not be set."
+                  EXPECTED_URL=""
                 fi
-                EXPECTED_URL="http://$EC2_IP"
               fi
               
               # Check if NEXTAUTH_URL is invalid or doesn't match expected
@@ -297,8 +305,14 @@ jobs:
                  grep -q '^NEXTAUTH_URL="https://"$' "$APP_DIR/.env" || \
                  grep -q '^NEXTAUTH_URL=$' "$APP_DIR/.env" || \
                  [ "$CURRENT_URL" = "localhost:3000" ] || \
-                 [ "$CURRENT_URL" = "http://localhost:3000" ] || \
-                 [ "$CURRENT_URL" != "$EXPECTED_URL" ]; then
+                 [ "$CURRENT_URL" = "http://localhost:3000" ]; then
+                if [ -n "$EXPECTED_URL" ]; then
+                  echo "Updating NEXTAUTH_URL from '$CURRENT_URL' to: $EXPECTED_URL"
+                  sed -i "s|^NEXTAUTH_URL=.*|NEXTAUTH_URL=\"$EXPECTED_URL\"|" "$APP_DIR/.env"
+                else
+                  echo "WARNING: Cannot fix NEXTAUTH_URL - EC2_HOST secret not set. Deploy script will handle this."
+                fi
+              elif [ -n "$EXPECTED_URL" ] && [ "$CURRENT_URL" != "$EXPECTED_URL" ]; then
                 echo "Updating NEXTAUTH_URL from '$CURRENT_URL' to: $EXPECTED_URL"
                 sed -i "s|^NEXTAUTH_URL=.*|NEXTAUTH_URL=\"$EXPECTED_URL\"|" "$APP_DIR/.env"
               else
@@ -308,9 +322,9 @@ jobs:
             
             cd "$APP_DIR" || exit 1
             
-            # Run deployment script
+            # Run deployment script (pass env vars explicitly)
             echo "Running deployment script..."
-            bash scripts/deploy.sh || exit 1
+            DOMAIN_NAME="${DOMAIN_NAME:-}" EC2_HOST="${EC2_HOST:-}" bash scripts/deploy.sh || exit 1
             
             # Verify deployment
             echo "Verifying deployment..."

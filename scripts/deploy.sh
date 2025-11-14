@@ -69,29 +69,36 @@ fi
 
 # Verify NEXTAUTH_URL is set correctly before proceeding
 echo "Verifying NEXTAUTH_URL configuration..."
+echo "Available env vars: DOMAIN_NAME=${DOMAIN_NAME:-<not set>}, EC2_HOST=${EC2_HOST:-<not set>}"
+
 if [ -f ".env" ]; then
   NEXTAUTH_URL=$(grep '^NEXTAUTH_URL=' .env | cut -d'"' -f2 || echo "")
   
-  # Determine what it SHOULD be
+  # Determine what it SHOULD be - try multiple sources
+  EXPECTED_URL=""
+  
   if [ -n "${DOMAIN_NAME:-}" ]; then
     EXPECTED_URL="https://$DOMAIN_NAME"
+    echo "Using DOMAIN_NAME: $EXPECTED_URL"
   elif [ -n "${EC2_HOST:-}" ]; then
     EXPECTED_URL="http://$EC2_HOST"
+    echo "Using EC2_HOST: $EXPECTED_URL"
   else
     # Try to get IP from metadata service
-    EC2_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo "")
+    echo "Trying to get EC2 IP from metadata service..."
+    EC2_IP=$(curl -s --max-time 2 http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo "")
     if [ -n "$EC2_IP" ]; then
       EXPECTED_URL="http://$EC2_IP"
+      echo "Using metadata service IP: $EXPECTED_URL"
     else
-      EXPECTED_URL=""
+      echo "WARNING: Could not determine EC2 IP. EC2_HOST secret may not be set."
     fi
   fi
   
   # Check if invalid (empty, localhost, or doesn't match expected)
   if [ -z "$NEXTAUTH_URL" ] || \
      [ "$NEXTAUTH_URL" = "localhost:3000" ] || \
-     [ "$NEXTAUTH_URL" = "http://localhost:3000" ] || \
-     ([ -n "$EXPECTED_URL" ] && [ "$NEXTAUTH_URL" != "$EXPECTED_URL" ]); then
+     [ "$NEXTAUTH_URL" = "http://localhost:3000" ]; then
     if [ -n "$EXPECTED_URL" ]; then
       echo "Fixing NEXTAUTH_URL: $NEXTAUTH_URL -> $EXPECTED_URL"
       sed -i "s|^NEXTAUTH_URL=.*|NEXTAUTH_URL=\"$EXPECTED_URL\"|" .env
@@ -100,8 +107,13 @@ if [ -f ".env" ]; then
       echo "ERROR: NEXTAUTH_URL is not set correctly and cannot be auto-fixed!"
       echo "Current value: $NEXTAUTH_URL"
       echo "Please ensure DOMAIN_NAME or EC2_HOST secret is set in GitHub Actions."
+      echo "The EC2_HOST secret should contain the IP address or hostname of your EC2 instance."
       exit 1
     fi
+  elif [ -n "$EXPECTED_URL" ] && [ "$NEXTAUTH_URL" != "$EXPECTED_URL" ]; then
+    echo "Updating NEXTAUTH_URL to match expected: $NEXTAUTH_URL -> $EXPECTED_URL"
+    sed -i "s|^NEXTAUTH_URL=.*|NEXTAUTH_URL=\"$EXPECTED_URL\"|" .env
+    echo "✓ Updated NEXTAUTH_URL to: $EXPECTED_URL"
   else
     echo "✓ NEXTAUTH_URL is set to: $NEXTAUTH_URL"
   fi
