@@ -170,11 +170,73 @@ export default function Home() {
     <main className="min-h-screen bg-gray-50">
       <div className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Data Deals Interactive</h1>
-          <p className="text-gray-600">
-            Exploring AI data deals from the NeurIPS 2025 paper
-          </p>
+        <header className="mb-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+              <div className="flex-shrink-0">
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">AI Data Deals</h1>
+                <p className="text-gray-600">
+                  Interactive explorer
+                </p>
+              </div>
+              
+              {/* Vertical Separator */}
+              <div className="hidden lg:block border-l border-gray-300 flex-shrink-0"></div>
+              
+              {/* Paper Info Box */}
+              <div className="flex-1 grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 lg:gap-6">
+                {/* Column 1: Paper Title */}
+                <div className="flex flex-col">
+                  <h2 className="font-bold text-gray-900 text-sm leading-tight">
+                    A Sustainable AI Economy Needs Data Deals That Work for Generators
+                  </h2>
+                </div>
+                
+                {/* Column 2: Authors */}
+                <div className="flex flex-col ml-2">
+                  <p className="text-gray-700 text-sm leading-relaxed">
+                    Ruoxi Jia, Luis Oala, Wenjie Xiong, Suqin Ge, Jiachen T. Wang, Feiyang Kang, Dawn Song
+                  </p>
+                </div>
+                
+                {/* Column 3: Links */}
+                <div className="flex flex-wrap gap-x-3 gap-y-1">
+                  <a 
+                    href="https://openreview.net/pdf?id=mdKzkjY1dM" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 underline text-sm"
+                  >
+                    Paper
+                  </a>
+                  <a 
+                    href="https://neurips.cc/virtual/2025/loc/san-diego/poster/121926" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 underline text-sm"
+                  >
+                    NeurIPS Poster
+                  </a>
+                  <a 
+                    href="https://recorder-v3.slideslive.com/?share=107281&s=9746fb43-083d-4e57-a960-15a4e3fb26d8" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 underline text-sm"
+                  >
+                    Video
+                  </a>
+                  <a 
+                    href="https://docs.google.com/presentation/d/1gk3LhmmyvB9qs5wWdLMOdmmoGd7u2LDO-vnSBN89MBQ/edit?usp=sharing" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 underline text-sm"
+                  >
+                    Slides
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
         </header>
 
         {stats && (
