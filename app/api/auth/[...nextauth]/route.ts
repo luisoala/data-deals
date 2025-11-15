@@ -21,13 +21,10 @@ if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) {
 
 const handler = NextAuth(authOptions)
 
-// Wrap NextAuth handler to fix redirect URLs that don't include base path
+// Wrap NextAuth handlers to fix redirect URLs that don't include base path
 const BASE_PATH = process.env.BASE_PATH || process.env.NEXT_PUBLIC_BASE_PATH || '/neurips2025-data-deals'
 
-async function wrappedHandler(req: NextRequest) {
-  const response = await handler(req)
-  
-  // Fix redirect URLs in response headers that don't include base path
+async function fixRedirectUrl(response: Response): Promise<Response> {
   const location = response.headers.get('location')
   if (location && location.startsWith('/api/auth/') && !location.startsWith(BASE_PATH)) {
     // Rewrite redirect URL to include base path
@@ -42,8 +39,16 @@ async function wrappedHandler(req: NextRequest) {
     console.log(`[NextAuth] Fixed redirect URL: ${location} -> ${fixedLocation}`)
     return newResponse
   }
-  
   return response
 }
 
-export { wrappedHandler as GET, wrappedHandler as POST }
+export const GET = async (req: NextRequest, context: any) => {
+  const response = await handler.GET(req, context)
+  return fixRedirectUrl(response)
+}
+
+export const POST = async (req: NextRequest, context: any) => {
+  const response = await handler.POST(req, context)
+  return fixRedirectUrl(response)
+}
+
