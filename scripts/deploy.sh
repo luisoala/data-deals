@@ -196,6 +196,57 @@ pm2 delete data-deals 2>/dev/null || true
 # Verify .env file exists and has required variables
 if [ -f ".env" ]; then
   echo "Verifying .env file contents..."
+  
+  # Debug: Check if environment variables are available
+  echo "Checking environment variables from GitHub Actions:"
+  echo "  OAUTH_CLIENT_ID is ${OAUTH_CLIENT_ID:+set (length: ${#OAUTH_CLIENT_ID})}${OAUTH_CLIENT_ID:-<not set>}"
+  echo "  OAUTH_CLIENT_SECRET is ${OAUTH_CLIENT_SECRET:+set (length: ${#OAUTH_CLIENT_SECRET})}${OAUTH_CLIENT_SECRET:-<not set>}"
+  echo "  ADMIN_GITHUB_USERNAMES is ${ADMIN_GITHUB_USERNAMES:+set}${ADMIN_GITHUB_USERNAMES:-<not set>}"
+  
+  # Update .env file with environment variables from GitHub Actions if they're available
+  # This ensures secrets are written to .env file for PM2 to use
+  if [ -n "${OAUTH_CLIENT_ID:-}" ]; then
+    if grep -q "^GITHUB_CLIENT_ID=" .env; then
+      # Update existing value
+      sed -i "s|^GITHUB_CLIENT_ID=.*|GITHUB_CLIENT_ID=\"$OAUTH_CLIENT_ID\"|" .env
+      echo "✓ Updated GITHUB_CLIENT_ID in .env"
+    else
+      # Add new line
+      echo "GITHUB_CLIENT_ID=\"$OAUTH_CLIENT_ID\"" >> .env
+      echo "✓ Added GITHUB_CLIENT_ID to .env"
+    fi
+  fi
+  
+  if [ -n "${OAUTH_CLIENT_SECRET:-}" ]; then
+    if grep -q "^GITHUB_CLIENT_SECRET=" .env; then
+      sed -i "s|^GITHUB_CLIENT_SECRET=.*|GITHUB_CLIENT_SECRET=\"$OAUTH_CLIENT_SECRET\"|" .env
+      echo "✓ Updated GITHUB_CLIENT_SECRET in .env"
+    else
+      echo "GITHUB_CLIENT_SECRET=\"$OAUTH_CLIENT_SECRET\"" >> .env
+      echo "✓ Added GITHUB_CLIENT_SECRET to .env"
+    fi
+  fi
+  
+  if [ -n "${ADMIN_GITHUB_USERNAMES:-}" ]; then
+    if grep -q "^ADMIN_GITHUB_USERNAMES=" .env; then
+      sed -i "s|^ADMIN_GITHUB_USERNAMES=.*|ADMIN_GITHUB_USERNAMES=\"$ADMIN_GITHUB_USERNAMES\"|" .env
+      echo "✓ Updated ADMIN_GITHUB_USERNAMES in .env"
+    else
+      echo "ADMIN_GITHUB_USERNAMES=\"$ADMIN_GITHUB_USERNAMES\"" >> .env
+      echo "✓ Added ADMIN_GITHUB_USERNAMES to .env"
+    fi
+  fi
+  
+  if [ -n "${NEXTAUTH_SECRET:-}" ]; then
+    if grep -q "^NEXTAUTH_SECRET=" .env; then
+      sed -i "s|^NEXTAUTH_SECRET=.*|NEXTAUTH_SECRET=\"$NEXTAUTH_SECRET\"|" .env
+      echo "✓ Updated NEXTAUTH_SECRET in .env"
+    else
+      echo "NEXTAUTH_SECRET=\"$NEXTAUTH_SECRET\"" >> .env
+      echo "✓ Added NEXTAUTH_SECRET to .env"
+    fi
+  fi
+  
   if grep -q "NEXTAUTH_URL=" .env && grep -q "GITHUB_CLIENT_ID=" .env; then
     echo "✓ .env file contains required variables"
     # Show NEXTAUTH_URL (masked) for debugging

@@ -339,7 +339,17 @@ jobs:
             cd "$APP_DIR" || exit 1
             
             # Run deployment script (env vars should be exported above)
+            # Explicitly pass environment variables to ensure they're available
             echo "Running deployment script..."
+            echo "Verifying env vars before deploy script:"
+            echo "  OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID:+set (length: ${#OAUTH_CLIENT_ID})}${OAUTH_CLIENT_ID:-<not set>}"
+            echo "  OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET:+set (length: ${#OAUTH_CLIENT_SECRET})}${OAUTH_CLIENT_SECRET:-<not set>}"
+            OAUTH_CLIENT_ID="$OAUTH_CLIENT_ID" \
+            OAUTH_CLIENT_SECRET="$OAUTH_CLIENT_SECRET" \
+            ADMIN_GITHUB_USERNAMES="$ADMIN_GITHUB_USERNAMES" \
+            NEXTAUTH_SECRET="$NEXTAUTH_SECRET" \
+            EC2_HOST="$EC2_HOST" \
+            DOMAIN_NAME="$DOMAIN_NAME" \
             bash scripts/deploy.sh || exit 1
             
             # Verify deployment
