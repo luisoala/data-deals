@@ -165,9 +165,8 @@ server {
     ssl_certificate_key $SSL_KEY;
 
     # Handle the path prefix (matches base path and all sub-paths including _next/static)
-    # Rewrite to strip base path - Next.js will add it back for links/API calls
+    # Don't rewrite - Next.js handles basePath internally, but we need to prefix API calls manually
     location ~ ^$BASE_PATH {
-        rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
@@ -197,9 +196,8 @@ server {
     server_name _ ${EC2_IP};
 
     # Handle the path prefix (matches base path and all sub-paths including _next/static)
-    # Rewrite to strip base path - Next.js will add it back for links/API calls
+    # Don't rewrite - Next.js handles basePath internally, but we need to prefix API calls manually
     location ~ ^$BASE_PATH {
-        rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
@@ -236,9 +234,8 @@ server {
     }
 
     # Handle the path prefix (matches base path and all sub-paths including _next/static)
-    # Rewrite to strip base path - Next.js will add it back for links/API calls
+    # Don't rewrite - Next.js handles basePath internally, but we need to prefix API calls manually
     location ~ ^$BASE_PATH {
-        rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
@@ -261,9 +258,8 @@ server {
     server_name _ ${EC2_IP};
 
     # Handle the path prefix (matches base path and all sub-paths including _next/static)
-    # Rewrite to strip base path - Next.js will add it back for links/API calls
+    # Don't rewrite - Next.js handles basePath internally, but we need to prefix API calls manually
     location ~ ^$BASE_PATH {
-        rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
@@ -338,9 +334,8 @@ server {
     ssl_certificate_key $SSL_KEY;
 
     # Handle the path prefix (matches base path and all sub-paths including _next/static)
-    # Rewrite to strip base path - Next.js will add it back for links/API calls
+    # Don't rewrite - Next.js handles basePath internally, but we need to prefix API calls manually
     location ~ ^$BASE_PATH {
-        rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
@@ -370,9 +365,8 @@ server {
     server_name _ ${EC2_IP};
 
     # Handle the path prefix (matches base path and all sub-paths including _next/static)
-    # Rewrite to strip base path - Next.js will add it back for links/API calls
+    # Don't rewrite - Next.js handles basePath internally, but we need to prefix API calls manually
     location ~ ^$BASE_PATH {
-        rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
@@ -411,9 +405,8 @@ server {
     ssl_certificate_key $SSL_KEY;
 
     # Handle the path prefix (matches base path and all sub-paths including _next/static)
-    # Rewrite to strip base path - Next.js will add it back for links/API calls
+    # Don't rewrite - Next.js handles basePath internally, but we need to prefix API calls manually
     location ~ ^$BASE_PATH {
-        rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
@@ -443,9 +436,8 @@ server {
     server_name _ ${EC2_IP};
 
     # Handle the path prefix (matches base path and all sub-paths including _next/static)
-    # Rewrite to strip base path - Next.js will add it back for links/API calls
+    # Don't rewrite - Next.js handles basePath internally, but we need to prefix API calls manually
     location ~ ^$BASE_PATH {
-        rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
@@ -479,9 +471,8 @@ server {
     }
 
     # Handle the path prefix (matches base path and all sub-paths including _next/static)
-    # Rewrite to strip base path - Next.js will add it back for links/API calls
+    # Don't rewrite - Next.js handles basePath internally, but we need to prefix API calls manually
     location ~ ^$BASE_PATH {
-        rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
@@ -504,9 +495,8 @@ server {
     server_name _ ${EC2_IP};
 
     # Handle the path prefix (matches base path and all sub-paths including _next/static)
-    # Rewrite to strip base path - Next.js will add it back for links/API calls
+    # Don't rewrite - Next.js handles basePath internally, but we need to prefix API calls manually
     location ~ ^$BASE_PATH {
-        rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
@@ -666,6 +656,16 @@ if [ -f ".env" ]; then
     fi
   fi
   
+  # Ensure NEXT_PUBLIC_BASE_PATH is set for client-side API calls
+  BASE_PATH_VAL="${BASE_PATH:-/neurips2025-data-deals}"
+  if grep -q "^NEXT_PUBLIC_BASE_PATH=" .env; then
+    sed -i "s|^NEXT_PUBLIC_BASE_PATH=.*|NEXT_PUBLIC_BASE_PATH=\"$BASE_PATH_VAL\"|" .env
+    echo "✓ Updated NEXT_PUBLIC_BASE_PATH in .env"
+  else
+    echo "NEXT_PUBLIC_BASE_PATH=\"$BASE_PATH_VAL\"" >> .env
+    echo "✓ Added NEXT_PUBLIC_BASE_PATH to .env"
+  fi
+  
   if grep -q "NEXTAUTH_URL=" .env && grep -q "GITHUB_CLIENT_ID=" .env; then
     echo "✓ .env file contains required variables"
     # Show NEXTAUTH_URL (masked) for debugging
@@ -709,6 +709,7 @@ ENV_GITHUB_CLIENT_ID=$(parse_env_value "$(grep '^GITHUB_CLIENT_ID=' .env | head 
 ENV_GITHUB_CLIENT_SECRET=$(parse_env_value "$(grep '^GITHUB_CLIENT_SECRET=' .env | head -1)" || echo "")
 ENV_ADMIN_GITHUB_USERNAMES=$(parse_env_value "$(grep '^ADMIN_GITHUB_USERNAMES=' .env | head -1)" || echo "")
 ENV_BASE_PATH="${BASE_PATH:-/neurips2025-data-deals}"
+ENV_NEXT_PUBLIC_BASE_PATH=$(parse_env_value "$(grep '^NEXT_PUBLIC_BASE_PATH=' .env | head -1)" || echo "$ENV_BASE_PATH")
 
 # Escape JSON special characters
 escape_json() {
@@ -734,7 +735,8 @@ cat > "$ECOSYSTEM_FILE" <<EOF
       "GITHUB_CLIENT_ID": "$(escape_json "$ENV_GITHUB_CLIENT_ID")",
       "GITHUB_CLIENT_SECRET": "$(escape_json "$ENV_GITHUB_CLIENT_SECRET")",
       "ADMIN_GITHUB_USERNAMES": "$(escape_json "$ENV_ADMIN_GITHUB_USERNAMES")",
-      "BASE_PATH": "$(escape_json "$ENV_BASE_PATH")"
+      "BASE_PATH": "$(escape_json "$ENV_BASE_PATH")",
+      "NEXT_PUBLIC_BASE_PATH": "$(escape_json "$ENV_NEXT_PUBLIC_BASE_PATH")"
     }
   }]
 }

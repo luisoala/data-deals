@@ -3,6 +3,9 @@
 import { useState } from 'react'
 import { Deal } from '@/app/page'
 
+// Base path for API calls (matches next.config.js basePath)
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '/neurips2025-data-deals'
+
 interface SuggestionModalProps {
   deal: Deal | null
   onClose: () => void
@@ -29,7 +32,7 @@ export default function SuggestionModal({ deal, onClose }: SuggestionModalProps)
     try {
       const codes = formData.codes.split(',').map(c => c.trim()).filter(Boolean)
       
-      const response = await fetch('/api/suggestions', {
+      const response = await fetch(`${BASE_PATH}/api/suggestions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

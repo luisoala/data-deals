@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react'
 import { Deal } from '@/app/page'
 
+// Base path for API calls (matches next.config.js basePath)
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '/neurips2025-data-deals'
+
 interface Suggestion {
   id: number
   deal_id: number | null
@@ -26,7 +29,7 @@ export default function AdminDashboard() {
 
   const fetchSuggestions = async () => {
     try {
-      const response = await fetch('/api/suggestions?status=pending')
+      const response = await fetch(`${BASE_PATH}/api/suggestions?status=pending`)
       if (response.ok) {
         const data = await response.json()
         setSuggestions(data)
@@ -40,7 +43,7 @@ export default function AdminDashboard() {
 
   const handleApprove = async (suggestion: Suggestion) => {
     try {
-      const response = await fetch(`/api/suggestions/${suggestion.id}`, {
+      const response = await fetch(`${BASE_PATH}/api/suggestions/${suggestion.id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'approve' }),
@@ -65,7 +68,7 @@ export default function AdminDashboard() {
     }
 
     try {
-      const response = await fetch(`/api/suggestions/${suggestion.id}`, {
+      const response = await fetch(`${BASE_PATH}/api/suggestions/${suggestion.id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'reject' }),

@@ -8,6 +8,9 @@ import SuggestionModal from '@/components/SuggestionModal'
 import Link from 'next/link'
 import Image from 'next/image'
 
+// Base path for API calls (matches next.config.js basePath)
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '/neurips2025-data-deals'
+
 export interface Deal {
   id: number
   data_receiver: string
@@ -63,14 +66,14 @@ export default function Home() {
   }
 
   useEffect(() => {
-    fetch('/api/deals')
+    fetch(`${BASE_PATH}/api/deals`)
       .then(res => res.json())
       .then(data => {
         setDeals(data)
         setFilteredDeals(data)
       })
 
-    fetch('/api/stats')
+    fetch(`${BASE_PATH}/api/stats`)
       .then(res => res.json())
       .then(data => {
         setStats(data)
