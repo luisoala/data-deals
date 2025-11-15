@@ -159,8 +159,8 @@ jobs:
                 ssl_ciphers HIGH:!aNULL:!MD5;
                 ssl_prefer_server_ciphers on;
             
-                # Handle the path prefix - rewrite to remove prefix before proxying
-                location ~ ^$BASE_PATH(/|$) {
+                # Handle the path prefix (matches base path and all sub-paths including _next/static)
+                location ~ ^$BASE_PATH {
                     rewrite ^$BASE_PATH/?(.*) /\$1 break;
                     proxy_pass http://localhost:3000;
                     proxy_http_version 1.1;
