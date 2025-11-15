@@ -126,8 +126,11 @@ jobs:
               # Determine server name
               SERVER_NAME="${DOMAIN_NAME:-_}"
               
+              # Set base path (default to /neurips2025-data-deals)
+              BASE_PATH="${BASE_PATH:-/neurips2025-data-deals}"
+
               # Set up Nginx - HTTP server (for Let's Encrypt challenge or fallback)
-              echo "Configuring Nginx..."
+              echo "Configuring Nginx with base path: $BASE_PATH"
               if [ -n "${DOMAIN_NAME:-}" ]; then
                 # HTTPS configuration with SSL
                 sudo tee /etc/nginx/sites-available/data-deals > /dev/null <<EOF
@@ -156,7 +159,9 @@ jobs:
                 ssl_ciphers HIGH:!aNULL:!MD5;
                 ssl_prefer_server_ciphers on;
             
-                location / {
+                # Handle the path prefix - rewrite to remove prefix before proxying
+                location $BASE_PATH {
+                    rewrite ^$BASE_PATH/?(.*) /\$1 break;
                     proxy_pass http://localhost:3000;
                     proxy_http_version 1.1;
                     proxy_set_header Upgrade \$http_upgrade;
@@ -167,6 +172,11 @@ jobs:
                     proxy_set_header X-Forwarded-Proto \$scheme;
                     proxy_cache_bypass \$http_upgrade;
                 }
+                
+                # Redirect root to the app
+                location = / {
+                    return 301 $BASE_PATH;
+                }
             }
             EOF
               else
@@ -176,13 +186,23 @@ jobs:
                 listen 80;
                 server_name _;
             
-                location / {
+                # Handle the path prefix
+                location $BASE_PATH {
+                    rewrite ^$BASE_PATH/?(.*) /\$1 break;
                     proxy_pass http://localhost:3000;
                     proxy_http_version 1.1;
                     proxy_set_header Upgrade \$http_upgrade;
                     proxy_set_header Connection 'upgrade';
                     proxy_set_header Host \$host;
+                    proxy_set_header X-Real-IP \$remote_addr;
+                    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+                    proxy_set_header X-Forwarded-Proto \$scheme;
                     proxy_cache_bypass \$http_upgrade;
+                }
+                
+                # Redirect root to the app
+                location = / {
+                    return 301 $BASE_PATH;
                 }
             }
             EOF
@@ -228,19 +248,22 @@ jobs:
               if [ ! -f "$APP_DIR/.env" ]; then
                 echo "Creating .env file..."
                 
+                # Set base path (default to /neurips2025-data-deals)
+                BASE_PATH="${BASE_PATH:-/neurips2025-data-deals}"
+                
                 # Determine NEXTAUTH_URL based on domain or EC2_HOST
                 # Use domain with HTTPS if available, otherwise use EC2_HOST with HTTP
                 if [ -n "${DOMAIN_NAME:-}" ]; then
-                  NEXTAUTH_URL="https://$DOMAIN_NAME"
+                  NEXTAUTH_URL="https://$DOMAIN_NAME$BASE_PATH"
                 elif [ -n "${EC2_HOST:-}" ]; then
-                  NEXTAUTH_URL="http://$EC2_HOST"
+                  NEXTAUTH_URL="http://$EC2_HOST$BASE_PATH"
                 else
                   # Fallback to metadata service or localhost
                   EC2_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo "")
                   if [ -z "$EC2_IP" ]; then
                     EC2_IP="localhost:3000"
                   fi
-                  NEXTAUTH_URL="http://$EC2_IP"
+                  NEXTAUTH_URL="http://$EC2_IP$BASE_PATH"
                 fi
                 
                 # Use GitHub secrets if available, otherwise use template

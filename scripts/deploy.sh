@@ -141,7 +141,14 @@ if [ -n "$DOMAIN_NAME" ]; then
   
   if [ -f "$SSL_CERT" ] && [ -f "$SSL_KEY" ]; then
     echo "SSL certificate found, configuring HTTPS..."
+    # Get EC2 IP for fallback server block
+    EC2_IP="${EC2_HOST:-}"
+    if [ -z "$EC2_IP" ]; then
+      EC2_IP=$(curl -s --max-time 2 http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo "")
+    fi
+    
     sudo tee /etc/nginx/sites-available/data-deals > /dev/null <<EOF
+# HTTPS server block for domain
 server {
     listen 443 ssl http2;
     server_name $DOMAIN_NAME;
@@ -168,19 +175,19 @@ server {
     }
 }
 
+# HTTP redirect to HTTPS for domain
 server {
     listen 80;
     server_name $DOMAIN_NAME;
     return 301 https://\$server_name\$request_uri;
 }
-EOF
-  else
-    echo "SSL certificate not found, configuring HTTP only..."
-    sudo tee /etc/nginx/sites-available/data-deals > /dev/null <<EOF
-server {
-    listen 80;
-    server_name $DOMAIN_NAME;
 
+# IP-based server block (fallback for direct IP access - HTTP only)
+server {
+    listen 80 default_server;
+    server_name _ ${EC2_IP};
+
+    # Handle the path prefix
     location $BASE_PATH {
         rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
@@ -199,9 +206,90 @@ server {
     }
 }
 EOF
+  else
+    echo "SSL certificate not found, configuring HTTP only..."
+    # Get EC2 IP for fallback server block
+    EC2_IP="${EC2_HOST:-}"
+    if [ -z "$EC2_IP" ]; then
+      EC2_IP=$(curl -s --max-time 2 http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo "")
+    fi
+    
+    sudo tee /etc/nginx/sites-available/data-deals > /dev/null <<EOF
+# Domain-based server block
+server {
+    listen 80;
+    server_name $DOMAIN_NAME;
+
+    # Let's Encrypt challenge
+    location /.well-known/acme-challenge/ {
+        root /var/www/html;
+    }
+
+    # Handle the path prefix
+    location $BASE_PATH {
+        rewrite ^$BASE_PATH/?(.*) /\$1 break;
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_cache_bypass \$http_upgrade;
+    }
+
+    location = / {
+        return 301 $BASE_PATH;
+    }
+}
+
+# IP-based server block (fallback for direct IP access)
+server {
+    listen 80 default_server;
+    server_name _ ${EC2_IP};
+
+    # Handle the path prefix
+    location $BASE_PATH {
+        rewrite ^$BASE_PATH/?(.*) /\$1 break;
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_cache_bypass \$http_upgrade;
+    }
+
+    location = / {
+        return 301 $BASE_PATH;
+    }
+}
+EOF
+    
+    # Test and reload Nginx before trying to get SSL cert
+    sudo nginx -t && sudo systemctl reload nginx
+    
+    # Try to obtain SSL certificate if certbot is available
+    if command -v certbot &> /dev/null; then
+      echo "Attempting to obtain SSL certificate..."
+      CERTBOT_EMAIL_VAL="${CERTBOT_EMAIL:-admin@$DOMAIN_NAME}"
+      sudo certbot --nginx -d "$DOMAIN_NAME" --non-interactive --agree-tos --email "$CERTBOT_EMAIL_VAL" --redirect 2>&1 | head -20 || {
+        echo "SSL certificate setup failed (DNS may not be configured yet)"
+        echo "You can manually run: sudo certbot --nginx -d $DOMAIN_NAME"
+      }
+      
+      # If cert was obtained, reload Nginx config will be done by certbot
+      # Otherwise, reload to ensure HTTP config is active
+      sudo systemctl reload nginx || true
+    else
+      echo "Certbot not available, skipping SSL setup"
+    fi
   fi
   
-  # Test and reload Nginx
+  # Test and reload Nginx (if SSL cert was obtained, this ensures HTTPS config is active)
   sudo nginx -t && sudo systemctl reload nginx
   echo "✓ Nginx configuration updated"
 else
