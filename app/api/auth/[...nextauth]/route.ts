@@ -42,13 +42,24 @@ async function fixRedirectUrl(response: Response): Promise<Response> {
   return response
 }
 
+// NextAuth returns handlers directly - wrap them to fix redirect URLs
 export const GET = async (req: NextRequest, context: any) => {
-  const response = await handler.GET(req, context)
-  return fixRedirectUrl(response)
+  try {
+    const response = await handler(req, context)
+    return fixRedirectUrl(response)
+  } catch (error) {
+    console.error('[NextAuth] GET handler error:', error)
+    throw error
+  }
 }
 
 export const POST = async (req: NextRequest, context: any) => {
-  const response = await handler.POST(req, context)
-  return fixRedirectUrl(response)
+  try {
+    const response = await handler(req, context)
+    return fixRedirectUrl(response)
+  } catch (error) {
+    console.error('[NextAuth] POST handler error:', error)
+    throw error
+  }
 }
 
