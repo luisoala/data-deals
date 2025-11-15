@@ -128,7 +128,10 @@ if [ ! -f "$APP_DIR/.env" ]; then
 DATABASE_URL="file:./prisma/prod.db"
 
 # NextAuth
-NEXTAUTH_URL="http://$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo 'localhost:3000')"
+# NEXTAUTH_URL must include /api/auth at the end for NextAuth to work correctly
+BASE_PATH="${BASE_PATH:-/neurips2025-data-deals}"
+EC2_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo 'localhost:3000')
+NEXTAUTH_URL="http://$EC2_IP$BASE_PATH/api/auth"
 NEXTAUTH_SECRET="$(openssl rand -base64 32)"
 
 # GitHub OAuth (set these manually)

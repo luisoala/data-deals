@@ -78,20 +78,21 @@ if [ -f ".env" ]; then
   NEXTAUTH_URL=$(grep '^NEXTAUTH_URL=' .env | cut -d'"' -f2 || echo "")
   
   # Determine what it SHOULD be - try multiple sources
+  # NEXTAUTH_URL must include /api/auth at the end for NextAuth to work correctly
   EXPECTED_URL=""
   
   if [ -n "${DOMAIN_NAME:-}" ]; then
-    EXPECTED_URL="https://$DOMAIN_NAME$BASE_PATH"
+    EXPECTED_URL="https://$DOMAIN_NAME$BASE_PATH/api/auth"
     echo "Using DOMAIN_NAME with base path: $EXPECTED_URL"
   elif [ -n "${EC2_HOST:-}" ]; then
-    EXPECTED_URL="http://$EC2_HOST$BASE_PATH"
+    EXPECTED_URL="http://$EC2_HOST$BASE_PATH/api/auth"
     echo "Using EC2_HOST with base path: $EXPECTED_URL"
   else
     # Try to get IP from metadata service
     echo "Trying to get EC2 IP from metadata service..."
     EC2_IP=$(curl -s --max-time 2 http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo "")
     if [ -n "$EC2_IP" ]; then
-      EXPECTED_URL="http://$EC2_IP$BASE_PATH"
+      EXPECTED_URL="http://$EC2_IP$BASE_PATH/api/auth"
       echo "Using metadata service IP with base path: $EXPECTED_URL"
     else
       echo "WARNING: Could not determine EC2 IP. EC2_HOST secret may not be set."
