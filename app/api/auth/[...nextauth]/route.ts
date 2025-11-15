@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth'
 import { authOptions } from '@/lib/auth'
+import { NextRequest, NextResponse } from 'next/server'
 
 // Log environment variables at runtime to debug production issues
 console.log('[NextAuth] Environment check:')
@@ -20,4 +21,29 @@ if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) {
 
 const handler = NextAuth(authOptions)
 
-export { handler as GET, handler as POST }
+// Wrap NextAuth handler to fix redirect URLs that don't include base path
+const BASE_PATH = process.env.BASE_PATH || process.env.NEXT_PUBLIC_BASE_PATH || '/neurips2025-data-deals'
+
+async function wrappedHandler(req: NextRequest) {
+  const response = await handler(req)
+  
+  // Fix redirect URLs in response headers that don't include base path
+  const location = response.headers.get('location')
+  if (location && location.startsWith('/api/auth/') && !location.startsWith(BASE_PATH)) {
+    // Rewrite redirect URL to include base path
+    const fixedLocation = `${BASE_PATH}${location}`
+    // Clone response and update location header
+    const newResponse = new NextResponse(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers,
+    })
+    newResponse.headers.set('location', fixedLocation)
+    console.log(`[NextAuth] Fixed redirect URL: ${location} -> ${fixedLocation}`)
+    return newResponse
+  }
+  
+  return response
+}
+
+export { wrappedHandler as GET, wrappedHandler as POST }

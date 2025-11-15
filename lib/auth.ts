@@ -44,9 +44,6 @@ if (!githubClientId || !githubClientSecret) {
 const basePath = process.env.BASE_PATH || '/neurips2025-data-deals'
 
 export const authOptions: NextAuthOptions = {
-  // Explicitly set baseUrl to ensure NextAuth uses it for all URL construction
-  // This should match NEXTAUTH_URL but NextAuth might not use NEXTAUTH_URL correctly for server-side redirects
-  baseUrl: nextAuthUrl || undefined,
   providers: [
     GitHubProvider({
       clientId: githubClientId || '',
