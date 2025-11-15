@@ -26,6 +26,8 @@ const BASE_PATH = process.env.BASE_PATH || process.env.NEXT_PUBLIC_BASE_PATH || 
 
 async function fixRedirectUrl(response: Response): Promise<Response> {
   const location = response.headers.get('location')
+  console.log(`[NextAuth] Response status: ${response.status}, location: ${location}, BASE_PATH: ${BASE_PATH}`)
+  
   if (location && location.startsWith('/api/auth/') && !location.startsWith(BASE_PATH)) {
     // Rewrite redirect URL to include base path
     const fixedLocation = `${BASE_PATH}${location}`
@@ -43,6 +45,12 @@ async function fixRedirectUrl(response: Response): Promise<Response> {
       headers: headers,
     })
   }
+  
+  // Also check for relative URLs that start with /api/auth
+  if (location && location.startsWith('/api/auth/')) {
+    console.log(`[NextAuth] Found /api/auth URL but it already starts with BASE_PATH or doesn't match pattern`)
+  }
+  
   return response
 }
 
