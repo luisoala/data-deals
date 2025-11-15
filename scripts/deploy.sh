@@ -164,8 +164,8 @@ server {
     ssl_certificate $SSL_CERT;
     ssl_certificate_key $SSL_KEY;
 
-    # Handle the path prefix
-    location ~ ^$BASE_PATH(/|$) {
+    # Handle the path prefix (matches base path and all sub-paths including _next/static)
+    location ~ ^$BASE_PATH {
         rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
@@ -195,8 +195,8 @@ server {
     listen 80 default_server;
     server_name _ ${EC2_IP};
 
-    # Handle the path prefix
-    location ~ ^$BASE_PATH(/|$) {
+    # Handle the path prefix (matches base path and all sub-paths including _next/static)
+    location ~ ^$BASE_PATH {
         rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
@@ -233,8 +233,8 @@ server {
         root /var/www/html;
     }
 
-    # Handle the path prefix
-    location ~ ^$BASE_PATH(/|$) {
+    # Handle the path prefix (matches base path and all sub-paths including _next/static)
+    location ~ ^$BASE_PATH {
         rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
@@ -257,8 +257,8 @@ server {
     listen 80 default_server;
     server_name _ ${EC2_IP};
 
-    # Handle the path prefix
-    location ~ ^$BASE_PATH(/|$) {
+    # Handle the path prefix (matches base path and all sub-paths including _next/static)
+    location ~ ^$BASE_PATH {
         rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
@@ -288,7 +288,8 @@ EOF
       # Wait a moment for Nginx to be fully ready
       sleep 2
       
-      # Run certbot to obtain certificate
+      # Run certbot to obtain/renew certificate
+      # Certbot will modify Nginx config, so we need to re-apply base path after
       sudo certbot --nginx -d "$DOMAIN_NAME" --non-interactive --agree-tos --email "$CERTBOT_EMAIL_VAL" --redirect 2>&1 | tee /tmp/certbot-output.log || {
         echo "SSL certificate setup failed. Checking certbot output..."
         tail -30 /tmp/certbot-output.log || echo "Could not read certbot output"
@@ -296,10 +297,10 @@ EOF
         echo "Make sure DNS is pointing to this server and ports 80/443 are open."
       }
       
-      # Check if certificate was successfully obtained
-      # Wait a moment for certbot to finish writing files
-      sleep 1
+      # Wait a moment for certbot to finish writing files and modifying config
+      sleep 2
       
+      # Check if certificate exists (either newly obtained or already existed)
       if [ -f "$SSL_CERT" ] && [ -f "$SSL_KEY" ]; then
         echo "✓ SSL certificate successfully obtained!"
         
@@ -323,8 +324,8 @@ server {
     ssl_certificate $SSL_CERT;
     ssl_certificate_key $SSL_KEY;
 
-    # Handle the path prefix
-    location ~ ^$BASE_PATH(/|$) {
+    # Handle the path prefix (matches base path and all sub-paths including _next/static)
+    location ~ ^$BASE_PATH {
         rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
@@ -354,8 +355,8 @@ server {
     listen 80 default_server;
     server_name _ ${EC2_IP};
 
-    # Handle the path prefix
-    location ~ ^$BASE_PATH(/|$) {
+    # Handle the path prefix (matches base path and all sub-paths including _next/static)
+    location ~ ^$BASE_PATH {
         rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
