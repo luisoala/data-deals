@@ -165,8 +165,9 @@ server {
     ssl_certificate_key $SSL_KEY;
 
     # Handle the path prefix (matches base path and all sub-paths including _next/static)
-    # Let Next.js handle the base path internally - don't rewrite
+    # Rewrite to strip base path - Next.js will add it back for links/API calls
     location ~ ^$BASE_PATH {
+        rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
@@ -196,8 +197,9 @@ server {
     server_name _ ${EC2_IP};
 
     # Handle the path prefix (matches base path and all sub-paths including _next/static)
-    # Let Next.js handle the base path internally - don't rewrite
+    # Rewrite to strip base path - Next.js will add it back for links/API calls
     location ~ ^$BASE_PATH {
+        rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
@@ -234,8 +236,9 @@ server {
     }
 
     # Handle the path prefix (matches base path and all sub-paths including _next/static)
-    # Let Next.js handle the base path internally - don't rewrite
+    # Rewrite to strip base path - Next.js will add it back for links/API calls
     location ~ ^$BASE_PATH {
+        rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
@@ -258,8 +261,9 @@ server {
     server_name _ ${EC2_IP};
 
     # Handle the path prefix (matches base path and all sub-paths including _next/static)
-    # Let Next.js handle the base path internally - don't rewrite
+    # Rewrite to strip base path - Next.js will add it back for links/API calls
     location ~ ^$BASE_PATH {
+        rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
@@ -334,8 +338,9 @@ server {
     ssl_certificate_key $SSL_KEY;
 
     # Handle the path prefix (matches base path and all sub-paths including _next/static)
-    # Let Next.js handle the base path internally - don't rewrite
+    # Rewrite to strip base path - Next.js will add it back for links/API calls
     location ~ ^$BASE_PATH {
+        rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
@@ -365,8 +370,9 @@ server {
     server_name _ ${EC2_IP};
 
     # Handle the path prefix (matches base path and all sub-paths including _next/static)
-    # Let Next.js handle the base path internally - don't rewrite
+    # Rewrite to strip base path - Next.js will add it back for links/API calls
     location ~ ^$BASE_PATH {
+        rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
@@ -405,8 +411,9 @@ server {
     ssl_certificate_key $SSL_KEY;
 
     # Handle the path prefix (matches base path and all sub-paths including _next/static)
-    # Let Next.js handle the base path internally - don't rewrite
+    # Rewrite to strip base path - Next.js will add it back for links/API calls
     location ~ ^$BASE_PATH {
+        rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
@@ -436,8 +443,9 @@ server {
     server_name _ ${EC2_IP};
 
     # Handle the path prefix (matches base path and all sub-paths including _next/static)
-    # Let Next.js handle the base path internally - don't rewrite
+    # Rewrite to strip base path - Next.js will add it back for links/API calls
     location ~ ^$BASE_PATH {
+        rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
@@ -471,8 +479,9 @@ server {
     }
 
     # Handle the path prefix (matches base path and all sub-paths including _next/static)
-    # Let Next.js handle the base path internally - don't rewrite
+    # Rewrite to strip base path - Next.js will add it back for links/API calls
     location ~ ^$BASE_PATH {
+        rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
@@ -495,8 +504,9 @@ server {
     server_name _ ${EC2_IP};
 
     # Handle the path prefix (matches base path and all sub-paths including _next/static)
-    # Let Next.js handle the base path internally - don't rewrite
+    # Rewrite to strip base path - Next.js will add it back for links/API calls
     location ~ ^$BASE_PATH {
+        rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
