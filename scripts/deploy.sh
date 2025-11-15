@@ -298,7 +298,7 @@ EOF
       }
       
       # Wait a moment for certbot to finish writing files and modifying config
-      sleep 2
+      sleep 3
       
       # Certbot ALWAYS modifies Nginx config when it runs (even for renewals)
       # We MUST re-apply base path configuration after certbot runs
@@ -310,8 +310,17 @@ EOF
         EC2_IP=$(curl -s --max-time 2 http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo "")
       fi
       
-      # Check if certificate exists (either newly obtained or already existed)
-      if [ -f "$SSL_CERT" ] && [ -f "$SSL_KEY" ]; then
+      # Check if certificate exists using sudo (files are root-owned)
+      # Also check certbot output log for success indicators
+      CERTBOT_SUCCESS=false
+      if grep -q "Successfully deployed certificate" /tmp/certbot-output.log 2>/dev/null || \
+         grep -q "Certificate not yet due for renewal" /tmp/certbot-output.log 2>/dev/null; then
+        CERTBOT_SUCCESS=true
+      fi
+      
+      # Check if certificate files exist (use sudo since they're root-owned)
+      if sudo test -f "$SSL_CERT" && sudo test -f "$SSL_KEY"; then
+        echo "✓ SSL certificate files found at $SSL_CERT"
         echo "✓ SSL certificate found, configuring HTTPS with base path..."
         
         # Re-apply the HTTPS config with base path
@@ -378,8 +387,77 @@ EOF
         # Test and reload Nginx with corrected config
         sudo nginx -t && sudo systemctl reload nginx
         echo "✓ Base path configuration restored after certbot (HTTPS)"
+      elif [ "$CERTBOT_SUCCESS" = "true" ]; then
+        echo "Certbot succeeded but certificate files check failed. Checking certificate path..."
+        echo "  SSL_CERT path: $SSL_CERT"
+        echo "  SSL_KEY path: $SSL_KEY"
+        sudo ls -la "$SSL_CERT" "$SSL_KEY" 2>&1 || true
+        echo "Applying HTTPS config anyway (certbot reported success)..."
+        
+        # Apply HTTPS config assuming certbot created the files
+        sudo tee /etc/nginx/sites-available/data-deals > /dev/null <<EOF
+# HTTPS server block for domain
+server {
+    listen 443 ssl http2;
+    server_name $DOMAIN_NAME;
+
+    ssl_certificate $SSL_CERT;
+    ssl_certificate_key $SSL_KEY;
+
+    # Handle the path prefix (matches base path and all sub-paths including _next/static)
+    location ~ ^$BASE_PATH {
+        rewrite ^$BASE_PATH/?(.*) /\$1 break;
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_cache_bypass \$http_upgrade;
+    }
+
+    location = / {
+        return 301 $BASE_PATH;
+    }
+}
+
+# HTTP redirect to HTTPS for domain
+server {
+    listen 80;
+    server_name $DOMAIN_NAME;
+    return 301 https://\$server_name\$request_uri;
+}
+
+# IP-based server block (fallback for direct IP access - HTTP only)
+server {
+    listen 80 default_server;
+    server_name _ ${EC2_IP};
+
+    # Handle the path prefix (matches base path and all sub-paths including _next/static)
+    location ~ ^$BASE_PATH {
+        rewrite ^$BASE_PATH/?(.*) /\$1 break;
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_cache_bypass \$http_upgrade;
+    }
+
+    location = / {
+        return 301 $BASE_PATH;
+    }
+}
+EOF
+        sudo nginx -t && sudo systemctl reload nginx
+        echo "✓ Base path configuration restored after certbot (HTTPS - certbot success fallback)"
       else
-        echo "SSL certificate files not found, but certbot ran. Re-applying HTTP config with base path..."
+        echo "SSL certificate files not found and certbot did not report success. Re-applying HTTP config with base path..."
         # Even if cert check fails, certbot may have modified config, so re-apply HTTP config
         sudo tee /etc/nginx/sites-available/data-deals > /dev/null <<EOF
 # Domain-based server block
