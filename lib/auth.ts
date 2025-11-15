@@ -67,12 +67,25 @@ export const authOptions: NextAuthOptions = {
       }
       return token
     },
+    async redirect({ url, baseUrl }) {
+      // Ensure redirects include the base path
+      // baseUrl should already include the base path from NEXTAUTH_URL
+      if (url.startsWith('/')) {
+        // Relative URL - prepend baseUrl (which includes basePath)
+        return `${baseUrl}${url}`
+      } else if (new URL(url).origin === baseUrl) {
+        // Same origin - return as is
+        return url
+      }
+      // External URL or fallback
+      return baseUrl
+    },
   },
   pages: {
     signIn: `${basePath}/auth/signin`,
   },
   // Ensure NextAuth uses the correct base path for API routes
-  // NextAuth should automatically detect basePath from Next.js config, but we can be explicit
+  // NEXTAUTH_URL should include /api/auth at the end
 }
 
 declare module 'next-auth' {
