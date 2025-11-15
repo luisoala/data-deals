@@ -246,7 +246,9 @@ escape_json() {
 
 # Create PM2 ecosystem file with explicit environment variables
 # This ensures PM2 passes them to the Node.js process
-cat > /tmp/pm2-ecosystem.json <<EOF
+# Use project directory so PM2 can find it reliably
+ECOSYSTEM_FILE="$(pwd)/ecosystem.config.json"
+cat > "$ECOSYSTEM_FILE" <<EOF
 {
   "apps": [{
     "name": "data-deals",
@@ -269,15 +271,29 @@ EOF
 echo "Environment variables loaded:"
 echo "  NEXTAUTH_URL=${ENV_NEXTAUTH_URL:0:30}..."
 echo "  GITHUB_CLIENT_ID=${ENV_GITHUB_CLIENT_ID:0:10}..."
+echo "  GITHUB_CLIENT_SECRET=${ENV_GITHUB_CLIENT_SECRET:0:10}..."
+
+# Debug: Show ecosystem file contents (masked)
+echo "PM2 ecosystem file contents (masked):"
+cat "$ECOSYSTEM_FILE" | sed 's/"GITHUB_CLIENT_ID": "[^"]*"/"GITHUB_CLIENT_ID": "***"/' | sed 's/"GITHUB_CLIENT_SECRET": "[^"]*"/"GITHUB_CLIENT_SECRET": "***"/' | head -15
 
 echo "Starting PM2 with environment variables..."
-pm2 start /tmp/pm2-ecosystem.json
+# Delete existing process first
+pm2 delete data-deals 2>/dev/null || true
+# Start with ecosystem file (use relative path from project directory)
+cd "$(pwd)"
+pm2 start ecosystem.config.json
 pm2 save
-rm -f /tmp/pm2-ecosystem.json
+# Keep ecosystem file for future restarts (don't delete it)
 
-# Verify environment variables are set
+# Verify environment variables are set in PM2
 echo "Verifying PM2 environment..."
-pm2 env 0 | grep -E "(NEXTAUTH_URL|GITHUB_CLIENT_ID)" || echo "Note: Check PM2 env if variables are missing"
+sleep 2
+pm2 env 0 | grep -E "(NEXTAUTH_URL|GITHUB_CLIENT_ID|GITHUB_CLIENT_SECRET)" || {
+  echo "WARNING: Environment variables not found in PM2 env!"
+  echo "Checking PM2 process info..."
+  pm2 describe data-deals | grep -A 20 "env:" || true
+}
 
 # Verify NEXTAUTH_URL is accessible to the running process
 echo "Verifying environment variables are loaded..."
