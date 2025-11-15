@@ -246,12 +246,11 @@ export default function Home() {
                   {/* Logos 1 */}
                   <div className="flex items-center">
                     <Image 
-                      src="/logos/logos1.png" 
+                      src={`${BASE_PATH}/logos/logos1.png`}
                       alt="Institutional logos" 
                       width={200}
                       height={64}
                       className="h-auto max-h-16 object-contain"
-                      unoptimized={process.env.NODE_ENV === 'production'}
                     />
                   </div>
                   
@@ -261,12 +260,11 @@ export default function Home() {
                   {/* Logos 2 */}
                   <div className="flex items-center flex-shrink-0">
                     <Image 
-                      src="/logos/logos2.png" 
+                      src={`${BASE_PATH}/logos/logos2.png`}
                       alt="NeurIPS logo" 
                       width={120}
                       height={64}
                       className="h-auto max-h-16 object-contain"
-                      unoptimized={process.env.NODE_ENV === 'production'}
                     />
                   </div>
                 </div>

@@ -40,6 +40,9 @@ if (!githubClientId || !githubClientSecret) {
   console.log('  Client Secret:', githubClientSecret.substring(0, 10) + '...')
 }
 
+// Get base path from environment (matches next.config.js)
+const basePath = process.env.BASE_PATH || '/neurips2025-data-deals'
+
 export const authOptions: NextAuthOptions = {
   providers: [
     GitHubProvider({
@@ -66,8 +69,10 @@ export const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: '/auth/signin',
+    signIn: `${basePath}/auth/signin`,
   },
+  // Ensure NextAuth uses the correct base path for API routes
+  // NextAuth should automatically detect basePath from Next.js config, but we can be explicit
 }
 
 declare module 'next-auth' {
