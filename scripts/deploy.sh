@@ -154,6 +154,7 @@ if [ -n "$DOMAIN_NAME" ]; then
       EC2_IP=$(curl -s --max-time 2 http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo "")
     fi
     
+    # Always write the full config with base path (certbot may have modified it)
     sudo tee /etc/nginx/sites-available/data-deals > /dev/null <<EOF
 # HTTPS server block for domain
 server {
@@ -296,15 +297,24 @@ EOF
       }
       
       # Check if certificate was successfully obtained
+      # Wait a moment for certbot to finish writing files
+      sleep 1
+      
       if [ -f "$SSL_CERT" ] && [ -f "$SSL_KEY" ]; then
         echo "✓ SSL certificate successfully obtained!"
         
-        # Certbot modifies Nginx config - we need to ensure base path is still configured
-        # Check if certbot preserved our base path location block
-        if ! grep -q "location.*$BASE_PATH" /etc/nginx/sites-available/data-deals; then
-          echo "Re-applying base path configuration after certbot..."
-          # Re-apply the HTTPS config with base path
-          sudo tee /etc/nginx/sites-available/data-deals > /dev/null <<EOF
+        # Certbot ALWAYS modifies Nginx config - we MUST re-apply base path configuration
+        # Certbot creates a generic config that proxies / to localhost:3000, which breaks base path
+        echo "Re-applying base path configuration after certbot (certbot always overwrites config)..."
+        
+        # Get EC2 IP for fallback server block
+        EC2_IP="${EC2_HOST:-}"
+        if [ -z "$EC2_IP" ]; then
+          EC2_IP=$(curl -s --max-time 2 http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo "")
+        fi
+        
+        # Re-apply the HTTPS config with base path
+        sudo tee /etc/nginx/sites-available/data-deals > /dev/null <<EOF
 # HTTPS server block for domain
 server {
     listen 443 ssl http2;
@@ -363,11 +373,10 @@ server {
     }
 }
 EOF
-          sudo nginx -t && sudo systemctl reload nginx
-        fi
         
-        # Reload Nginx to apply certbot's changes
-        sudo systemctl reload nginx || true
+        # Test and reload Nginx with corrected config
+        sudo nginx -t && sudo systemctl reload nginx
+        echo "✓ Base path configuration restored after certbot"
       else
         echo "SSL certificate not obtained yet. HTTP-only configuration active."
         # Reload to ensure HTTP config is active
