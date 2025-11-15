@@ -84,21 +84,63 @@ export default function DealsTable({ deals, searchQuery, onSearchChange, onEdit,
         </button>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full table-fixed">
+        <style dangerouslySetInnerHTML={{__html: `
+          @media (max-width: 767px) {
+            .deals-table col:nth-child(1) { width: 35%; }
+            .deals-table col:nth-child(2) { width: 35%; }
+            .deals-table col:nth-child(3) { width: 0; }
+            .deals-table col:nth-child(4) { width: 0; }
+            .deals-table col:nth-child(5) { width: 0; }
+            .deals-table col:nth-child(6) { width: 0; }
+            .deals-table col:nth-child(7) { width: 0; }
+            .deals-table col:nth-child(8) { width: 30%; }
+          }
+          @media (min-width: 768px) and (max-width: 1023px) {
+            .deals-table col:nth-child(1) { width: 25%; }
+            .deals-table col:nth-child(2) { width: 25%; }
+            .deals-table col:nth-child(3) { width: 10%; }
+            .deals-table col:nth-child(4) { width: 0; }
+            .deals-table col:nth-child(5) { width: 0; }
+            .deals-table col:nth-child(6) { width: 0; }
+            .deals-table col:nth-child(7) { width: 0; }
+            .deals-table col:nth-child(8) { width: 15%; }
+          }
+          @media (min-width: 1024px) and (max-width: 1279px) {
+            .deals-table col:nth-child(1) { width: 20%; }
+            .deals-table col:nth-child(2) { width: 20%; }
+            .deals-table col:nth-child(3) { width: 8%; }
+            .deals-table col:nth-child(4) { width: 10%; }
+            .deals-table col:nth-child(5) { width: 12%; }
+            .deals-table col:nth-child(6) { width: 0; }
+            .deals-table col:nth-child(7) { width: 0; }
+            .deals-table col:nth-child(8) { width: 15%; }
+          }
+          @media (min-width: 1280px) {
+            .deals-table col:nth-child(1) { width: 15%; }
+            .deals-table col:nth-child(2) { width: 15%; }
+            .deals-table col:nth-child(3) { width: 8%; }
+            .deals-table col:nth-child(4) { width: 10%; }
+            .deals-table col:nth-child(5) { width: 12%; }
+            .deals-table col:nth-child(6) { width: 8%; }
+            .deals-table col:nth-child(7) { width: 17%; }
+            .deals-table col:nth-child(8) { width: 15%; }
+          }
+        `}} />
+        <table className="w-full table-fixed deals-table">
           <colgroup>
-            <col style={{ width: '15%' }} />
-            <col style={{ width: '15%' }} />
-            <col style={{ width: '8%' }} />
-            <col style={{ width: '10%' }} />
-            <col style={{ width: '12%' }} />
-            <col style={{ width: '8%' }} />
-            <col style={{ width: '20%' }} />
-            <col style={{ width: '12%' }} />
+            <col />
+            <col />
+            <col />
+            <col />
+            <col />
+            <col />
+            <col />
+            <col />
           </colgroup>
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th
-                className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                className="px-3 md:px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                 onClick={() => handleSort('data_receiver')}
               >
                 <div className="flex items-center gap-1">
@@ -107,7 +149,7 @@ export default function DealsTable({ deals, searchQuery, onSearchChange, onEdit,
                 </div>
               </th>
               <th
-                className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                className="px-3 md:px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                 onClick={() => handleSort('data_aggregator')}
               >
                 <div className="flex items-center gap-1">
@@ -116,7 +158,7 @@ export default function DealsTable({ deals, searchQuery, onSearchChange, onEdit,
                 </div>
               </th>
               <th
-                className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                className="hidden md:table-cell px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                 onClick={() => handleSort('date')}
               >
                 <div className="flex items-center gap-1">
@@ -125,7 +167,7 @@ export default function DealsTable({ deals, searchQuery, onSearchChange, onEdit,
                 </div>
               </th>
               <th
-                className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                className="hidden lg:table-cell px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                 onClick={() => handleSort('type')}
               >
                 <div className="flex items-center gap-1">
@@ -134,7 +176,7 @@ export default function DealsTable({ deals, searchQuery, onSearchChange, onEdit,
                 </div>
               </th>
               <th
-                className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                className="hidden lg:table-cell px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                 onClick={() => handleSort('value_raw')}
               >
                 <div className="flex items-center gap-1">
@@ -142,13 +184,13 @@ export default function DealsTable({ deals, searchQuery, onSearchChange, onEdit,
                   <SortIcon field="value_raw" />
                 </div>
               </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+              <th className="hidden xl:table-cell px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                 Codes
               </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+              <th className="hidden xl:table-cell px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                 Source
               </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+              <th className="px-3 md:px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
               </th>
             </tr>
           </thead>
@@ -157,22 +199,22 @@ export default function DealsTable({ deals, searchQuery, onSearchChange, onEdit,
                   const sourceInfo = getSourceInfo(deal)
                   return (
                 <tr key={deal.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 text-xs text-gray-900 font-medium truncate" title={deal.data_receiver}>
+                  <td className="px-3 md:px-6 py-4 text-xs text-gray-900 font-medium truncate" title={deal.data_receiver}>
                     {deal.data_receiver}
                   </td>
-                  <td className="px-6 py-4 text-xs text-gray-900 truncate" title={deal.data_aggregator}>
+                  <td className="px-3 md:px-6 py-4 text-xs text-gray-900 truncate" title={deal.data_aggregator}>
                     {deal.data_aggregator}
                   </td>
-                  <td className="px-6 py-4 text-xs text-gray-600 whitespace-nowrap">
+                  <td className="hidden md:table-cell px-6 py-4 text-xs text-gray-600 whitespace-nowrap">
                     {deal.date}
                   </td>
-                  <td className="px-6 py-4 text-xs text-gray-600 whitespace-nowrap">
+                  <td className="hidden lg:table-cell px-6 py-4 text-xs text-gray-600 whitespace-nowrap">
                     {deal.type}
                   </td>
-                  <td className="px-6 py-4 text-xs text-gray-600 whitespace-nowrap">
+                  <td className="hidden lg:table-cell px-6 py-4 text-xs text-gray-600 whitespace-nowrap">
                     {deal.value_raw}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="hidden xl:table-cell px-6 py-4 whitespace-nowrap">
                     <div className="flex gap-1">
                       {deal.codes.map(code => (
                         <span
@@ -184,7 +226,7 @@ export default function DealsTable({ deals, searchQuery, onSearchChange, onEdit,
                       ))}
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-xs truncate">
+                  <td className="hidden xl:table-cell px-6 py-4 text-xs truncate">
                     {sourceInfo.url ? (
                       <a
                         href={sourceInfo.url}
@@ -199,10 +241,10 @@ export default function DealsTable({ deals, searchQuery, onSearchChange, onEdit,
                       <span className="text-gray-400" title={sourceInfo.name}>{sourceInfo.name}</span>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-xs text-right">
+                  <td className="px-3 md:px-6 py-4 whitespace-nowrap text-xs text-right">
                     <button
                       onClick={() => onEdit(deal)}
-                      className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-200 transition-colors"
+                      className="px-2 md:px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-200 transition-colors"
                     >
                       Edit
                     </button>

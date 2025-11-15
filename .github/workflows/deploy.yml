@@ -72,6 +72,7 @@ jobs:
             
             # Export environment variables directly from GitHub Actions secrets
             # These are passed via the env section and should be available
+            export BASE_PATH="/neurips2025-data-deals"
             export DOMAIN_NAME="${{ secrets.DOMAIN_NAME }}"
             export EC2_HOST="${{ secrets.EC2_HOST }}"
             export OAUTH_CLIENT_ID="${{ secrets.OAUTH_CLIENT_ID }}"
@@ -292,21 +293,24 @@ jobs:
               echo "Validating .env file..."
               echo "Available env vars (after export): DOMAIN_NAME=${DOMAIN_NAME:-<not set>}, EC2_HOST=${EC2_HOST:-<not set>}"
               
+              # Set base path (default to /neurips2025-data-deals)
+              BASE_PATH="${BASE_PATH:-/neurips2025-data-deals}"
+              
               # Determine correct NEXTAUTH_URL
               EXPECTED_URL=""
               if [ -n "${DOMAIN_NAME:-}" ]; then
-                EXPECTED_URL="https://$DOMAIN_NAME"
-                echo "Using DOMAIN_NAME: $EXPECTED_URL"
+                EXPECTED_URL="https://$DOMAIN_NAME$BASE_PATH"
+                echo "Using DOMAIN_NAME with base path: $EXPECTED_URL"
               elif [ -n "${EC2_HOST:-}" ]; then
-                EXPECTED_URL="http://$EC2_HOST"
-                echo "Using EC2_HOST: $EXPECTED_URL"
+                EXPECTED_URL="http://$EC2_HOST$BASE_PATH"
+                echo "Using EC2_HOST with base path: $EXPECTED_URL"
               else
                 # Fallback to metadata service
                 echo "Trying to get EC2 IP from metadata service..."
                 EC2_IP=$(curl -s --max-time 2 http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo "")
                 if [ -n "$EC2_IP" ]; then
-                  EXPECTED_URL="http://$EC2_IP"
-                  echo "Using metadata service IP: $EXPECTED_URL"
+                  EXPECTED_URL="http://$EC2_IP$BASE_PATH"
+                  echo "Using metadata service IP with base path: $EXPECTED_URL"
                 else
                   echo "WARNING: Could not determine EC2 IP. EC2_HOST secret may not be set."
                   EXPECTED_URL=""
@@ -344,6 +348,7 @@ jobs:
             echo "Verifying env vars before deploy script:"
             echo "  OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID:+set (length: ${#OAUTH_CLIENT_ID})}${OAUTH_CLIENT_ID:-<not set>}"
             echo "  OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET:+set (length: ${#OAUTH_CLIENT_SECRET})}${OAUTH_CLIENT_SECRET:-<not set>}"
+            BASE_PATH="${BASE_PATH:-/neurips2025-data-deals}" \
             OAUTH_CLIENT_ID="$OAUTH_CLIENT_ID" \
             OAUTH_CLIENT_SECRET="$OAUTH_CLIENT_SECRET" \
             ADMIN_GITHUB_USERNAMES="$ADMIN_GITHUB_USERNAMES" \

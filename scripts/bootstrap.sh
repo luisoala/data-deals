@@ -73,18 +73,34 @@ cd "$APP_DIR"
 
 # Set up Nginx configuration
 echo "Configuring Nginx..."
+BASE_PATH="${BASE_PATH:-/neurips2025-data-deals}"
+DOMAIN_NAME="${DOMAIN_NAME:-}"
+
+# Configure Nginx with path prefix support
 sudo tee /etc/nginx/sites-available/data-deals > /dev/null <<EOF
 server {
     listen 80;
-    server_name _;
+    server_name ${DOMAIN_NAME:-_};
 
-    location / {
+    # Handle the path prefix - rewrite to remove prefix before proxying
+    location ${BASE_PATH} {
+        # Remove the base path prefix before proxying to Next.js
+        rewrite ^${BASE_PATH}/?(.*) /\$1 break;
+        
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection 'upgrade';
         proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
         proxy_cache_bypass \$http_upgrade;
+    }
+
+    # Optional: Redirect root to the app
+    location = / {
+        return 301 ${BASE_PATH};
     }
 }
 EOF

@@ -69,7 +69,10 @@ fi
 
 # Verify NEXTAUTH_URL is set correctly before proceeding
 echo "Verifying NEXTAUTH_URL configuration..."
-echo "Available env vars: DOMAIN_NAME=${DOMAIN_NAME:-<not set>}, EC2_HOST=${EC2_HOST:-<not set>}"
+echo "Available env vars: DOMAIN_NAME=${DOMAIN_NAME:-<not set>}, EC2_HOST=${EC2_HOST:-<not set>}, BASE_PATH=${BASE_PATH:-/neurips2025-data-deals}"
+
+# Set base path (default to /neurips2025-data-deals)
+BASE_PATH="${BASE_PATH:-/neurips2025-data-deals}"
 
 if [ -f ".env" ]; then
   NEXTAUTH_URL=$(grep '^NEXTAUTH_URL=' .env | cut -d'"' -f2 || echo "")
@@ -78,18 +81,18 @@ if [ -f ".env" ]; then
   EXPECTED_URL=""
   
   if [ -n "${DOMAIN_NAME:-}" ]; then
-    EXPECTED_URL="https://$DOMAIN_NAME"
-    echo "Using DOMAIN_NAME: $EXPECTED_URL"
+    EXPECTED_URL="https://$DOMAIN_NAME$BASE_PATH"
+    echo "Using DOMAIN_NAME with base path: $EXPECTED_URL"
   elif [ -n "${EC2_HOST:-}" ]; then
-    EXPECTED_URL="http://$EC2_HOST"
-    echo "Using EC2_HOST: $EXPECTED_URL"
+    EXPECTED_URL="http://$EC2_HOST$BASE_PATH"
+    echo "Using EC2_HOST with base path: $EXPECTED_URL"
   else
     # Try to get IP from metadata service
     echo "Trying to get EC2 IP from metadata service..."
     EC2_IP=$(curl -s --max-time 2 http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo "")
     if [ -n "$EC2_IP" ]; then
-      EXPECTED_URL="http://$EC2_IP"
-      echo "Using metadata service IP: $EXPECTED_URL"
+      EXPECTED_URL="http://$EC2_IP$BASE_PATH"
+      echo "Using metadata service IP with base path: $EXPECTED_URL"
     else
       echo "WARNING: Could not determine EC2 IP. EC2_HOST secret may not be set."
     fi
@@ -121,6 +124,88 @@ else
   echo "ERROR: .env file not found!"
   echo "This should have been created by the bootstrap script."
   exit 1
+fi
+
+# Update Nginx configuration with base path
+echo "Updating Nginx configuration..."
+BASE_PATH="${BASE_PATH:-/neurips2025-data-deals}"
+DOMAIN_NAME="${DOMAIN_NAME:-}"
+
+# Update Nginx config if domain is set
+if [ -n "$DOMAIN_NAME" ]; then
+  echo "Configuring Nginx for domain $DOMAIN_NAME with base path $BASE_PATH"
+  
+  # Check if SSL certificate exists
+  SSL_CERT="/etc/letsencrypt/live/$DOMAIN_NAME/fullchain.pem"
+  SSL_KEY="/etc/letsencrypt/live/$DOMAIN_NAME/privkey.pem"
+  
+  if [ -f "$SSL_CERT" ] && [ -f "$SSL_KEY" ]; then
+    echo "SSL certificate found, configuring HTTPS..."
+    sudo tee /etc/nginx/sites-available/data-deals > /dev/null <<EOF
+server {
+    listen 443 ssl http2;
+    server_name $DOMAIN_NAME;
+
+    ssl_certificate $SSL_CERT;
+    ssl_certificate_key $SSL_KEY;
+
+    # Handle the path prefix
+    location $BASE_PATH {
+        rewrite ^$BASE_PATH/?(.*) /\$1 break;
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_cache_bypass \$http_upgrade;
+    }
+
+    location = / {
+        return 301 $BASE_PATH;
+    }
+}
+
+server {
+    listen 80;
+    server_name $DOMAIN_NAME;
+    return 301 https://\$server_name\$request_uri;
+}
+EOF
+  else
+    echo "SSL certificate not found, configuring HTTP only..."
+    sudo tee /etc/nginx/sites-available/data-deals > /dev/null <<EOF
+server {
+    listen 80;
+    server_name $DOMAIN_NAME;
+
+    location $BASE_PATH {
+        rewrite ^$BASE_PATH/?(.*) /\$1 break;
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_cache_bypass \$http_upgrade;
+    }
+
+    location = / {
+        return 301 $BASE_PATH;
+    }
+}
+EOF
+  fi
+  
+  # Test and reload Nginx
+  sudo nginx -t && sudo systemctl reload nginx
+  echo "✓ Nginx configuration updated"
+else
+  echo "DOMAIN_NAME not set, skipping Nginx update (using existing config)"
 fi
 
 # Install dependencies
@@ -289,6 +374,7 @@ ENV_NEXTAUTH_SECRET=$(parse_env_value "$(grep '^NEXTAUTH_SECRET=' .env | head -1
 ENV_GITHUB_CLIENT_ID=$(parse_env_value "$(grep '^GITHUB_CLIENT_ID=' .env | head -1)" || echo "")
 ENV_GITHUB_CLIENT_SECRET=$(parse_env_value "$(grep '^GITHUB_CLIENT_SECRET=' .env | head -1)" || echo "")
 ENV_ADMIN_GITHUB_USERNAMES=$(parse_env_value "$(grep '^ADMIN_GITHUB_USERNAMES=' .env | head -1)" || echo "")
+ENV_BASE_PATH="${BASE_PATH:-/neurips2025-data-deals}"
 
 # Escape JSON special characters
 escape_json() {
@@ -313,7 +399,8 @@ cat > "$ECOSYSTEM_FILE" <<EOF
       "NEXTAUTH_SECRET": "$(escape_json "$ENV_NEXTAUTH_SECRET")",
       "GITHUB_CLIENT_ID": "$(escape_json "$ENV_GITHUB_CLIENT_ID")",
       "GITHUB_CLIENT_SECRET": "$(escape_json "$ENV_GITHUB_CLIENT_SECRET")",
-      "ADMIN_GITHUB_USERNAMES": "$(escape_json "$ENV_ADMIN_GITHUB_USERNAMES")"
+      "ADMIN_GITHUB_USERNAMES": "$(escape_json "$ENV_ADMIN_GITHUB_USERNAMES")",
+      "BASE_PATH": "$(escape_json "$ENV_BASE_PATH")"
     }
   }]
 }

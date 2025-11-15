@@ -6,6 +6,7 @@ import Filters from '@/components/Filters'
 import DealsTable from '@/components/DealsTable'
 import SuggestionModal from '@/components/SuggestionModal'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export interface Deal {
   id: number
@@ -27,6 +28,7 @@ export default function Home() {
   const [filteredDeals, setFilteredDeals] = useState<Deal[]>([])
   const [selectedNodes, setSelectedNodes] = useState<Set<string>>(new Set())
   const [searchQuery, setSearchQuery] = useState('')
+  const [copied, setCopied] = useState(false)
   const [filters, setFilters] = useState({
     yearMin: 2016,
     yearMax: 2025,
@@ -184,23 +186,16 @@ export default function Home() {
               <div className="hidden lg:block border-l border-gray-300 flex-shrink-0"></div>
               
               {/* Paper Info Box */}
-              <div className="flex-1 grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 lg:gap-6">
-                {/* Column 1: Paper Title */}
+              <div className="flex-1 grid grid-cols-1 md:grid-cols-[3fr_auto] gap-4 lg:gap-6">
+                {/* Column 1: Paper Title + Links */}
                 <div className="flex flex-col">
                   <h2 className="font-bold text-gray-900 text-sm leading-tight">
-                    A Sustainable AI Economy Needs Data Deals That Work for Generators
+                    A Sustainable AI Economy Needs
                   </h2>
-                </div>
-                
-                {/* Column 2: Authors */}
-                <div className="flex flex-col ml-2">
-                  <p className="text-gray-700 text-sm leading-relaxed">
-                    Ruoxi Jia, Luis Oala, Wenjie Xiong, Suqin Ge, Jiachen T. Wang, Feiyang Kang, Dawn Song
-                  </p>
-                </div>
-                
-                {/* Column 3: Links */}
-                <div className="flex flex-wrap gap-x-3 gap-y-1">
+                  <h2 className="font-bold text-gray-900 text-sm leading-tight">
+                    Data Deals That Work for Generators
+                  </h2>
+                  <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2">
                   <a 
                     href="https://openreview.net/pdf?id=mdKzkjY1dM" 
                     target="_blank" 
@@ -233,6 +228,42 @@ export default function Home() {
                   >
                     Slides
                   </a>
+                  </div>
+                </div>
+                
+                {/* Column 2: Authors + Logos */}
+                <div className="flex items-center gap-4">
+                  {/* Authors - narrower column */}
+                  <div className="flex flex-col max-w-xs">
+                    <p className="text-gray-700 text-sm leading-relaxed">
+                      Ruoxi Jia, Luis Oala, Wenjie Xiong, Suqin Ge, Jiachen T. Wang, Feiyang Kang, Dawn Song
+                    </p>
+                  </div>
+                  
+                  {/* Logos 1 */}
+                  <div className="flex items-center">
+                    <Image 
+                      src="/logos/logos1.png" 
+                      alt="Institutional logos" 
+                      width={200}
+                      height={64}
+                      className="h-auto max-h-16 object-contain"
+                    />
+                  </div>
+                  
+                  {/* Vertical Separator */}
+                  <div className="hidden lg:block border-l border-gray-300 flex-shrink-0 h-16 mx-4"></div>
+                  
+                  {/* Logos 2 */}
+                  <div className="flex items-center flex-shrink-0">
+                    <Image 
+                      src="/logos/logos2.png" 
+                      alt="NeurIPS logo" 
+                      width={120}
+                      height={64}
+                      className="h-auto max-h-16 object-contain"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -304,14 +335,55 @@ export default function Home() {
           />
         )}
 
-        {/* Footer with Admin Dashboard */}
+        {/* Footer with Citation and Admin Dashboard */}
         <footer className="mt-12 pt-8 border-t border-gray-200">
-          <Link
-            href="/admin"
-            className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors inline-block"
-          >
-            Admin Dashboard
-          </Link>
+          <div className="flex flex-col md:flex-row gap-6 items-start">
+            {/* Citation Box */}
+            <div className="flex-1 max-w-7xl">
+              <p className="text-sm text-gray-600 mb-2">
+                We appreciate if you cite our work as follows:
+              </p>
+              <div className="relative bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <pre className="text-xs font-mono text-gray-800 whitespace-pre-wrap overflow-x-auto">
+{`@inproceedings{
+jia2025a,
+title={A Sustainable {AI} Economy Needs Data Deals That Work for Generators},
+author={Ruoxi Jia and Luis Oala and Wenjie Xiong and Suqin Ge and Jiachen T. Wang and Feiyang Kang and Dawn Song},
+booktitle={The Thirty-Ninth Annual Conference on Neural Information Processing Systems Position Paper Track},
+year={2025},
+url={https://openreview.net/forum?id=mdKzkjY1dM}
+}`}
+                </pre>
+                <button
+                  onClick={() => {
+                    const bibtex = `@inproceedings{
+jia2025a,
+title={A Sustainable {AI} Economy Needs Data Deals That Work for Generators},
+author={Ruoxi Jia and Luis Oala and Wenjie Xiong and Suqin Ge and Jiachen T. Wang and Feiyang Kang and Dawn Song},
+booktitle={The Thirty-Ninth Annual Conference on Neural Information Processing Systems Position Paper Track},
+year={2025},
+url={https://openreview.net/forum?id=mdKzkjY1dM}
+}`
+                    navigator.clipboard.writeText(bibtex)
+                    setCopied(true)
+                    setTimeout(() => setCopied(false), 2000)
+                  }}
+                  className="absolute top-2 right-2 px-2 py-1 bg-white border border-gray-300 rounded text-xs text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  {copied ? 'Copied!' : 'Copy'}
+                </button>
+              </div>
+            </div>
+            
+            <div className="flex justify-end w-full md:w-auto md:ml-auto">
+              <Link
+                href="/admin"
+                className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors inline-block self-start"
+              >
+                Admin Dashboard
+              </Link>
+            </div>
+          </div>
         </footer>
       </div>
     </main>
