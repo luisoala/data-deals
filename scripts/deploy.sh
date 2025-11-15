@@ -594,6 +594,7 @@ fi
 echo "Building Next.js app..."
 # Export BASE_PATH so Next.js can use it during build (next.config.js reads process.env.BASE_PATH)
 export BASE_PATH="${BASE_PATH:-/neurips2025-data-deals}"
+echo "Building with BASE_PATH=${BASE_PATH}"
 npm run build
 
 # Restart PM2 process (this will reload .env file)
