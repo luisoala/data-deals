@@ -300,19 +300,19 @@ EOF
       # Wait a moment for certbot to finish writing files and modifying config
       sleep 2
       
+      # Certbot ALWAYS modifies Nginx config when it runs (even for renewals)
+      # We MUST re-apply base path configuration after certbot runs
+      echo "Re-applying base path configuration after certbot (certbot always overwrites config)..."
+      
+      # Get EC2 IP for fallback server block
+      EC2_IP="${EC2_HOST:-}"
+      if [ -z "$EC2_IP" ]; then
+        EC2_IP=$(curl -s --max-time 2 http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo "")
+      fi
+      
       # Check if certificate exists (either newly obtained or already existed)
       if [ -f "$SSL_CERT" ] && [ -f "$SSL_KEY" ]; then
-        echo "✓ SSL certificate successfully obtained!"
-        
-        # Certbot ALWAYS modifies Nginx config - we MUST re-apply base path configuration
-        # Certbot creates a generic config that proxies / to localhost:3000, which breaks base path
-        echo "Re-applying base path configuration after certbot (certbot always overwrites config)..."
-        
-        # Get EC2 IP for fallback server block
-        EC2_IP="${EC2_HOST:-}"
-        if [ -z "$EC2_IP" ]; then
-          EC2_IP=$(curl -s --max-time 2 http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo "")
-        fi
+        echo "✓ SSL certificate found, configuring HTTPS with base path..."
         
         # Re-apply the HTTPS config with base path
         sudo tee /etc/nginx/sites-available/data-deals > /dev/null <<EOF
@@ -377,11 +377,66 @@ EOF
         
         # Test and reload Nginx with corrected config
         sudo nginx -t && sudo systemctl reload nginx
-        echo "✓ Base path configuration restored after certbot"
+        echo "✓ Base path configuration restored after certbot (HTTPS)"
       else
-        echo "SSL certificate not obtained yet. HTTP-only configuration active."
-        # Reload to ensure HTTP config is active
-        sudo systemctl reload nginx || true
+        echo "SSL certificate files not found, but certbot ran. Re-applying HTTP config with base path..."
+        # Even if cert check fails, certbot may have modified config, so re-apply HTTP config
+        sudo tee /etc/nginx/sites-available/data-deals > /dev/null <<EOF
+# Domain-based server block
+server {
+    listen 80;
+    server_name $DOMAIN_NAME;
+
+    # Let's Encrypt challenge
+    location /.well-known/acme-challenge/ {
+        root /var/www/html;
+    }
+
+    # Handle the path prefix (matches base path and all sub-paths including _next/static)
+    location ~ ^$BASE_PATH {
+        rewrite ^$BASE_PATH/?(.*) /\$1 break;
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_cache_bypass \$http_upgrade;
+    }
+
+    location = / {
+        return 301 $BASE_PATH;
+    }
+}
+
+# IP-based server block (fallback for direct IP access)
+server {
+    listen 80 default_server;
+    server_name _ ${EC2_IP};
+
+    # Handle the path prefix (matches base path and all sub-paths including _next/static)
+    location ~ ^$BASE_PATH {
+        rewrite ^$BASE_PATH/?(.*) /\$1 break;
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_cache_bypass \$http_upgrade;
+    }
+
+    location = / {
+        return 301 $BASE_PATH;
+    }
+}
+EOF
+        sudo nginx -t && sudo systemctl reload nginx
+        echo "✓ Base path configuration restored after certbot (HTTP)"
       fi
     else
       echo "WARNING: Certbot not available. SSL certificate cannot be obtained."
