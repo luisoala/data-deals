@@ -29,37 +29,31 @@ async function fixRedirectUrl(response: Response): Promise<Response> {
   if (location && location.startsWith('/api/auth/') && !location.startsWith(BASE_PATH)) {
     // Rewrite redirect URL to include base path
     const fixedLocation = `${BASE_PATH}${location}`
-    // Clone response and update location header
-    const newResponse = new NextResponse(response.body, {
+    console.log(`[NextAuth] Fixing redirect URL: ${location} -> ${fixedLocation}`)
+    // Create new response with fixed location header
+    const headers = new Headers(response.headers)
+    headers.set('location', fixedLocation)
+    
+    // Read body if it exists
+    const body = response.body ? await response.clone().text() : null
+    
+    return new NextResponse(body, {
       status: response.status,
       statusText: response.statusText,
-      headers: response.headers,
+      headers: headers,
     })
-    newResponse.headers.set('location', fixedLocation)
-    console.log(`[NextAuth] Fixed redirect URL: ${location} -> ${fixedLocation}`)
-    return newResponse
   }
   return response
 }
 
-// NextAuth returns handlers directly - wrap them to fix redirect URLs
+// NextAuth returns an object with GET and POST handlers
 export const GET = async (req: NextRequest, context: any) => {
-  try {
-    const response = await handler(req, context)
-    return fixRedirectUrl(response)
-  } catch (error) {
-    console.error('[NextAuth] GET handler error:', error)
-    throw error
-  }
+  const response = await handler.GET(req, context)
+  return fixRedirectUrl(response)
 }
 
 export const POST = async (req: NextRequest, context: any) => {
-  try {
-    const response = await handler(req, context)
-    return fixRedirectUrl(response)
-  } catch (error) {
-    console.error('[NextAuth] POST handler error:', error)
-    throw error
-  }
+  const response = await handler.POST(req, context)
+  return fixRedirectUrl(response)
 }
 
