@@ -251,6 +251,7 @@ export default function Home() {
                       width={200}
                       height={64}
                       className="h-auto max-h-16 object-contain"
+                      unoptimized={process.env.NODE_ENV === 'production'}
                     />
                   </div>
                   
@@ -265,6 +266,7 @@ export default function Home() {
                       width={120}
                       height={64}
                       className="h-auto max-h-16 object-contain"
+                      unoptimized={process.env.NODE_ENV === 'production'}
                     />
                   </div>
                 </div>
