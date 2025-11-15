@@ -131,6 +131,13 @@ echo "Updating Nginx configuration..."
 BASE_PATH="${BASE_PATH:-/neurips2025-data-deals}"
 DOMAIN_NAME="${DOMAIN_NAME:-}"
 
+# Install certbot if domain is set and certbot is not available
+if [ -n "$DOMAIN_NAME" ] && ! command -v certbot &> /dev/null; then
+  echo "Installing certbot for SSL certificate management..."
+  sudo apt-get update -qq
+  sudo apt-get install -y certbot python3-certbot-nginx
+fi
+
 # Update Nginx config if domain is set
 if [ -n "$DOMAIN_NAME" ]; then
   echo "Configuring Nginx for domain $DOMAIN_NAME with base path $BASE_PATH"
@@ -157,7 +164,7 @@ server {
     ssl_certificate_key $SSL_KEY;
 
     # Handle the path prefix
-    location $BASE_PATH {
+    location ~ ^$BASE_PATH(/|$) {
         rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
@@ -188,7 +195,7 @@ server {
     server_name _ ${EC2_IP};
 
     # Handle the path prefix
-    location $BASE_PATH {
+    location ~ ^$BASE_PATH(/|$) {
         rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
@@ -226,7 +233,7 @@ server {
     }
 
     # Handle the path prefix
-    location $BASE_PATH {
+    location ~ ^$BASE_PATH(/|$) {
         rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
@@ -250,7 +257,7 @@ server {
     server_name _ ${EC2_IP};
 
     # Handle the path prefix
-    location $BASE_PATH {
+    location ~ ^$BASE_PATH(/|$) {
         rewrite ^$BASE_PATH/?(.*) /\$1 break;
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
@@ -274,18 +281,101 @@ EOF
     
     # Try to obtain SSL certificate if certbot is available
     if command -v certbot &> /dev/null; then
-      echo "Attempting to obtain SSL certificate..."
+      echo "Attempting to obtain SSL certificate for $DOMAIN_NAME..."
       CERTBOT_EMAIL_VAL="${CERTBOT_EMAIL:-admin@$DOMAIN_NAME}"
-      sudo certbot --nginx -d "$DOMAIN_NAME" --non-interactive --agree-tos --email "$CERTBOT_EMAIL_VAL" --redirect 2>&1 | head -20 || {
-        echo "SSL certificate setup failed (DNS may not be configured yet)"
+      
+      # Wait a moment for Nginx to be fully ready
+      sleep 2
+      
+      # Run certbot to obtain certificate
+      sudo certbot --nginx -d "$DOMAIN_NAME" --non-interactive --agree-tos --email "$CERTBOT_EMAIL_VAL" --redirect 2>&1 | tee /tmp/certbot-output.log || {
+        echo "SSL certificate setup failed. Checking certbot output..."
+        tail -30 /tmp/certbot-output.log || echo "Could not read certbot output"
         echo "You can manually run: sudo certbot --nginx -d $DOMAIN_NAME"
+        echo "Make sure DNS is pointing to this server and ports 80/443 are open."
       }
       
-      # If cert was obtained, reload Nginx config will be done by certbot
-      # Otherwise, reload to ensure HTTP config is active
-      sudo systemctl reload nginx || true
+      # Check if certificate was successfully obtained
+      if [ -f "$SSL_CERT" ] && [ -f "$SSL_KEY" ]; then
+        echo "✓ SSL certificate successfully obtained!"
+        
+        # Certbot modifies Nginx config - we need to ensure base path is still configured
+        # Check if certbot preserved our base path location block
+        if ! grep -q "location.*$BASE_PATH" /etc/nginx/sites-available/data-deals; then
+          echo "Re-applying base path configuration after certbot..."
+          # Re-apply the HTTPS config with base path
+          sudo tee /etc/nginx/sites-available/data-deals > /dev/null <<EOF
+# HTTPS server block for domain
+server {
+    listen 443 ssl http2;
+    server_name $DOMAIN_NAME;
+
+    ssl_certificate $SSL_CERT;
+    ssl_certificate_key $SSL_KEY;
+
+    # Handle the path prefix
+    location ~ ^$BASE_PATH(/|$) {
+        rewrite ^$BASE_PATH/?(.*) /\$1 break;
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_cache_bypass \$http_upgrade;
+    }
+
+    location = / {
+        return 301 $BASE_PATH;
+    }
+}
+
+# HTTP redirect to HTTPS for domain
+server {
+    listen 80;
+    server_name $DOMAIN_NAME;
+    return 301 https://\$server_name\$request_uri;
+}
+
+# IP-based server block (fallback for direct IP access - HTTP only)
+server {
+    listen 80 default_server;
+    server_name _ ${EC2_IP};
+
+    # Handle the path prefix
+    location ~ ^$BASE_PATH(/|$) {
+        rewrite ^$BASE_PATH/?(.*) /\$1 break;
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_cache_bypass \$http_upgrade;
+    }
+
+    location = / {
+        return 301 $BASE_PATH;
+    }
+}
+EOF
+          sudo nginx -t && sudo systemctl reload nginx
+        fi
+        
+        # Reload Nginx to apply certbot's changes
+        sudo systemctl reload nginx || true
+      else
+        echo "SSL certificate not obtained yet. HTTP-only configuration active."
+        # Reload to ensure HTTP config is active
+        sudo systemctl reload nginx || true
+      fi
     else
-      echo "Certbot not available, skipping SSL setup"
+      echo "WARNING: Certbot not available. SSL certificate cannot be obtained."
+      echo "Install certbot manually: sudo apt-get install -y certbot python3-certbot-nginx"
     fi
   fi
   
