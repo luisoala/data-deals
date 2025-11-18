@@ -44,8 +44,6 @@ if (!githubClientId || !githubClientSecret) {
 const basePath = process.env.BASE_PATH || '/neurips2025-data-deals'
 
 export const authOptions: NextAuthOptions = {
-  // Configure basePath for NextAuth to work with Next.js basePath
-  basePath: `${basePath}/api/auth`,
   providers: [
     GitHubProvider({
       clientId: githubClientId || '',
