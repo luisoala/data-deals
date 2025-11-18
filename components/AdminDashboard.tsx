@@ -124,113 +124,116 @@ export default function AdminDashboard() {
       </div>
 
       {activeTab === 'suggestions' && (
-        <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-2xl font-bold mb-4">
-          Pending Suggestions ({suggestions.length})
-        </h2>
+        <>
+          <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-2xl font-bold mb-4">
+              Pending Suggestions ({suggestions.length})
+            </h2>
 
-        {suggestions.length === 0 ? (
-          <p className="text-gray-600">No pending suggestions</p>
-        ) : (
-          <div className="space-y-4">
-            {suggestions.map(suggestion => (
-              <div
-                key={suggestion.id}
-                className="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer"
-                onClick={() => setSelectedSuggestion(suggestion)}
-              >
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-semibold">
-                      {suggestion.type === 'new' ? 'New Entry' : 'Edit Entry'}
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      Submitted: {new Date(suggestion.submitted_at).toLocaleString()}
-                    </p>
-                    {suggestion.deal && (
-                      <p className="text-sm text-gray-600">
-                        Deal ID: {suggestion.deal.id}
-                      </p>
-                    )}
+            {suggestions.length === 0 ? (
+              <p className="text-gray-600">No pending suggestions</p>
+            ) : (
+              <div className="space-y-4">
+                {suggestions.map(suggestion => (
+                  <div
+                    key={suggestion.id}
+                    className="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer"
+                    onClick={() => setSelectedSuggestion(suggestion)}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-semibold">
+                          {suggestion.type === 'new' ? 'New Entry' : 'Edit Entry'}
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                          Submitted: {new Date(suggestion.submitted_at).toLocaleString()}
+                        </p>
+                        {suggestion.deal && (
+                          <p className="text-sm text-gray-600">
+                            Deal ID: {suggestion.deal.id}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleApprove(suggestion)
+                          }}
+                          className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700"
+                        >
+                          Approve
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleReject(suggestion)
+                          }}
+                          className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleApprove(suggestion)
-                      }}
-                      className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700"
-                    >
-                      Approve
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleReject(suggestion)
-                      }}
-                      className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
-                    >
-                      Reject
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {selectedSuggestion && (
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-2xl font-bold mb-4">Suggestion Details</h2>
-          <div className="space-y-4">
-            {selectedSuggestion.deal && (
-              <div>
-                <h3 className="font-semibold mb-2">Current Deal:</h3>
-                <div className="bg-gray-50 p-4 rounded">
-                  <pre className="text-sm overflow-x-auto">
-                    {JSON.stringify(
-                      {
-                        ...selectedSuggestion.deal,
-                        codes: selectedSuggestion.deal.codes,
-                      },
-                      null,
-                      2
-                    )}
-                  </pre>
-                </div>
+                ))}
               </div>
             )}
-            <div>
-              <h3 className="font-semibold mb-2">Suggested Changes:</h3>
-              <div className="bg-blue-50 p-4 rounded">
-                <pre className="text-sm overflow-x-auto">
-                  {JSON.stringify(selectedSuggestion.fields, null, 2)}
-                </pre>
+          </div>
+
+          {selectedSuggestion && (
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-2xl font-bold mb-4">Suggestion Details</h2>
+              <div className="space-y-4">
+                {selectedSuggestion.deal && (
+                  <div>
+                    <h3 className="font-semibold mb-2">Current Deal:</h3>
+                    <div className="bg-gray-50 p-4 rounded">
+                      <pre className="text-sm overflow-x-auto">
+                        {JSON.stringify(
+                          {
+                            ...selectedSuggestion.deal,
+                            codes: selectedSuggestion.deal.codes,
+                          },
+                          null,
+                          2
+                        )}
+                      </pre>
+                    </div>
+                  </div>
+                )}
+                <div>
+                  <h3 className="font-semibold mb-2">Suggested Changes:</h3>
+                  <div className="bg-blue-50 p-4 rounded">
+                    <pre className="text-sm overflow-x-auto">
+                      {JSON.stringify(selectedSuggestion.fields, null, 2)}
+                    </pre>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleApprove(selectedSuggestion)}
+                    className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => handleReject(selectedSuggestion)}
+                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                  >
+                    Reject
+                  </button>
+                  <button
+                    onClick={() => setSelectedSuggestion(null)}
+                    className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => handleApprove(selectedSuggestion)}
-                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-              >
-                Approve
-              </button>
-              <button
-                onClick={() => handleReject(selectedSuggestion)}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-              >
-                Reject
-              </button>
-              <button
-                onClick={() => setSelectedSuggestion(null)}
-                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
+          )}
+        </>
       )}
 
       {activeTab === 'audit' && (
