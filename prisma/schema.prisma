@@ -41,6 +41,7 @@ model Suggestion {
   fields      String   // JSON object stored as string
   status      String   @default("pending") // "pending", "approved", "rejected"
   submitted_at DateTime @default(now())
+  submitted_by String? // GitHub username or IP address of submitter
   reviewed_at  DateTime?
   reviewed_by  String?  // GitHub username
 
@@ -48,5 +49,22 @@ model Suggestion {
 
   @@index([status])
   @@index([deal_id])
+}
+
+model AuditLog {
+  id          Int      @id @default(autoincrement())
+  action      String   // "suggestion_submitted", "suggestion_approved", "suggestion_rejected", "deal_created", "deal_updated"
+  entity_type String   // "suggestion" or "deal"
+  entity_id   Int?     // ID of the suggestion or deal
+  user        String?   // GitHub username or IP address
+  details     String?  // JSON string with additional details
+  ip_address  String?  // IP address of the user
+  created_at  DateTime  @default(now())
+
+  @@index([action])
+  @@index([entity_type])
+  @@index([entity_id])
+  @@index([created_at])
+  @@index([user])
 }
 

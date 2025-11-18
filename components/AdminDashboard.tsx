@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Deal } from '@/app/page'
+import AuditLogViewer from './AuditLogViewer'
 
 // Base path for API calls (matches next.config.js basePath)
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '/neurips2025-data-deals'
@@ -19,6 +20,7 @@ interface Suggestion {
 }
 
 export default function AdminDashboard() {
+  const [activeTab, setActiveTab] = useState<'suggestions' | 'audit'>('suggestions')
   const [suggestions, setSuggestions] = useState<Suggestion[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedSuggestion, setSelectedSuggestion] = useState<Suggestion | null>(null)
@@ -93,7 +95,36 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-lg shadow p-6">
+      {/* Tabs */}
+      <div className="bg-white rounded-lg shadow">
+        <div className="border-b border-gray-200">
+          <nav className="flex -mb-px">
+            <button
+              onClick={() => setActiveTab('suggestions')}
+              className={`px-6 py-3 text-sm font-medium border-b-2 ${
+                activeTab === 'suggestions'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Pending Suggestions ({suggestions.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('audit')}
+              className={`px-6 py-3 text-sm font-medium border-b-2 ${
+                activeTab === 'audit'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Audit Log
+            </button>
+          </nav>
+        </div>
+      </div>
+
+      {activeTab === 'suggestions' && (
+        <div className="bg-white rounded-lg shadow p-6">
         <h2 className="text-2xl font-bold mb-4">
           Pending Suggestions ({suggestions.length})
         </h2>
@@ -199,6 +230,13 @@ export default function AdminDashboard() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {activeTab === 'audit' && (
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-2xl font-bold mb-4">Audit Log</h2>
+          <AuditLogViewer />
         </div>
       )}
     </div>

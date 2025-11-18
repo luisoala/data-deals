@@ -127,6 +127,19 @@ async function updateDealsJson(dealData: any, isNew: boolean) {
   }
 }
 
+// Helper function to get IP address from request
+function getIpAddress(request: NextRequest): string | null {
+  const forwarded = request.headers.get('x-forwarded-for')
+  if (forwarded) {
+    return forwarded.split(',')[0].trim()
+  }
+  const realIp = request.headers.get('x-real-ip')
+  if (realIp) {
+    return realIp
+  }
+  return null
+}
+
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -152,6 +165,9 @@ export async function POST(
     if (!suggestion) {
       return NextResponse.json({ error: 'Suggestion not found' }, { status: 404 })
     }
+
+    const reviewer = session.user.githubUsername || 'unknown'
+    const ipAddress = getIpAddress(request)
 
     if (action === 'approve') {
       const fields = JSON.parse(suggestion.fields)
@@ -189,7 +205,40 @@ export async function POST(
           data: {
             status: 'approved',
             reviewed_at: new Date(),
-            reviewed_by: session.user.githubUsername || null,
+            reviewed_by: reviewer,
+          },
+        })
+
+        // Create audit log for suggestion approval
+        await prisma.auditLog.create({
+          data: {
+            action: 'suggestion_approved',
+            entity_type: 'suggestion',
+            entity_id: suggestion.id,
+            user: reviewer,
+            ip_address: ipAddress,
+            details: JSON.stringify({
+              suggestion_type: suggestion.type,
+              deal_id: newDeal.id,
+              deal_ref: newDeal.ref,
+            }),
+          },
+        })
+
+        // Create audit log for deal creation
+        await prisma.auditLog.create({
+          data: {
+            action: 'deal_created',
+            entity_type: 'deal',
+            entity_id: newDeal.id,
+            user: reviewer,
+            ip_address: ipAddress,
+            details: JSON.stringify({
+              via_suggestion: suggestion.id,
+              data_receiver: newDeal.data_receiver,
+              data_aggregator: newDeal.data_aggregator,
+              ref: newDeal.ref,
+            }),
           },
         })
 
@@ -235,7 +284,40 @@ export async function POST(
           data: {
             status: 'approved',
             reviewed_at: new Date(),
-            reviewed_by: session.user.githubUsername || null,
+            reviewed_by: reviewer,
+          },
+        })
+
+        // Create audit log for suggestion approval
+        await prisma.auditLog.create({
+          data: {
+            action: 'suggestion_approved',
+            entity_type: 'suggestion',
+            entity_id: suggestion.id,
+            user: reviewer,
+            ip_address: ipAddress,
+            details: JSON.stringify({
+              suggestion_type: suggestion.type,
+              deal_id: updatedDeal.id,
+              deal_ref: updatedDeal.ref,
+            }),
+          },
+        })
+
+        // Create audit log for deal update
+        await prisma.auditLog.create({
+          data: {
+            action: 'deal_updated',
+            entity_type: 'deal',
+            entity_id: updatedDeal.id,
+            user: reviewer,
+            ip_address: ipAddress,
+            details: JSON.stringify({
+              via_suggestion: suggestion.id,
+              data_receiver: updatedDeal.data_receiver,
+              data_aggregator: updatedDeal.data_aggregator,
+              ref: updatedDeal.ref,
+            }),
           },
         })
 
@@ -265,7 +347,22 @@ export async function POST(
         data: {
           status: 'rejected',
           reviewed_at: new Date(),
-          reviewed_by: session.user.githubUsername || null,
+          reviewed_by: reviewer,
+        },
+      })
+
+      // Create audit log for suggestion rejection
+      await prisma.auditLog.create({
+        data: {
+          action: 'suggestion_rejected',
+          entity_type: 'suggestion',
+          entity_id: suggestion.id,
+          user: reviewer,
+          ip_address: ipAddress,
+          details: JSON.stringify({
+            suggestion_type: suggestion.type,
+            deal_id: suggestion.deal_id,
+          }),
         },
       })
 

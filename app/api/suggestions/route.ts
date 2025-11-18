@@ -35,8 +35,22 @@ export async function GET(request: NextRequest) {
   }
 }
 
+// Helper function to get IP address from request
+function getIpAddress(request: NextRequest): string | null {
+  const forwarded = request.headers.get('x-forwarded-for')
+  if (forwarded) {
+    return forwarded.split(',')[0].trim()
+  }
+  const realIp = request.headers.get('x-real-ip')
+  if (realIp) {
+    return realIp
+  }
+  return null
+}
+
 export async function POST(request: NextRequest) {
   try {
+    const session = await getServerSession(authOptions)
     const body = await request.json()
     const { deal_id, type, fields } = body
 
@@ -44,12 +58,32 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
+    // Get submitter info
+    const submittedBy = session?.user?.githubUsername || getIpAddress(request) || 'anonymous'
+    const ipAddress = getIpAddress(request)
+
     const suggestion = await prisma.suggestion.create({
       data: {
         deal_id: deal_id || null,
         type,
         fields: JSON.stringify(fields),
         status: 'pending',
+        submitted_by: submittedBy,
+      },
+    })
+
+    // Create audit log entry
+    await prisma.auditLog.create({
+      data: {
+        action: 'suggestion_submitted',
+        entity_type: 'suggestion',
+        entity_id: suggestion.id,
+        user: submittedBy,
+        ip_address: ipAddress,
+        details: JSON.stringify({
+          type: suggestion.type,
+          deal_id: suggestion.deal_id,
+        }),
       },
     })
 
