@@ -667,6 +667,40 @@ if [ -f ".env" ]; then
     echo "✓ Added NEXT_PUBLIC_BASE_PATH to .env"
   fi
   
+  # Set NEXT_PUBLIC_NEXTAUTH_URL for client-side NextAuth (construct from NEXTAUTH_URL or domain)
+  if grep -q "^NEXTAUTH_URL=" .env; then
+    # Parse NEXTAUTH_URL value (handles both quoted and unquoted)
+    NEXTAUTH_URL_LINE=$(grep '^NEXTAUTH_URL=' .env | head -1)
+    if [[ "$NEXTAUTH_URL_LINE" == *'"'* ]]; then
+      NEXTAUTH_URL_VAL=$(echo "$NEXTAUTH_URL_LINE" | sed 's/^NEXTAUTH_URL="\(.*\)"/\1/')
+    else
+      NEXTAUTH_URL_VAL=$(echo "$NEXTAUTH_URL_LINE" | sed 's/^NEXTAUTH_URL=\(.*\)/\1/')
+    fi
+    
+    # Extract the base URL (protocol + domain + base path)
+    if [[ "$NEXTAUTH_URL_VAL" == https://* ]] || [[ "$NEXTAUTH_URL_VAL" == http://* ]]; then
+      # Remove /api/auth suffix if present to get the base URL
+      NEXT_PUBLIC_NEXTAUTH_URL_VAL="${NEXTAUTH_URL_VAL%/api/auth}"
+    else
+      # Construct from domain if available
+      if [ -n "$DOMAIN_NAME" ]; then
+        NEXT_PUBLIC_NEXTAUTH_URL_VAL="https://$DOMAIN_NAME$BASE_PATH_VAL"
+      elif [ -n "$EC2_HOST" ]; then
+        NEXT_PUBLIC_NEXTAUTH_URL_VAL="http://$EC2_HOST$BASE_PATH_VAL"
+      else
+        NEXT_PUBLIC_NEXTAUTH_URL_VAL="http://localhost:3000$BASE_PATH_VAL"
+      fi
+    fi
+    
+    if grep -q "^NEXT_PUBLIC_NEXTAUTH_URL=" .env; then
+      sed -i "s|^NEXT_PUBLIC_NEXTAUTH_URL=.*|NEXT_PUBLIC_NEXTAUTH_URL=\"$NEXT_PUBLIC_NEXTAUTH_URL_VAL\"|" .env
+      echo "✓ Updated NEXT_PUBLIC_NEXTAUTH_URL in .env"
+    else
+      echo "NEXT_PUBLIC_NEXTAUTH_URL=\"$NEXT_PUBLIC_NEXTAUTH_URL_VAL\"" >> .env
+      echo "✓ Added NEXT_PUBLIC_NEXTAUTH_URL to .env"
+    fi
+  fi
+  
   if grep -q "NEXTAUTH_URL=" .env && grep -q "GITHUB_CLIENT_ID=" .env; then
     echo "✓ .env file contains required variables"
     # Show NEXTAUTH_URL (masked) for debugging
