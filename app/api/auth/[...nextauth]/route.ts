@@ -19,6 +19,7 @@ if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) {
   console.error('[NextAuth] This will cause OAuthSignin errors.')
 }
 
+// NextAuth v4 returns handlers directly - export them
 const handler = NextAuth(authOptions)
 
 // Wrap NextAuth handlers to fix redirect URLs that don't include base path
@@ -46,22 +47,60 @@ async function fixRedirectUrl(response: Response): Promise<Response> {
     })
   }
   
-  // Also check for relative URLs that start with /api/auth
-  if (location && location.startsWith('/api/auth/')) {
-    console.log(`[NextAuth] Found /api/auth URL but it already starts with BASE_PATH or doesn't match pattern`)
-  }
-  
   return response
 }
 
-// NextAuth returns an object with GET and POST handlers
+// NextAuth v4 returns an object with GET and POST handlers
+// Export them with redirect URL fixing
 export const GET = async (req: NextRequest, context: any) => {
-  const response = await handler.GET(req, context)
-  return fixRedirectUrl(response)
+  try {
+    // Check if handler has GET method
+    if (handler && typeof handler.GET === 'function') {
+      const response = await handler.GET(req, context)
+      return fixRedirectUrl(response)
+    } else {
+      // Log error for debugging
+      console.error('[NextAuth] ERROR: handler.GET is not a function')
+      console.error('[NextAuth] Handler type:', typeof handler)
+      if (handler && typeof handler === 'object') {
+        console.error('[NextAuth] Handler keys:', Object.keys(handler))
+      }
+      // Try to call handler directly if it's a function
+      if (typeof handler === 'function') {
+        const response = await handler(req, context)
+        return fixRedirectUrl(response)
+      }
+      return new NextResponse('Internal Server Error', { status: 500 })
+    }
+  } catch (error) {
+    console.error('[NextAuth] GET handler error:', error)
+    return new NextResponse('Internal Server Error', { status: 500 })
+  }
 }
 
 export const POST = async (req: NextRequest, context: any) => {
-  const response = await handler.POST(req, context)
-  return fixRedirectUrl(response)
+  try {
+    // Check if handler has POST method
+    if (handler && typeof handler.POST === 'function') {
+      const response = await handler.POST(req, context)
+      return fixRedirectUrl(response)
+    } else {
+      // Log error for debugging
+      console.error('[NextAuth] ERROR: handler.POST is not a function')
+      console.error('[NextAuth] Handler type:', typeof handler)
+      if (handler && typeof handler === 'object') {
+        console.error('[NextAuth] Handler keys:', Object.keys(handler))
+      }
+      // Try to call handler directly if it's a function
+      if (typeof handler === 'function') {
+        const response = await handler(req, context)
+        return fixRedirectUrl(response)
+      }
+      return new NextResponse('Internal Server Error', { status: 500 })
+    }
+  } catch (error) {
+    console.error('[NextAuth] POST handler error:', error)
+    return new NextResponse('Internal Server Error', { status: 500 })
+  }
 }
 
