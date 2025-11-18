@@ -364,8 +364,14 @@ export default function NetworkGraph({
 
   return (
     <div>
-      <div className="mb-4">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4 mb-4">
         <h2 className="text-xl font-semibold text-gray-900">Deal Network</h2>
+        {/* Vertical Separator */}
+        <div className="hidden lg:block border-l border-gray-300 flex-shrink-0 h-6"></div>
+        {/* Disclaimer */}
+        <div className="text-xs text-gray-500 flex-1">
+          <strong>Disclaimer:</strong> Our listings comprise publicly disclosed deals and public filings. However, many transactions are private or under NDA, so our dataset likely undercounts and our classification necessarily simplifies heterogeneous contracts. While we provide a transparent table, completeness cannot be assumed. If you know additional public information of data deals in AI please add them below.
+        </div>
       </div>
       <div className="text-xs text-gray-500 mb-4">
         Select nodes to filter the deal table.

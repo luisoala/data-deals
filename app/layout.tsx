@@ -5,9 +5,18 @@ import { Providers } from './providers'
 
 const inter = Inter({ subsets: ['latin'] })
 
+// Construct favicon path with basePath
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '/neurips2025-data-deals'
+const faviconUrl = `${basePath}/favicon.ico`
+
 export const metadata: Metadata = {
-  title: 'AI Data Deals Dashboard',
+  title: 'AI Data Deals Dashboard',
   description: 'Interactive visualization of AI data deals',
+  icons: {
+    icon: faviconUrl,
+    shortcut: faviconUrl,
+    apple: faviconUrl,
+  },
 }
 
 export const viewport = {

@@ -250,7 +250,7 @@ export default function Home() {
                       alt="Institutional logos" 
                       width={200}
                       height={64}
-                      className="h-auto max-h-16 object-contain"
+                      className="h-auto max-h-16 w-auto object-contain"
                     />
                   </div>
                   
@@ -264,7 +264,7 @@ export default function Home() {
                       alt="NeurIPS logo" 
                       width={120}
                       height={64}
-                      className="h-auto max-h-16 object-contain"
+                      className="h-auto max-h-16 w-auto object-contain"
                     />
                   </div>
                 </div>
@@ -339,7 +339,7 @@ export default function Home() {
         )}
 
         {/* Footer with Citation and Admin Dashboard */}
-        <footer className="mt-12 pt-8 border-t border-gray-200">
+        <footer className="mt-6 pt-4">
           <div className="flex flex-col md:flex-row gap-6 items-start">
             {/* Citation Box */}
             <div className="flex-1 max-w-7xl">
@@ -378,10 +378,10 @@ url={https://openreview.net/forum?id=mdKzkjY1dM}
               </div>
             </div>
             
-            <div className="flex justify-end w-full md:w-auto md:ml-auto">
+            <div className="flex justify-end w-full md:w-auto md:ml-auto md:pt-[22px]">
               <Link
                 href="/admin"
-                className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors inline-block self-start"
+                className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors inline-block"
               >
                 Admin Dashboard
               </Link>
