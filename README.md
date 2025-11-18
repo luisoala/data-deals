@@ -1,101 +1,55 @@
-# Data Deals Interactive Website
+# Interactive Data Deal Explorer
 
-Interactive web application showcasing AI data deals from the NeurIPS 2025 paper "A Sustainable AI Economy Needs Data Deals That Work for Generators".
+A web application to browse documented AI data deals from the NeurIPS 2025 paper **"A Sustainable AI Economy Needs Data Deals That Work for Generators"**.
 
-## What This Is
+This tool provides an interactive explorer for publicly reported data deals, featuring network visualizations, filterable data tables, and crowd-sourced additions.
 
-A Next.js web application that visualizes and manages a dataset of 73 AI data deals, featuring:
-- Interactive network graph visualization
-- Filterable, sortable data table
-- Community-driven suggestions for edits/new entries
-- Admin dashboard for content moderation (GitHub OAuth)
+[Paper](https://openreview.net/pdf?id=mdKzkjY1dM) | [NeurIPS Poster](https://neurips.cc/virtual/2025/loc/san-diego/poster/121926) | [Video](https://recorder-v3.slideslive.com/?share=107281&s=9746fb43-083d-4e57-a960-15a4e3fb26d8) | [Slides](https://docs.google.com/presentation/d/1gk3LhmmyvB9qs5wWdLMOdmmoGd7u2LDO-vnSBN89MBQ/edit?usp=sharing)
 
-## Quick Start
+<details>
+<summary><strong>Paper summary</strong></summary>
 
-```bash
-npm install
-npm run dev:setup
-```
+We argue that the machine learning value chain is structurally unsustainable due to an economic data processing inequality: each state in the data cycle from inputs to model weights to synthetic outputs refines technical signal but strips economic equity from data generators. We show, by analyzing seventy-three public data deals, that the majority of value accrues to aggregators, with documented creator royalties rounding to zero and widespread opacity of deal terms. This is not just an economic welfare concern: as data and its derivatives become economic assets, the feedback loop that sustains current learning algorithms is at risk. We identify three structural faults - missing provenance, asymmetric bargaining power, and non-dynamic pricing - as the operational machinery of this inequality. In our analysis, we trace these problems along the machine learning value chain and propose an Equitable Data-Value Exchange (EDVEX) Framework to enable a minimal market that benefits all participants. Finally, we outline research directions where our community can make concrete contributions to data deals and contextualize our position with related and orthogonal viewpoints.
 
-Open [http://localhost:3000](http://localhost:3000)
+</details>
+
+
+## How to Use This Tool
+
+1. **Use the hosted version**: Visit [https://research.brickroad.network/neurips2025-data-deals](https://research.brickroad.network/neurips2025-data-deals) to explore and edit data deals interactively.
+
+2. **Run locally**: See the [Setup Checklist](docs/SETUP_CHECKLIST.md) for local development instructions.
 
 ## Project Structure
 
-```
+```text
 data-deals/
-├── app/                    # Next.js App Router
-│   ├── admin/              # Admin dashboard page
-│   ├── api/                # API routes (deals, suggestions, auth)
-│   ├── auth/               # Authentication pages
-│   ├── page.tsx            # Main homepage
-│   └── layout.tsx          # Root layout
+├── app/                    # Next.js application (pages, API routes)
 ├── components/             # React components
-│   ├── AdminDashboard.tsx
-│   ├── DealsTable.tsx
-│   ├── Filters.tsx
-│   ├── NetworkGraph.tsx
-│   └── SuggestionModal.tsx
-├── data/                   # Data files
-│   ├── deals.json          # Single source of truth (73 deals)
-│   ├── README.md           # Data documentation
-│   └── archive/            # Historical paper materials
+├── data/                   # Deal data and the raw paper LaTeX
 ├── docs/                   # Documentation
-│   ├── README.md           # Documentation index
-│   ├── DATA_MODEL.md       # Data structure details
-│   ├── DEPLOYMENT.md       # Deployment guide
-│   └── ...
 ├── lib/                    # Shared utilities
-│   ├── auth.ts             # NextAuth configuration
-│   └── prisma.ts           # Prisma client
-├── prisma/                 # Database
-│   └── schema.prisma       # Prisma schema
+├── prisma/                 # Database schema
 ├── scripts/                # Build & deployment scripts
-│   ├── deploy.sh           # Production deployment
-│   ├── dev-start.sh        # Local development setup
-│   ├── sync-json-to-db.ts  # Sync deals.json → database
-│   ├── export-db-to-json.ts # Export database → deals.json
-│   └── archive/            # Deprecated scripts
-├── public/                 # Static assets
-├── middleware.ts           # Next.js middleware (auth)
-├── package.json            # Dependencies & scripts
-└── tsconfig.json           # TypeScript config
+└── public/                 # Static assets
 ```
 
-## Key Files
+For detailed technical documentation, see [docs/README.md](docs/README.md).
 
-- **`data/deals.json`** - Single source of truth for all 73 deals
-- **`prisma/schema.prisma`** - Database schema (Deal, Suggestion models)
-- **`scripts/deploy.sh`** - Production deployment script (EC2)
-- **`.github/workflows/deploy.yml`** - CI/CD workflow
+## Citation
 
-## Available Scripts
+If you use this tool or reference the data deals dataset, we appreciate if you cite the paper:
 
-```bash
-npm run dev              # Start development server
-npm run dev:setup        # Full setup (install, db, sync)
-npm run build            # Build for production
-npm run start            # Start production server
-npm run sync             # Sync deals.json → database
-npm run export:db        # Export database → deals.json
-npm run db:studio        # Open Prisma Studio
-npm run db:push          # Push schema changes
+```bibtex
+@inproceedings{
+    jia2025a,
+    title={A Sustainable {AI} Economy Needs Data Deals That Work for Generators},
+    author={Ruoxi Jia and Luis Oala and Wenjie Xiong and Suqin Ge and Jiachen T. Wang and Feiyang Kang and Dawn Song},
+    booktitle={The Thirty-Ninth Annual Conference on Neural Information Processing Systems Position Paper Track},
+    year={2025},
+    url={https://openreview.net/forum?id=mdKzkjY1dM}
+}
 ```
-
-## Documentation
-
-- **Data**: See `data/README.md` for data structure and workflow
-- **All Guides**: See `docs/README.md` for complete documentation index
-- **Deployment**: See `docs/DEPLOYMENT.md` for production setup
-
-## Tech Stack
-
-- **Framework**: Next.js 14+ (App Router)
-- **Language**: TypeScript
-- **Database**: SQLite (dev) / Prisma ORM
-- **Auth**: NextAuth.js (GitHub OAuth)
-- **Styling**: Tailwind CSS
-- **Visualization**: D3.js
-- **Deployment**: GitHub Actions → EC2 (PM2, Nginx)
 
 ## License
 

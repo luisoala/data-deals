@@ -1,14 +1,7 @@
+# TODO
 
-
-animation
-
-green blue
-
-date updated
-
-
-disclaimer box
-
-database workflow, updates and admin -> restructure?
-
-
+- [ ] Animation improvements
+- [ ] Admin dashboard enhancements
+- [ ] Date updated tracking
+- [ ] Add other features
+- [ ] Disclaimer box

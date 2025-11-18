@@ -43,3 +43,13 @@ next-env.d.ts
 *.db
 *.db-journal
 
+# python
+/venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# build artifacts
+.next/cache/**/*.old
