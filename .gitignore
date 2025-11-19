@@ -53,3 +53,10 @@ __pycache__/
 
 # build artifacts
 .next/cache/**/*.old
+
+# GIF generation intermediate files
+data/archive/data_deals-neurips_camera_ready-latex/gif_frames/
+data/archive/data_deals-neurips_camera_ready-latex/gif_frames_*/
+
+# Generated GIF files
+*.gif
